@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f8f6f0">
+  <title>Worlds Gallery — Every picture has a world behind it</title>
+  <meta name="description" content="A free, global gallery of photographs, collages and the human stories behind them. Interactive prototype; fictional sample stories.">
+  <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="portal.css">
+</head>
+<body class="portal-locked">
+<!-- Worlds Gallery V5: immersive country entry. Globe is the ONLY initial screen. -->
+<div id="worldPortal" class="world-portal" data-phase="globe" data-sky="twilight" aria-label="Interactive world explorer">
+  <div class="portal-space" aria-hidden="true">
+    <div class="nebula nebula-one"></div><div class="nebula nebula-two"></div><div class="nebula nebula-three"></div>
+    <div class="decor-planet decor-purple"></div><div class="decor-planet decor-gold"><span class="decor-ring"></span></div>
+    <div class="light-flare"></div>
+  </div>
+  <canvas id="portalStars" aria-hidden="true"></canvas>
+  <canvas id="portalEarth" role="button" tabindex="0" aria-label="Rotate Earth with drag or arrow keys, tap a country to zoom. Press slash to find a country."></canvas>
+  <div id="portalCenterRing" class="portal-center-ring" aria-hidden="true"><span></span></div>
+  <div class="world-clock" id="worldClock" aria-live="off">
+    <div class="clock-time-row"><span class="clock-symbol" id="clockSymbol">◐</span><strong id="clockTime">--:-- --</strong></div>
+    <div id="clockPlace" class="clock-place">Finding your destination...</div>
+    <div class="clock-note" id="clockNote">Representative local time</div>
+  </div>
+  <div class="portal-hover" id="portalHover" aria-live="polite" hidden></div>
+  <div class="portal-footer" id="portalFooter">
+     <div class="facing-country" id="portalFacing">THE WORLD IS YOUR GALLERY</div>
+     <div class="portal-instructions">Drag to rotate <span>·</span> Scroll to zoom <span>·</span> Tap a country <span>·</span> Press <kbd>/</kbd> to search</div>
+  </div>
+  <div class="portal-drill" id="portalDrill" aria-live="polite" hidden></div>
+  <div class="portal-country-search" id="portalSearchPane" hidden>
+    <div class="portal-search-head"><label for="portalSearchInput">Where would you like to go?</label><button id="portalCloseSearch" type="button" aria-label="Close country search">×</button></div>
+    <input id="portalSearchInput" type="search" autocomplete="off" placeholder="Search country or territory..." aria-label="Search countries"/>
+    <div id="portalSearchResults" class="portal-search-list"></div>
+    <small>Search is an accessible alternative to selecting tiny countries on the globe.</small>
+  </div>
+  <button type="button" id="portalSearchToggle" class="portal-search-trigger" aria-label="Find a country" title="Find a country">⌕</button>
+</div>
+
+<header class="site-header"><div class="shell nav-bar">
+  <a class="brand" href="#home" aria-label="Worlds Gallery home"><span class="brand-symbol">W<span class="brand-dot">✦</span></span><span>Worlds <em>Gallery.</em></span></a>
+  <nav class="nav-links" aria-label="Main navigation"><a href="#map-section">The world</a><a href="#stories">Stories</a><a href="#about">Our purpose</a></nav>
+  <button type="button" class="button button-primary nav-share" data-open-upload>Share your story <span aria-hidden="true">↗</span></button>
+</div></header>
+<main id="home">
+<div class="arrival-ribbon" id="arrivalRibbon" hidden>
+  <div class="arrival-left"><span class="arrival-globe">✧</span><div><span class="arrival-kicker">YOU ARE EXPLORING</span><strong id="arrivalCountry">The whole world</strong><div class="arrival-locality" id="arrivalLocality"></div></div></div>
+  <div class="arrival-right"><div class="arrival-feature"><span>✦ DISCOVER A CORNER</span><strong id="arrivalRandom">Explore somewhere new</strong><button type="button" id="arrivalShuffle" aria-label="Suggest another place" title="Suggest another place" class="arrival-shuffle">↻</button></div><button type="button" id="arrivalBackEarth" class="arrival-earth-btn">↗ Return to Earth</button></div>
+</div>
+  <section class="hero shell" id="map-section">
+    <div class="hero-copy"><div class="eyebrow"><span class="tiny-sun">✳</span> ONE PLANET. COUNTLESS STORIES.</div>
+      <h1>Every picture<br>has a <em>world</em><br>behind it.</h1>
+      <p class="hero-subtitle">A thoughtful gallery for ordinary moments and extraordinary feelings. Explore memories, journeys, and dreams through the people who lived them.</p>
+      <div class="hero-actions"><button type="button" class="button button-primary" data-open-upload>Tell your story <span>↗</span></button><a href="#stories" class="button button-light">Explore the gallery <span>↓</span></a></div>
+      <div class="hero-trust"><span class="hero-spark">✧</span> From anywhere in the world. Always free to explore.</div>
+      <div class="mini-stats"><div><b id="statStories">7</b><span>Demo stories</span></div><div><b id="statCountries">5</b><span>Countries represented</span></div><div><b>249</b><span>Country directory</span></div></div>
+    </div>
+    <div class="globe-pane">
+      <div class="globe-top"><div><span class="eyebrow small">YOUR WINDOW TO THE WORLD</span><div class="globe-title">Where would you like to go?</div></div><span class="live-pill"><i></i> Interactive globe</span></div>
+      <div class="globe-canvas-wrap" id="globeWrap"><div class="globe-stars" aria-hidden="true"></div><canvas id="globeCanvas" width="680" height="680" role="img" aria-label="Interactive stylized globe. Drag to rotate; click a country to explore its stories. Country dropdown below is an accessible alternative."></canvas><span class="globe-hint">↔ Drag to spin · Tap a country</span></div>
+      <div class="globe-bottom"><div class="globe-location"><span class="globe-marker">⌖</span><div><span class="globe-loc-caption">Currently exploring</span><strong id="globeLocation">The whole world</strong></div></div><div class="globe-controls"><button type="button" id="globeReset" class="small-circle" aria-label="Reset globe">↺</button><button type="button" id="globeZoomOut" class="small-circle" aria-label="Zoom out">−</button><button type="button" id="globeZoomIn" class="small-circle" aria-label="Zoom in">+</button></div></div>
+      <div class="globe-selection" id="globeSelection">Choose a country on the globe or in the gallery filters to discover stories from there.</div>
+    </div>
+  </section>
+
+  <section id="stories" class="gallery-section"><div class="shell">
+    <div class="section-eyebrow"><span></span> THE OPEN STORYBOOK</div>
+    <div class="gallery-heading"><div><h2>Explore the <em>gallery.</em></h2><p>Every photograph holds a place, a person, and a piece of a life.</p></div><span class="demo-label">✦ Fictional sample stories · Browser-only demo</span></div>
+    <div class="filter-panel">
+      <div class="filter-top"><label class="searchbox" for="search"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.8"/><path d="m16 16 5 5"/></svg><input id="search" type="search" placeholder="Search names, titles, memories, places..." aria-label="Search gallery"></label><button class="button select-themes" id="themeChoose" type="button"><span>✦ Select themes</span><span class="countbubble" id="themeCount">0</span><span aria-hidden="true">▾</span></button></div>
+      <div class="filter-bottom">
+        <label class="filter-field"><span>World region</span><select id="continentFilter" aria-label="Filter by world region"><option value="">All world regions</option><option>Africa</option><option>Americas</option><option>Asia</option><option>Europe</option><option>Oceania</option><option>Antarctic</option></select></label>
+        <label class="filter-field"><span>Country or territory</span><select id="countryFilter" aria-label="Filter by country"><option value="">All countries</option></select></label>
+        <div class="filter-field"><span>State / province / region</span><button id="openRegion" type="button" class="filter-select-btn"><span id="regionLabel">All regions</span><span aria-hidden="true">▾</span></button></div>
+        <label class="filter-field sort"><span>Sort stories</span><select id="sortFilter" aria-label="Sort stories"><option value="new">Newest first</option><option value="hearts">Most loved</option><option value="author">Storyteller A–Z</option><option value="title">Title A–Z</option><option value="country">Country A–Z</option></select></label>
+      </div>
+      <div class="active-filters" id="activeFilters" hidden><div class="active-chips" id="themeChips"></div><button id="clearFilters" type="button" class="link-button">Clear all filters</button></div>
+    </div>
+    <div class="gallery-subline"><span id="resultsCount">Stories</span><span>Tap any image to read · <span class="subline-heart">♥</span> the stories that move you</span></div>
+    <div class="gallery-grid" id="gallery" aria-live="polite"></div>
+    <div class="footnote">Places without submissions remain discoverable through the country directory. This prototype contains fictional stories only.</div>
+  </div></section>
+
+  <section id="about" class="about-section"><div class="shell about-inner"><div><div class="eyebrow">A HUMAN ARCHIVE, BUILT WITH CARE</div><h2>Not a competition<br>for attention.<br><em>A place for meaning.</em></h2></div><div class="about-right"><p>One photo. Up to four moments in a collage. At least 1,000 characters to tell the fuller story. Discover what life feels like across countries, generations and different perspectives.</p><div class="about-steps"><span>01 <strong>Capture a moment</strong></span><span>02 <strong>Choose your collage design</strong></span><span>03 <strong>Tell the story behind it</strong></span><span>04 <strong>Explore with empathy</strong></span></div><small>Public launch will require accounts, content moderation, privacy protections, consent and reporting. These features are not implemented in the demo.</small></div></div></section>
+</main>
+<footer><div class="shell footrow"><span class="brand footbrand"><span class="brand-symbol">W</span><span>Worlds <em>Gallery.</em></span></span><button type="button" class="link-button" id="feedbackOpen">✉ Leave feedback</button><span>Concept V5 · All samples fictional · Not publicly hosted</span><a href="#home">Back to the top ↑</a></div></footer>
+
+<dialog class="modal" id="themesDialog" aria-label="Choose story themes"><div class="modal-header"><div><div class="eyebrow small">EXPLORE YOUR INTERESTS</div><h3>Choose your themes</h3></div><button type="button" class="close-button" data-close="themesDialog" aria-label="Close">×</button></div><div class="modal-body"><p class="modal-hint">Choose one, several, or none. Selected themes will appear under your filters; matching stories can belong to <b>any</b> selected theme.</p><div class="theme-modal-grid" id="themeOptions"></div></div><div class="modal-footer"><button type="button" class="button button-light" id="themesClear">Clear selection</button><button type="button" class="button button-primary" id="themesApply">Apply themes <span>✓</span></button></div></dialog>
+
+<dialog class="modal" id="regionDialog" aria-label="Select a region"><div class="modal-header"><div><div class="eyebrow small">A CLOSER LOOK</div><h3>Select a region</h3></div><button type="button" class="close-button" data-close="regionDialog" aria-label="Close">×</button></div><div class="modal-body"><p class="modal-hint" id="regionHelp">Select a country to browse its first-level regions and provinces.</p><input class="input modal-search" id="regionSearch" type="search" placeholder="Search a region, state or province..." aria-label="Search regions"><div id="regionChoices" class="region-choices"></div></div><div class="modal-footer"><button type="button" class="button button-light" id="regionAny">All regions</button><button type="button" class="button button-primary" data-close="regionDialog">Done</button></div></dialog>
+
+<dialog class="modal upload-modal" id="uploadDialog" aria-label="Share your story"><div class="modal-header"><div><div class="eyebrow small">A MEMORY WORTH KEEPING</div><h3>Share your moment</h3></div><button type="button" class="close-button" data-close="uploadDialog" aria-label="Close">×</button></div><div class="modal-body"><p class="modal-hint">Your uploads in this prototype are saved <strong>only in this browser</strong>, not published online. One to four photos, one meaningful story.</p>
+ <form id="uploadForm" novalidate>
+  <div class="form-row"><label class="form-field"><span>Storyteller pen name *</span><input id="author" class="input" type="text" minlength="2" maxlength="60" required placeholder="e.g. Quiet Voyager"></label><label class="form-field"><span>Country of the moment *</span><select class="input" id="uploadCountry" required><option value="">Choose country</option></select></label></div>
+  <div class="form-row"><label class="form-field"><span>Region / province <small>(optional)</small></span><input id="uploadRegion" list="uploadRegions" class="input" placeholder="e.g. Central Luzon"><datalist id="uploadRegions"></datalist></label><label class="form-field"><span>City / town <small>(optional)</small></span><input id="uploadCity" class="input" placeholder="Optional location"></label></div>
+  <div class="form-row"><label class="form-field"><span>Story theme *</span><select class="input" id="uploadTheme" required><option value="">Choose main theme</option></select></label><label class="form-field"><span>Story title *</span><input class="input" id="uploadTitle" type="text" maxlength="120" required placeholder="A moment I will remember"></label></div>
+  <div class="upload-section"><div class="section-label"><strong>01 · Choose 1–4 photos</strong><span>JPG, PNG or WebP · max 12 MB each</span></div><label class="upload-zone" for="imageInput"><span class="upload-icon">↥</span><strong>Choose your photographs</strong><small>Up to four images · automatically resized in your browser</small><input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp" multiple></label><div class="image-tools" id="imageTools" hidden><div class="image-picked" id="imagePicked"></div><p class="micro-hint">Use arrows to change the order of pictures. Tap a preview image to view it on its own.</p></div></div>
+  <div class="upload-section"><div class="section-label"><strong>02 · Choose a collage design</strong><span>Layouts adapt to your photo count</span></div><div class="templates" id="templates"></div><div class="preview-frame"><div class="preview-top"><span>LIVE COLLAGE PREVIEW</span><span id="previewLayoutName">Classic layout</span></div><div class="collage-preview" id="collagePreview"><div class="preview-empty">Your chosen collage will appear here <span>✧</span></div></div></div><p class="micro-hint">Every image remains viewable separately when someone opens your story. The collage is just the cover design.</p></div>
+  <div class="upload-section"><div class="section-label"><strong>03 · Tell us what happened</strong><span>At least 1,000 characters</span></div><textarea id="uploadBody" maxlength="15000" class="input story-textarea" placeholder="Take us back to that moment. Where were you? What did you feel? Why does this memory matter?" required></textarea><div class="character-meta"><div class="progress-outer"><div id="characterBar"></div></div><span id="characterCount">0 / 1,000 characters</span></div></div>
+  <div id="formMessage" class="form-message" role="status" aria-live="polite"></div><div class="upload-footer"><span>Not published · Browser demo only</span><button class="button button-primary" type="submit" id="submitStory">Add to my demo gallery <span>↗</span></button></div>
+ </form></div></dialog>
+
+<dialog class="modal read-modal" id="readDialog" aria-label="Read story"><div class="modal-header"><div><div class="eyebrow small">A STORY FROM THE WORLD</div><span id="readMeta">A human memory</span></div><button type="button" class="close-button" data-close="readDialog" aria-label="Close">×</button></div><div class="modal-body" id="readBody"></div></dialog>
+
+<dialog class="lightbox" id="lightboxDialog" aria-label="View photo at full size"><div class="lightbox-top"><span id="lightboxCounter">Photo 1 of 1</span><button type="button" class="close-button lightbox-close" data-close="lightboxDialog" aria-label="Close photo">×</button></div><div class="lightbox-middle"><button type="button" id="lightboxPrev" class="photo-arrow" aria-label="Previous image">‹</button><img id="lightboxImage" alt="Selected story image"><button type="button" id="lightboxNext" class="photo-arrow" aria-label="Next image">›</button></div><div id="lightboxCaption" class="lightbox-caption">View original frame</div></dialog>
+
+<dialog class="modal feedback-dialog" id="feedbackDialog" aria-label="Feedback demonstration"><div class="modal-header"><div><div class="eyebrow small">HELP US SHAPE THIS WORLD</div><h3>A note for the gallery</h3></div><button type="button" class="close-button" data-close="feedbackDialog" aria-label="Close">×</button></div><div class="modal-body"><p class="modal-hint">Try our animated feedback envelope. This is a <b>visual demo only</b>: your message will not be sent or saved online.</p><div class="envelope-scene" id="envelopeScene"><div class="envelope-paper" id="envelopePaper">Dear Worlds Gallery, ✦</div><div class="envelope-back"></div><div class="envelope-flap"></div><div class="envelope-front"></div><div class="mail-bin" aria-hidden="true">▣</div></div><form id="feedbackForm"><label class="form-field" for="feedbackText"><span>Your feedback</span><textarea id="feedbackText" class="input" rows="4" maxlength="1000" required placeholder="What would make Worlds Gallery better?"></textarea></label><div class="feedback-buttons"><span id="feedbackStatus" class="micro-hint">No message will be transmitted.</span><button type="submit" class="button button-primary" id="feedbackSubmit">Preview sending ✉</button></div></form></div></dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="data.js"></script><script src="world_geometry.js"></script><script src="ph_coastline.js"></script><script src="ph_admin_geo.js"></script><script src="place_highlights.js"></script><script src="globe.js"></script><script src="app.js"></script><script src="timezones.js"></script><script src="portal.js"></script>
+</body>
+</html>
