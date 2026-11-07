@@ -43,14 +43,14 @@ function regionMatch(post,r){if(!r)return true;const terms=[post.region||'',post
   // If a province was chosen, posts from its parent subdivision can appear only if explicitly tagged.
   return false;
 }
-function getFiltered(){const q=norm(state.search),oneCharacter=q.length===1;
+function getFiltered(){const q=norm(state.search);
  const result=stories().filter(s=>{
   const iso=countryCode(s.country);const meta=COUNTRY_META[iso]||{};
   if(state.selectedContinent && meta.continent!==state.selectedContinent) return false;
   if(state.selectedCountry&&iso!==state.selectedCountry)return false;
   if(!regionMatch(s,state.selectedRegion))return false;
   if(state.themes.size&&!state.themes.has(s.theme||'other'))return false;
-  if(q){if(oneCharacter) return norm(s.author).includes(q);return [s.author,s.title,s.story,s.country,s.region||'',s.province||'',s.city||'',themeFor(s.theme).name].some(str=>norm(str).includes(q))}
+  if(q){return [s.author,s.title,s.story,s.country,s.region||'',s.province||'',s.city||'',themeFor(s.theme).name].some(str=>norm(str).includes(q))}
   return true;
  });
  const sorter=state.sort;
@@ -222,4 +222,84 @@ async function init(){renderCountryOptions(false);renderUploadCountries();render
  globe=createWorldGlobe($('globeCanvas'),code=>{if(!COUNTRIES.some(c=>c[0]===code)){notify('Map selection unavailable for this territory. Use the country filter below.');return}setCountry(code,'globe')});
  try{db=await openDb();demoStories=await dbAll();renderGallery()}catch{demoStories=readFallbackStories();renderGallery();notify('Browser storage fallback enabled. Demo posts may be session-only on this device.')}
 }
+
+/* WG PORTAL PHOTO ZOOM + SEARCH V5 */
+function enablePortalPhotoZoom() {
+  const portal = document.getElementById('portalDrill');
+  if (!portal) return;
+
+  const selector =
+    '.wg-highlight-photo img, .wg-discover-image img';
+
+  function decorate() {
+    portal.querySelectorAll(selector).forEach(img => {
+      if (img.dataset.wgZoomReady === '1') return;
+
+      img.dataset.wgZoomReady = '1';
+      img.tabIndex = 0;
+      img.setAttribute('role', 'button');
+      img.setAttribute(
+        'aria-label',
+        'Enlarge photo: ' + (img.alt || 'Featured place')
+      );
+      img.title = 'View larger photo';
+    });
+  }
+
+  new MutationObserver(decorate).observe(portal, {
+    childList: true,
+    subtree: true
+  });
+
+  decorate();
+
+  function enlarge(img) {
+    if (!img) return;
+
+    if (!img.naturalWidth) {
+      notify('This photograph has not loaded yet.');
+      return;
+    }
+
+    const dialog = $('lightboxDialog');
+    if (!dialog || dialog.open) return;
+
+    openLightbox([img.currentSrc || img.src], 0);
+
+    $('lightboxCounter').textContent =
+      'Featured photograph';
+
+    $('lightboxImage').alt =
+      img.alt || 'Featured destination photograph';
+
+    $('lightboxCaption').textContent =
+      img.alt || 'Featured destination photograph';
+  }
+
+  portal.addEventListener('click', e => {
+    const img = e.target.closest?.(selector);
+    if (img) enlarge(img);
+  });
+
+  portal.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+
+    const img = e.target.closest?.(selector);
+    if (!img || img !== e.target) return;
+
+    e.preventDefault();
+    enlarge(img);
+  });
+
+  $('lightboxDialog').addEventListener('close', () => {
+    $('lightboxCaption').textContent =
+      'View original frame';
+
+    $('lightboxImage').alt =
+      'Selected story image';
+  });
+}
+
+enablePortalPhotoZoom();
+
 init();

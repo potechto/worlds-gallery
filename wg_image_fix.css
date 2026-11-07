@@ -1,0 +1,29 @@
+﻿.wg-highlight-photo {
+  background: #061b30 !important;
+  height: clamp(230px, 29vw, 350px);
+}
+
+.wg-highlight-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain !important;
+  object-position: center;
+}
+
+.wg-highlight-photo .wg-photo-fallback {
+  display: none !important;
+}
+
+.wg-highlight-photo.offline .wg-photo-fallback {
+  display: flex !important;
+}
+
+.wg-highlight-photo.offline img {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .wg-highlight-photo {
+    height: 260px;
+  }
+}

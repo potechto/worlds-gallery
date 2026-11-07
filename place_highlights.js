@@ -1,7 +1,7 @@
 /* Curated, credited Wikimedia Commons photo highlights (online only). Fallback is bundled geography, not a fabricated photo. */
 window.WG_HIGHLIGHTS = {
   "Philippines": {
-    "title": "Landscapes of the Philippines",
+    "title": "Banaue Rice Terraces, Ifugao",
     "description": "The Philippine archipelago includes more than 7,000 islands. Its mountains, coastal communities and cultural traditions are part of an exceptionally varied landscape.",
     "author": "Jose B. Cabajar",
     "license": "CC BY-SA 3.0",
@@ -68,15 +68,15 @@ window.WG_HIGHLIGHTS = {
   "Bataan": {
     "title": "Mount Samat National Shrine",
     "description": "In Pilar, the Dambana ng Kagitingan commemorates Filipino and American defenders during the Second World War.",
-    "author": "LMP 2001",
+    "author": "Ranieljosecastaneda",
     "license": "CC BY-SA 4.0",
     "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
     "coord": [
       14.68,
       120.42
     ],
-    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Mount%20Samat%20National%20Shrine%202017-02-18.jpg?width=850",
-    "source": "https://commons.wikimedia.org/wiki/File:Mount_Samat_National_Shrine_2017-02-18.jpg"
+    "url": "assets/photos/mount-samat-shrine.jpg",
+    "source": "https://commons.wikimedia.org/wiki/File:Shrine_of_Valor_Mt._Samat.jpg"
   },
   "Hermosa": {
     "title": "Saint Peter of Verona Parish Church",

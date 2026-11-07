@@ -1,0 +1,121 @@
+/* Worlds Gallery Auth V2 — Cinematic Hybrid. Native WebGL + NASA texture.
+   Designed for restrained, premium motion rather than cartoon animation. */
+html:not(.wg-auth-ok) #worldPortal,
+html:not(.wg-auth-ok) .site-header,
+html:not(.wg-auth-ok) main,
+html:not(.wg-auth-ok) footer {visibility:hidden!important;pointer-events:none!important}
+#wgAuthGate[hidden],#wgLogout[hidden],#wgAuthGate .wg-auth-form[hidden],#wgAuthGate #wgAuthTabs[hidden]{display:none!important}
+#wgAuthGate,#wgAuthGate *{box-sizing:border-box}
+#wgAuthGate{position:fixed;inset:0;z-index:30000;display:block;overflow-x:hidden;overflow-y:auto;isolation:isolate;background:#020915;color:#f0f5f8;font:400 14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+#wgAuthGate .wg-auth-cinema{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:-1;background:radial-gradient(ellipse at 28% 40%,#17334d 0%,#071827 34%,#020b19 78%),linear-gradient(130deg,#081a27,#02060e)}
+#wgAuthGate .wg-auth-nebula{position:absolute;inset:-15%;background:radial-gradient(ellipse at 26% 50%,rgba(79,144,187,.18),transparent 40%),radial-gradient(ellipse at 64% 82%,rgba(28,89,123,.12),transparent 45%);opacity:.85}
+#wgAuthGate .wg-auth-nebula:after{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(221,236,253,.75) .65px,transparent 1.1px),radial-gradient(circle,rgba(219,235,255,.48) .7px,transparent 1px);background-size:122px 163px,211px 239px;background-position:13px 17px,71px 93px;opacity:.29}
+#wgAuthGate #wgCinematicCanvas{display:block;position:absolute;inset:0;width:100%;height:100%;opacity:.97;filter:saturate(.98) contrast(1.08)}
+#wgAuthGate .wg-auth-static-earth{position:absolute;left:clamp(-210px,5vw,130px);top:50%;width:min(63vw,840px);aspect-ratio:1;transform:translateY(-50%);background:url('wg_earth_preview.webp') center/contain no-repeat;filter:drop-shadow(0 0 68px rgba(58,140,177,.22));opacity:.91}
+#wgAuthGate[data-cinema="live"] .wg-auth-static-earth{opacity:0}
+#wgAuthGate .wg-auth-cinema-shading{position:absolute;inset:0;background:linear-gradient(90deg,rgba(1,7,17,.38),transparent 48%,rgba(2,9,19,.67) 76%),linear-gradient(0deg,rgba(2,9,19,.52),transparent 28%,transparent 70%,rgba(1,8,18,.32));}
+#wgAuthGate .wg-auth-cinema-grain{position:absolute;inset:0;opacity:.11;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.66' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");mix-blend-mode:screen}
+#wgAuthGate .wg-auth-frame{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(390px,495px);align-items:center;gap:clamp(22px,3.4vw,58px);min-height:100dvh;max-width:1680px;margin:auto;padding:clamp(28px,3.8vw,55px) clamp(26px,4.4vw,70px)}
+#wgAuthGate .wg-auth-editorial{height:min(87dvh,850px);min-height:530px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;pointer-events:none;text-shadow:0 2px 24px rgba(0,0,0,.28)}
+#wgAuthGate .wg-auth-brand{display:inline-flex;align-items:center;gap:13px;font-size:13px;letter-spacing:.19em;font-weight:750;color:#f1f7f8;white-space:nowrap}
+#wgAuthGate .wg-auth-brand-dot{color:#84c5d7}
+#wgAuthGate .wg-auth-brand-symbol{position:relative;display:inline-block;width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(207,239,245,.92);transform:rotate(-18deg)}
+#wgAuthGate .wg-auth-brand-symbol:before{content:"";position:absolute;inset:7px -4px;border:1px solid rgba(133,200,218,.67);border-radius:50%;transform:rotate(-42deg)}
+#wgAuthGate .wg-auth-brand-symbol i{position:absolute;inset:7px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#c9eff1,#296c86 72%,#092537)}
+#wgAuthGate .wg-auth-intro{max-width:660px;margin-top:auto;margin-bottom:clamp(58px,9dvh,130px)}
+#wgAuthGate .wg-auth-kicker{display:flex;align-items:center;gap:10px;color:#a8d4df;letter-spacing:.20em;font-weight:650;font-size:10px}
+#wgAuthGate .wg-auth-dot{display:block;width:6px;height:6px;border-radius:50%;background:#94d5db;box-shadow:0 0 14px rgba(118,207,223,.6)}
+#wgAuthGate .wg-auth-intro h1{font-weight:550;letter-spacing:-.055em;font-size:clamp(46px,5.2vw,82px);line-height:1.01;margin:24px 0 22px;color:#f8fbfd}
+#wgAuthGate .wg-auth-intro h1 em{font-style:normal;color:#c4e8e8;font-weight:400}
+#wgAuthGate .wg-auth-intro p{margin:0;color:#c9d8e4;line-height:1.85;font-size:clamp(13px,1.13vw,16px);max-width:510px}
+#wgAuthGate .wg-auth-flightline{width:min(100%,570px);display:flex;align-items:center;gap:12px;color:#afc8d5;font-size:10px;letter-spacing:.13em;font-weight:600;white-space:nowrap}
+#wgAuthGate .wg-auth-flightline:before{content:"";display:block;width:18px;height:1px;background:#9dc4d4}
+#wgAuthGate .wg-auth-flightline-mark{width:14px;height:14px;border:1px solid rgba(189,223,234,.46);border-radius:50%;position:relative}
+#wgAuthGate .wg-auth-flightline-mark:after{content:"";position:absolute;inset:5px;background:#c8edf1;border-radius:50%}
+#wgAuthGate .wg-auth-flightline strong{margin-left:auto;font-weight:650;color:#ddf1f4;font-size:10px}
+#wgAuthGate .wg-auth-panel{width:100%;max-height:calc(100dvh - 55px);overflow:auto;overscroll-behavior:contain;padding:clamp(25px,2.7vw,37px);background:linear-gradient(135deg,rgba(10,23,38,.92),rgba(4,17,32,.86));border:1px solid rgba(196,229,241,.23);border-radius:23px;box-shadow:0 35px 90px rgba(0,0,0,.42),0 0 1px rgba(255,255,255,.4) inset;backdrop-filter:blur(24px) saturate(1.1);scrollbar-width:thin;scrollbar-color:rgba(185,217,227,.24) transparent}
+#wgAuthGate .wg-auth-panel-header,#wgAuthGate .wg-auth-panel-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;color:#9bb2c4;letter-spacing:.16em;font-size:9px;font-weight:750}
+#wgAuthGate .wg-auth-panel-header>span:first-child span{padding:0 5px;color:#5d819a}
+#wgAuthGate .wg-auth-secure span{color:#8bcaad;margin-right:4px;font-size:8px}
+#wgAuthGate .wg-auth-panel-copy{margin:clamp(20px,2.8vw,35px) 0 19px}
+#wgAuthGate .wg-auth-panel-copy h2{font-size:clamp(27px,2.25vw,34px);line-height:1.12;letter-spacing:-.045em;font-weight:610;color:#f2f7fa;margin:0 0 10px}
+#wgAuthGate .wg-auth-panel-copy p{font-size:12px;line-height:1.68;color:#aebfce;margin:0;max-width:390px}
+#wgAuthGate .wg-auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:0 0 22px;padding:4px;background:rgba(185,216,235,.06);border:1px solid rgba(175,212,228,.12);border-radius:12px}
+#wgAuthGate .wg-auth-tabs button{cursor:pointer;background:transparent;color:#b2c5d2;border:0;border-radius:9px;padding:11px 8px;font:650 12px/1.1 system-ui,-apple-system,'Segoe UI',sans-serif;letter-spacing:.02em;transition:background .22s ease,color .22s ease}
+#wgAuthGate .wg-auth-tabs button[aria-pressed="true"]{background:#d6ecf1;color:#102f41;box-shadow:0 4px 14px rgba(0,0,0,.13)}
+#wgAuthGate .wg-auth-form{display:grid;gap:13px;margin:0}
+#wgAuthGate .wg-auth-form-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#wgAuthGate .wg-auth-form label{min-width:0;display:grid;gap:6px;color:#d3e2ec;font-size:11px;letter-spacing:.02em;font-weight:550}
+#wgAuthGate .wg-auth-form input:not([type=checkbox]),#wgAuthGate .wg-auth-form select{box-sizing:border-box;display:block;min-width:0;width:100%;height:43px;background:rgba(10,28,46,.88);border:1px solid rgba(177,213,229,.20);border-radius:9px;color:#ecf6fa;padding:9px 11px;font:400 13px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;transition:border-color .22s ease,box-shadow .22s ease}
+#wgAuthGate .wg-auth-form input::placeholder{color:#8299a8}
+#wgAuthGate .wg-auth-form select option{background:#10283d;color:#f1f6f9}
+#wgAuthGate .wg-auth-form input:focus-visible,#wgAuthGate .wg-auth-form select:focus-visible,#wgAuthGate .wg-auth-tabs button:focus-visible,#wgLogout:focus-visible,#wgAuthGate .wg-auth-primary:focus-visible{outline:2px solid #a6dfea;outline-offset:2px;border-color:rgba(152,221,237,.73)}
+#wgAuthGate .wg-auth-location-more{border:1px solid rgba(170,210,228,.13);border-radius:10px;color:#b9d5e4;background:rgba(16,41,59,.25)}
+#wgAuthGate .wg-auth-location-more summary{list-style:none;cursor:pointer;padding:10px 12px;color:#c2d9e7;font-size:11px;display:flex;align-items:center;gap:8px}
+#wgAuthGate .wg-auth-location-more summary::-webkit-details-marker{display:none}
+#wgAuthGate .wg-auth-location-more summary:before{content:'+';font:600 17px/1 ui-sans-serif;color:#91d4de}
+#wgAuthGate .wg-auth-location-more[open] summary:before{content:'−'}
+#wgAuthGate .wg-auth-location-more summary span{margin-left:auto;font-size:9px;letter-spacing:.13em;color:#88a9bb}
+#wgAuthGate .wg-auth-location-fields{display:grid;gap:11px;padding:8px 12px 14px}
+#wgAuthGate .wg-auth-primary{margin-top:6px;display:flex;align-items:center;justify-content:center;gap:14px;min-height:46px;width:100%;padding:12px 18px;border:0;border-radius:10px;background:linear-gradient(110deg,#d7ede9,#bddce8);color:#0b2e3f;font:750 12px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;letter-spacing:.03em;cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.18);transition:transform .2s ease,filter .2s ease}
+#wgAuthGate .wg-auth-primary:hover:not(:disabled){filter:brightness(1.055);transform:translateY(-1px)}
+#wgAuthGate .wg-auth-primary span{font-size:16px}
+#wgAuthGate .wg-auth-primary:disabled{opacity:.55;cursor:wait}
+#wgAuthGate .wg-auth-note{font-size:11px;color:#a3b8c7;line-height:1.65;margin:0}
+#wgAuthGate .wg-auth-text-button{display:inline;background:none;border:0;padding:0;color:#b9e9ef;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+#wgAuthGate .wg-auth-status{font-size:11px;line-height:1.55;min-height:1.25em;color:#afddec;margin:12px 0 0}
+#wgAuthGate .wg-auth-panel-footer{border-top:1px solid rgba(175,213,227,.12);margin-top:15px;padding-top:15px;font-size:9px;letter-spacing:.095em;color:#8fa6b6}
+#wgAuthGate .wg-auth-lock{font-size:14px;color:#9bcdd9;vertical-align:middle;padding-right:4px}
+#wgLogout{position:fixed;right:22px;bottom:18px;z-index:11000;background:rgba(5,22,40,.9);border:1px solid rgba(196,224,240,.29);border-radius:999px;color:#e0f2f6;font:650 12px system-ui;padding:10px 17px;box-shadow:0 10px 28px rgba(0,0,0,.26);cursor:pointer;backdrop-filter:blur(12px)}
+@media (max-width:1140px){#wgAuthGate .wg-auth-frame{grid-template-columns:minmax(0,1fr) minmax(340px,455px);gap:22px;padding:26px 32px}#wgAuthGate .wg-auth-intro h1{font-size:clamp(39px,4.6vw,60px)}#wgAuthGate .wg-auth-editorial{height:85dvh;min-height:500px}#wgAuthGate .wg-auth-static-earth{left:-120px;width:min(74vw,770px)}}
+@media (max-width:780px){#wgAuthGate .wg-auth-frame{display:block;min-height:100dvh;padding:18px clamp(14px,4vw,28px) 28px;max-width:560px}#wgAuthGate .wg-auth-editorial{height:auto;min-height:0;margin:0 0 22px;gap:20px}#wgAuthGate .wg-auth-brand{font-size:12px}#wgAuthGate .wg-auth-brand-symbol{width:28px;height:28px}#wgAuthGate .wg-auth-intro{margin:14px 0 0}#wgAuthGate .wg-auth-intro h1{font-size:clamp(35px,7vw,48px);line-height:1.05;margin:10px 0}#wgAuthGate .wg-auth-intro p{font-size:12px;line-height:1.55}#wgAuthGate .wg-auth-kicker{font-size:9px}#wgAuthGate .wg-auth-flightline{display:none}#wgAuthGate .wg-auth-panel{max-height:none;overflow:visible;border-radius:19px;padding:clamp(19px,5vw,30px)}#wgAuthGate .wg-auth-panel-copy{margin:17px 0}#wgAuthGate .wg-auth-static-earth{left:-40%;top:28%;width:120vw;opacity:.40}#wgAuthGate .wg-auth-cinema-shading{background:linear-gradient(180deg,rgba(1,7,17,.65),rgba(1,7,17,.53) 35%,#020b19 100%)}#wgAuthGate #wgCinematicCanvas{opacity:.42}}
+@media (max-width:450px){#wgAuthGate .wg-auth-form-row{grid-template-columns:1fr;gap:12px}#wgAuthGate .wg-auth-panel-header{font-size:8px}#wgAuthGate .wg-auth-panel-footer{font-size:8px}#wgAuthGate .wg-auth-panel-copy h2{font-size:29px}}
+@media (prefers-reduced-motion:reduce){#wgAuthGate *,#wgAuthGate *:before,#wgAuthGate *:after{transition:none!important;animation:none!important}#wgAuthGate #wgCinematicCanvas{opacity:0}#wgAuthGate .wg-auth-static-earth{opacity:.75!important}}
+
+
+/* WG AUTH V2.1 — readable password eyes and downward-only searchable countries */
+#wgAuthGate .wg-password-wrap {position:relative;display:block;min-width:0}
+#wgAuthGate .wg-password-wrap input {padding-right:47px!important}
+#wgAuthGate .wg-password-toggle {position:absolute;top:50%;right:5px;transform:translateY(-50%);width:37px;height:35px;display:grid;place-items:center;border:0;border-radius:8px;color:#a9c8d6;background:transparent;cursor:pointer;transition:color .18s ease,background .18s ease}
+#wgAuthGate .wg-password-toggle:hover,#wgAuthGate .wg-password-toggle[aria-pressed="true"] {color:#eefbff;background:rgba(152,213,232,.11)}
+#wgAuthGate .wg-password-toggle svg {display:block;width:19px;height:19px;pointer-events:none}
+#wgAuthGate .wg-password-toggle:focus-visible,#wgAuthGate .wg-country-trigger:focus-visible,#wgAuthGate .wg-country-search:focus-visible {outline:2px solid #a6dfea;outline-offset:2px}
+#wgAuthGate .wg-auth-form select.wg-country-native {position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;clip-path:inset(50%)!important;overflow:hidden!important;padding:0!important;margin:0!important;border:0!important}
+#wgAuthGate .wg-country-trigger {height:43px;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 12px;border:1px solid rgba(177,213,229,.24);border-radius:9px;background:rgba(10,28,46,.88);color:#95adbd;font:400 13px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;cursor:pointer;text-align:left;transition:background .18s ease,border-color .18s ease}
+#wgAuthGate .wg-country-trigger:hover,#wgAuthGate .wg-country-trigger[aria-expanded="true"] {border-color:rgba(167,222,237,.60);background:#102b43}
+#wgAuthGate .wg-country-trigger.wg-has-value {color:#f0f7fa}
+#wgAuthGate .wg-country-trigger svg {flex-shrink:0;pointer-events:none;color:#b7dbe6}
+#wgAuthGate .wg-country-menu {position:fixed;z-index:31000;display:flex;flex-direction:column;gap:6px;padding:9px;border:1px solid rgba(179,218,233,.37);border-radius:12px;background:#092236;box-shadow:0 20px 45px rgba(0,0,0,.5);color:#eaf7fb;overflow:hidden}
+#wgAuthGate .wg-country-menu[hidden] {display:none!important}
+#wgAuthGate .wg-country-search {flex:0 0 37px;min-width:0;width:100%;height:37px;padding:8px 11px;border-radius:7px;border:1px solid rgba(177,213,229,.24);background:#102e45;color:#f2fbff;font:400 13px system-ui,-apple-system,Segoe UI,sans-serif}
+#wgAuthGate .wg-country-search::placeholder {color:#8ea7b7}
+#wgAuthGate .wg-country-list {min-height:0;flex:1;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#35576b #092236}
+#wgAuthGate .wg-country-option {display:block;width:100%;padding:9px 11px;background:transparent;color:#dceaf1;border:0;border-radius:7px;text-align:left;font:400 12px/1.35 system-ui,-apple-system,Segoe UI,sans-serif;cursor:pointer}
+#wgAuthGate .wg-country-option[aria-selected="true"],#wgAuthGate .wg-country-option[data-active="true"] {background:#234a61;color:#fff}
+#wgAuthGate .wg-country-option:hover {background:#1c3d53;color:#fff}
+#wgAuthGate .wg-country-empty {padding:10px;color:#adc6d4;font-size:12px;margin:0}
+@media (prefers-reduced-motion: reduce) {#wgAuthGate .wg-password-toggle,#wgAuthGate .wg-country-trigger {transition:none!important}}
+
+/* WG AUTH V2.2 — shared signup eye; verification message. */
+#wgAuthGate .wg-auth-status[data-kind="success"] {
+  display:block;padding:12px 13px;margin:13px 0 0;
+  border:1px solid rgba(134,218,184,.33);
+  border-radius:11px;background:rgba(28,87,65,.30);color:#caefde;
+  line-height:1.6;font-size:12px;
+}
+#wgAuthGate .wg-auth-status[data-kind="notice"] {
+  display:block;padding:12px 13px;margin:13px 0 0;
+  border:1px solid rgba(233,203,137,.30);
+  border-radius:11px;background:rgba(105,74,30,.24);color:#f7e0ac;
+  line-height:1.6;font-size:12px;
+}
+#wgAuthGate .wg-auth-form input[name="password"]:not(.wg-password-wrap input) {padding-right:11px!important}
+
+
+/* WG AUTH V2.3 - Suppress the native Edge password eye: one shared eye in confirm. */
+#wgAuthGate input::-ms-reveal,
+#wgAuthGate input::-ms-clear,
+#wgAuthGate input[type="password"]::-ms-reveal,
+#wgAuthGate input[type="password"]::-ms-clear {
+  display:none!important;width:0!important;height:0!important;
+}

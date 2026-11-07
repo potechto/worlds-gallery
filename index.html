@@ -6,8 +6,16 @@
   <meta name="theme-color" content="#f8f6f0">
   <title>Worlds Gallery — Every picture has a world behind it</title>
   <meta name="description" content="A free, global gallery of photographs, collages and the human stories behind them. Interactive prototype; fictional sample stories.">
-  <link rel="stylesheet" href="styles.css">
-<link rel="stylesheet" href="portal.css">
+  <link rel="stylesheet" href="styles.css?v=6a31ccca4772">
+<link rel="stylesheet" href="portal.css?v=f52be93964a3">
+<link rel="stylesheet" href="assets/vendor/maplibre/maplibre-gl.css?v=ab1e70d59ec4">
+<link rel="stylesheet" href="wg_global_map.css?v=ac4a25ab8663">
+<link rel="stylesheet" href="wg_world_knowledge.css?v=center-last-v1">
+<link rel="stylesheet" href="wg_image_fix.css?v=2df6a32cf4a7">
+<link rel="stylesheet" href="wg_landmark_discovery.css?v=7f81a92fdd24">
+<link rel="stylesheet" href="wg_auth.css?v=a646f1b23fa2">
+<link rel="stylesheet" href="wg_account.css?v=2f2d991d9677">
+
 </head>
 <body class="portal-locked">
 <!-- Worlds Gallery V5: immersive country entry. Globe is the ONLY initial screen. -->
@@ -32,12 +40,12 @@
   </div>
   <div class="portal-drill" id="portalDrill" aria-live="polite" hidden></div>
   <div class="portal-country-search" id="portalSearchPane" hidden>
-    <div class="portal-search-head"><label for="portalSearchInput">Where would you like to go?</label><button id="portalCloseSearch" type="button" aria-label="Close country search">×</button></div>
+    <div class="portal-search-head"><label for="portalSearchInput">Where would you like to go?</label><button id="portalCloseSearch" type="button" aria-label="Close country search"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
     <input id="portalSearchInput" type="search" autocomplete="off" placeholder="Search country or territory..." aria-label="Search countries"/>
     <div id="portalSearchResults" class="portal-search-list"></div>
     <small>Search is an accessible alternative to selecting tiny countries on the globe.</small>
   </div>
-  <button type="button" id="portalSearchToggle" class="portal-search-trigger" aria-label="Find a country" title="Find a country">⌕</button>
+  <button type="button" id="portalSearchToggle" class="portal-search-trigger" aria-label="Find a country" title="Find a country"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.7" cy="10.7" r="6.3"/><path d="m15.5 15.5 4.5 4.5"/></svg></button>
 </div>
 
 <header class="site-header"><div class="shell nav-bar">
@@ -105,11 +113,20 @@
 
 <dialog class="modal read-modal" id="readDialog" aria-label="Read story"><div class="modal-header"><div><div class="eyebrow small">A STORY FROM THE WORLD</div><span id="readMeta">A human memory</span></div><button type="button" class="close-button" data-close="readDialog" aria-label="Close">×</button></div><div class="modal-body" id="readBody"></div></dialog>
 
-<dialog class="lightbox" id="lightboxDialog" aria-label="View photo at full size"><div class="lightbox-top"><span id="lightboxCounter">Photo 1 of 1</span><button type="button" class="close-button lightbox-close" data-close="lightboxDialog" aria-label="Close photo">×</button></div><div class="lightbox-middle"><button type="button" id="lightboxPrev" class="photo-arrow" aria-label="Previous image">‹</button><img id="lightboxImage" alt="Selected story image"><button type="button" id="lightboxNext" class="photo-arrow" aria-label="Next image">›</button></div><div id="lightboxCaption" class="lightbox-caption">View original frame</div></dialog>
+<dialog class="lightbox" id="lightboxDialog" aria-label="View photo at full size"><div class="lightbox-top"><span id="lightboxCounter">Photo 1 of 1</span><button type="button" class="close-button lightbox-close" data-close="lightboxDialog" aria-label="Close photo"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><div class="lightbox-middle"><button type="button" id="lightboxPrev" class="photo-arrow" aria-label="Previous image"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg></button><img id="lightboxImage" alt="Selected story image"><button type="button" id="lightboxNext" class="photo-arrow" aria-label="Next image"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg></button></div><div id="lightboxCaption" class="lightbox-caption">View original frame</div></dialog>
 
 <dialog class="modal feedback-dialog" id="feedbackDialog" aria-label="Feedback demonstration"><div class="modal-header"><div><div class="eyebrow small">HELP US SHAPE THIS WORLD</div><h3>A note for the gallery</h3></div><button type="button" class="close-button" data-close="feedbackDialog" aria-label="Close">×</button></div><div class="modal-body"><p class="modal-hint">Try our animated feedback envelope. This is a <b>visual demo only</b>: your message will not be sent or saved online.</p><div class="envelope-scene" id="envelopeScene"><div class="envelope-paper" id="envelopePaper">Dear Worlds Gallery, ✦</div><div class="envelope-back"></div><div class="envelope-flap"></div><div class="envelope-front"></div><div class="mail-bin" aria-hidden="true">▣</div></div><form id="feedbackForm"><label class="form-field" for="feedbackText"><span>Your feedback</span><textarea id="feedbackText" class="input" rows="4" maxlength="1000" required placeholder="What would make Worlds Gallery better?"></textarea></label><div class="feedback-buttons"><span id="feedbackStatus" class="micro-hint">No message will be transmitted.</span><button type="submit" class="button button-primary" id="feedbackSubmit">Preview sending ✉</button></div></form></div></dialog>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="data.js"></script><script src="world_geometry.js"></script><script src="ph_coastline.js"></script><script src="ph_admin_geo.js"></script><script src="place_highlights.js"></script><script src="globe.js"></script><script src="app.js"></script><script src="timezones.js"></script><script src="portal.js"></script>
+<script src="data.js?v=39a174caa60a"></script><script src="world_geometry.js?v=b65c5365c640"></script><script src="ph_coastline.js?v=fe3b853d6dcc"></script><script src="ph_admin_geo.js?v=56699b9621e3"></script><script src="place_highlights.js?v=092981cd69b4"></script><script src="globe.js?v=0ea3b51f80da"></script><script src="app.js?v=7cc61ac8791b"></script><script src="timezones.js?v=1633b3a9ceba"></script><script src="portal.js?v=764c9b32e470"></script>
+<script src="assets/vendor/maplibre/maplibre-gl.js?v=45a9b07a9189"></script>
+<script src="wg_global_map.js?v=c46231b55e3a"></script>
+<script src="wg_world_knowledge.js?v=3ac5824820fe"></script>
+<script src="wg_landmark_discovery.js?v=68d3b0fda4ac"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
+<script src="wg_auth.js?v=78e929841516"></script>
+<script type="module" src="wg_cinematic.js?v=99a7ef27dd41"></script>
+<script src="wg_account.js?v=f01b3c829b69"></script>
+
 </body>
 </html>

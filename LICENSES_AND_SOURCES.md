@@ -30,3 +30,9 @@ Creative Commons: https://creativecommons.org/licenses/by-sa/3.0/ and https://cr
 ## Other artwork
 
 Galaxy and decorative planets are CSS visual effects in the original user-approved V4 design. Icons are inline CSS/SVG/Unicode, no third-party font bundles. All story-card photos included in original V4 demo are fictional/generated sample imagery, not user-submitted real stories.
+
+Mount Samat image (Bataan highlight):
+"Shrine of Valor Mt. Samat.jpg" by Ranieljosecastaneda.
+CC BY-SA 4.0.
+https://commons.wikimedia.org/wiki/File:Shrine_of_Valor_Mt._Samat.jpg
+https://creativecommons.org/licenses/by-sa/4.0/

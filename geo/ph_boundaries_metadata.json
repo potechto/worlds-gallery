@@ -1,0 +1,32 @@
+{
+  "ADM1": {
+    "boundaryID": "PHL-ADM1-36201628",
+    "boundaryYearRepresented": "2020",
+    "boundaryLicense": "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)",
+    "boundarySource": "National Mapping and Resource Information Authority (NAMRIA), Philippines Statistics Authority (PSA), OCHA Philippines",
+    "licenseSource": "data.humdata.org/dataset/philippines-administrative-levels-0-to-3",
+    "buildDate": "Jul 05, 2023",
+    "gjDownloadURL": "https://github.com/wmgeolab/geoBoundaries/raw/41af8f1/releaseData/gbOpen/PHL/ADM1/geoBoundaries-PHL-ADM1.geojson",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/41af8f1/releaseData/gbOpen/PHL/ADM1/geoBoundaries-PHL-ADM1_simplified.geojson"
+  },
+  "ADM2": {
+    "boundaryID": "PHL-ADM2-2640588",
+    "boundaryYearRepresented": "2020",
+    "boundaryLicense": "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)",
+    "boundarySource": "National Mapping and Resource Information Authority (NAMRIA), Philippines Statistics Authority (PSA), OCHA Philippines",
+    "licenseSource": "data.humdata.org/about/license",
+    "buildDate": "Jul 05, 2023",
+    "gjDownloadURL": "https://github.com/wmgeolab/geoBoundaries/raw/41af8f1/releaseData/gbOpen/PHL/ADM2/geoBoundaries-PHL-ADM2.geojson",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/41af8f1/releaseData/gbOpen/PHL/ADM2/geoBoundaries-PHL-ADM2_simplified.geojson"
+  },
+  "ADM3": {
+    "boundaryID": "PHL-ADM3-30758251",
+    "boundaryYearRepresented": "2020",
+    "boundaryLicense": "Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO)",
+    "boundarySource": "National Mapping and Resource Information Authority (NAMRIA), Philippines Statistics Authority (PSA), OCHA Philippines",
+    "licenseSource": "data.humdata.org/dataset/philippines-administrative-levels-0-to-3",
+    "buildDate": "Dec 12, 2023",
+    "gjDownloadURL": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PHL/ADM3/geoBoundaries-PHL-ADM3.geojson",
+    "simplifiedGeometryGeoJSON": "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/PHL/ADM3/geoBoundaries-PHL-ADM3_simplified.geojson"
+  }
+}

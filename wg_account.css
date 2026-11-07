@@ -1,0 +1,307 @@
+/* Worlds Gallery V2.2 — premium account drawer, privacy/settings & support UI. */
+#wgAccountTrigger[hidden],#wgAccountDrawer[hidden],#wgAccountShade[hidden],#wgGuestSupport[hidden],#wgGalleryBlackout[hidden]{display:none!important}
+#wgAccountTrigger,#wgAccountDrawer,#wgAccountShade,#wgGalleryBlackout{box-sizing:border-box}
+#wgAccountTrigger{position:fixed;right:22px;bottom:22px;z-index:35100;display:grid;place-items:center;width:52px;height:52px;padding:0;background:rgba(7,27,44,.92);color:#e5f7fa;border:1px solid rgba(196,225,237,.34);border-radius:50%;backdrop-filter:blur(15px);box-shadow:0 10px 35px rgba(0,0,0,.28);cursor:pointer;transition:background .25s ease,transform .25s ease}
+#wgAccountTrigger:hover:not(:disabled){background:#174057;transform:translateY(-2px)}
+#wgAccountTrigger:disabled{opacity:.5;cursor:wait}
+#wgAccountTrigger svg{width:23px;height:23px;pointer-events:none}
+html.wg-ac-open #wgAccountTrigger{top:17px;right:20px;bottom:auto;width:43px;height:43px;z-index:35200;border-radius:12px}
+#wgAccountShade{position:fixed;inset:0;z-index:35000;background:rgba(1,9,20,.61);backdrop-filter:blur(5px)}
+#wgAccountDrawer{position:fixed;right:0;top:0;bottom:0;z-index:35020;width:min(480px,100vw);min-height:100dvh;max-height:100dvh;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#335269 transparent;background:linear-gradient(145deg,#092236 0%,#07182b 53%,#071323 100%);border-left:1px solid rgba(197,224,238,.22);box-shadow:-24px 0 70px rgba(0,0,0,.38);color:#e5f2f9;font:400 13px/1.6 system-ui,-apple-system,'Segoe UI',sans-serif;padding:26px clamp(18px,3vw,30px) 35px}
+#wgAccountDrawer *,#wgAccountDrawer *:before,#wgAccountDrawer *:after{box-sizing:border-box}
+#wgAccountDrawer .wg-ac-header{display:flex;align-items:center;min-height:36px;padding-right:50px;border-bottom:1px solid rgba(202,231,242,.14);padding-bottom:18px;margin-bottom:24px}
+#wgAccountDrawer .wg-ac-mark{color:#d3eaf3;font-size:10px;letter-spacing:.17em;font-weight:750}
+#wgAccountDrawer .wg-ac-mark span{color:#82a8be}
+#wgAccountDrawer .wg-ac-intro{padding:24px 2px 25px;border-bottom:1px solid rgba(199,227,237,.13)}
+#wgAccountDrawer h2{margin:6px 0 8px;font-size:clamp(26px,4vw,35px);font-weight:630;letter-spacing:-.045em;line-height:1.16;color:#f3f9fb;outline:none;overflow-wrap:anywhere}
+#wgAccountDrawer p{margin:0;color:#a9bfcd;font-size:12px;line-height:1.72}
+#wgAccountDrawer .wg-ac-overline{display:block;color:#8ebfd0;font-size:10px;letter-spacing:.17em;font-weight:750}
+#wgAccountDrawer .wg-ac-menu-items{display:grid;gap:7px;padding:18px 0}
+#wgAccountDrawer .wg-ac-menu-row{display:grid;grid-template-columns:26px 1fr 21px;align-items:center;gap:12px;width:100%;padding:16px 14px;border:1px solid rgba(204,228,238,.13);border-radius:11px;background:rgba(166,206,229,.045);color:#e7f3f8;text-align:left;cursor:pointer;font:600 13px system-ui}
+#wgAccountDrawer .wg-ac-menu-row:hover,#wgAccountDrawer .wg-ac-menu-row:focus-visible{background:rgba(122,191,216,.15);border-color:rgba(172,222,242,.40)}
+#wgAccountDrawer .wg-ac-menu-row svg:last-child{opacity:.52}
+#wgAccountDrawer .wg-ac-footnote{padding:15px 0 0;border-top:1px solid rgba(199,227,237,.14);font-size:11px;color:#8eb0c2;line-height:1.7}
+#wgAccountDrawer .wg-ac-page-head{display:flex;gap:13px;align-items:flex-start;margin-bottom:18px}
+#wgAccountDrawer .wg-ac-back{display:grid;place-items:center;flex:0 0 35px;width:35px;height:35px;border-radius:10px;border:1px solid rgba(180,217,232,.22);background:rgba(255,255,255,.04);color:#d9eef4;cursor:pointer;margin-top:6px}
+#wgAccountDrawer .wg-ac-back:hover{background:#173c54}
+#wgAccountDrawer .wg-ac-form{display:grid;gap:15px;padding:7px 0 20px}
+#wgAccountDrawer .wg-ac-form label{display:flex;flex-direction:column;gap:7px;color:#d3e5ec;font-size:12px;font-weight:600;position:relative;min-width:0}
+#wgAccountDrawer .wg-ac-form input:not([type=checkbox]),#wgAccountDrawer .wg-ac-form textarea,#wgAccountDrawer .wg-ac-form select,#wgAccountDrawer .wg-ac-country-picker{display:block;width:100%;min-width:0;border:1px solid rgba(176,213,227,.29);background:#0c2a40;border-radius:10px;outline:none;color:#eff8fc;min-height:44px;padding:10px 12px;font:400 13px/1.45 system-ui,-apple-system,'Segoe UI',sans-serif}
+#wgAccountDrawer .wg-ac-form textarea{resize:vertical;min-height:155px;max-height:360px}
+#wgAccountDrawer .wg-ac-form input:focus-visible,#wgAccountDrawer .wg-ac-form textarea:focus-visible,#wgAccountDrawer .wg-ac-form select:focus-visible,#wgAccountDrawer .wg-ac-country-picker:focus-visible,#wgAccountDrawer button:focus-visible,#wgAccountTrigger:focus-visible{outline:2px solid #a3e1ec;outline-offset:2px}
+#wgAccountDrawer .wg-ac-form input[readonly]{background:rgba(8,23,37,.56);color:#a8bdca;cursor:default}
+#wgAccountDrawer .wg-ac-form small{color:#82a9bb;font-size:10px;font-weight:400}
+#wgAccountDrawer .wg-ac-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#wgAccountDrawer .wg-ac-section-label{margin-top:7px;padding-top:13px;border-top:1px solid rgba(181,218,232,.13);font-size:10px;font-weight:750;letter-spacing:.14em;color:#8bbdd0}
+#wgAccountDrawer .wg-ac-switch{flex-direction:row!important;gap:11px!important;align-items:flex-start!important;font-weight:500!important;line-height:1.55}
+#wgAccountDrawer .wg-ac-switch input{accent-color:#a8e2e5;appearance:auto;flex:0 0 auto;width:18px;height:18px;margin:1px 0}
+#wgAccountDrawer .wg-ac-muted{font-size:11px;color:#9eb9c8;line-height:1.68}
+#wgAccountDrawer .wg-ac-save{width:100%;min-height:46px;border:0;border-radius:11px;margin-top:3px;background:linear-gradient(115deg,#d6edea,#c0dce8);color:#0d2d3d;font:750 12px/1.2 system-ui,-apple-system,'Segoe UI',sans-serif;cursor:pointer;transition:filter .2s ease,transform .2s ease}
+#wgAccountDrawer .wg-ac-save:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}
+#wgAccountDrawer .wg-ac-save:disabled{opacity:.55;cursor:wait}
+#wgAccountDrawer .wg-ac-message{min-height:0;margin:12px 0 7px;font-size:11px;line-height:1.6;color:#bddce8}
+#wgAccountDrawer .wg-ac-message:not(:empty){border:1px solid rgba(140,210,196,.29);background:rgba(33,92,79,.18);padding:11px 12px;border-radius:11px}
+#wgAccountDrawer .wg-ac-message[data-good=false]{color:#f2c2b8;border-color:rgba(228,143,135,.35);background:rgba(111,46,43,.24)}
+#wgAccountDrawer .wg-ac-country-picker{display:flex;align-items:center;justify-content:space-between;gap:9px;text-align:left;cursor:pointer;min-height:44px}
+#wgAccountDrawer .wg-ac-country-picker svg{transform:rotate(90deg)}
+#wgAccountDrawer .wg-ac-country-popup{position:relative;display:flex;flex-direction:column;gap:7px;max-height:240px;z-index:2;padding:9px;border:1px solid rgba(185,222,235,.32);border-radius:12px;background:#0b2a41;box-shadow:0 20px 35px rgba(0,0,0,.24)}
+#wgAccountDrawer .wg-ac-country-popup[hidden]{display:none!important}
+#wgAccountDrawer .wg-ac-country-popup .wg-ac-country-scroll{display:block;overflow-y:auto;max-height:174px;scrollbar-width:thin}
+#wgAccountDrawer .wg-ac-country-popup button{display:block;width:100%;text-align:left;border:0;border-radius:7px;padding:8px 9px;color:#e2f2f7;background:transparent;cursor:pointer;font-size:12px}
+#wgAccountDrawer .wg-ac-country-popup button:hover,#wgAccountDrawer .wg-ac-country-popup button:focus-visible{background:#1c4961}
+#wgAccountDrawer .wg-ac-country-popup .wg-ac-country-search{min-height:37px}
+#wgAuthGate .wg-ac-guest-help{display:block;margin:14px auto 0;font-size:11px;color:#c5e6ef;text-decoration:underline;text-underline-offset:4px}
+#wgGalleryBlackout{position:fixed;inset:0;background:#000;z-index:47000;opacity:0;pointer-events:none;transition:opacity .48s ease}
+#wgGalleryBlackout.wg-black-in{opacity:1;pointer-events:auto}
+/* Reuse the existing native WebGL Earth while flying to the gallery. */
+#wgAuthGate.wg-gallery-flight{overflow:hidden!important}
+#wgAuthGate.wg-gallery-flight .wg-auth-frame{display:none!important}
+#wgAuthGate.wg-gallery-flight .wg-auth-cinema{z-index:0!important}
+#wgAuthGate.wg-gallery-flight #wgCinematicCanvas{opacity:1!important}
+#wgAuthGate.wg-gallery-flight .wg-auth-cinema-shading{background:radial-gradient(ellipse at center,transparent 25%,rgba(0,7,15,.48) 100%)}
+html.wg-reduce-motion #wgAuthGate #wgCinematicCanvas{opacity:0!important}
+@media (max-width:620px){
+  #wgAccountDrawer{width:100vw;padding:20px 18px 34px;border-left:0}
+  #wgAccountDrawer .wg-ac-two{grid-template-columns:1fr}
+  #wgAccountTrigger{width:47px;height:47px;right:13px;bottom:13px}
+  html.wg-ac-open #wgAccountTrigger{right:15px;top:16px}
+}
+@media (prefers-reduced-motion:reduce){
+  #wgAccountTrigger,#wgAccountDrawer .wg-ac-save,#wgGalleryBlackout{transition:none!important}
+}
+
+/* Downward-only selects for support and preferences. */
+#wgAccountDrawer .wg-ac-select-wrap{position:relative;width:100%}
+#wgAccountDrawer select.wg-ac-native-select{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;clip-path:inset(50%)!important}
+#wgAccountDrawer .wg-ac-select-trigger{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;min-height:44px;padding:9px 12px;border:1px solid rgba(176,213,227,.29);border-radius:10px;background:#0c2a40;color:#eaf5f9;text-align:left;font:400 13px system-ui;cursor:pointer}
+#wgAccountDrawer .wg-ac-select-popup{position:relative;z-index:4;display:flex;flex-direction:column;gap:3px;max-height:210px;overflow-y:auto;background:#0a2a42;border:1px solid rgba(183,222,235,.28);border-radius:10px;padding:5px;margin-top:5px;scrollbar-width:thin}
+#wgAccountDrawer .wg-ac-select-popup[hidden]{display:none!important}
+#wgAccountDrawer .wg-ac-select-popup button{background:transparent;border:0;border-radius:7px;color:#e2f2f7;text-align:left;min-height:34px;padding:8px 10px;font-size:12px;cursor:pointer}
+#wgAccountDrawer .wg-ac-select-popup button:hover,#wgAccountDrawer .wg-ac-select-popup button[aria-selected=true]{background:#205069}
+
+
+/* WG AUTH V2.3 - Gallery-only header menu, light account drawer, and locked navbar */
+/* The old footer sign-out remains programmatically available to the account menu. */
+#wgLogout { display:none!important; }
+/* The arrival information bar must remain in the DOM for portal.js, not in the UI. */
+#arrivalRibbon { display:none!important; }
+/* Share-story button is operated through the account menu, but its event handler remains attached. */
+.site-header .nav-bar .nav-share[data-open-upload] { display:none!important; }
+body:not(.portal-locked) .site-header {
+  position:sticky!important; top:0!important; z-index:8000!important;
+  background:rgba(255,254,250,.96)!important;
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+}
+.site-header .nav-bar {gap:clamp(12px,2.2vw,30px)}
+#gallery-notice {display:none}
+#wgAccountTrigger,html.wg-ac-open #wgAccountTrigger {
+  position:static!important;inset:auto!important;right:auto!important;top:auto!important;
+  bottom:auto!important;left:auto!important; flex:0 0 48px;
+  width:48px!important;height:48px!important;min-width:48px!important;
+  display:grid!important;place-items:center!important;padding:0!important;
+  background:#123f37!important;color:#fff!important;
+  border:1px solid #123f37!important;border-radius:13px!important;
+  box-shadow:none!important;transform:none!important;backdrop-filter:none!important;
+  transition:background .18s ease,border-color .18s ease!important;
+}
+#wgAccountTrigger[hidden] {display:none!important}
+#wgAccountTrigger:hover:not(:disabled),html.wg-ac-open #wgAccountTrigger:hover:not(:disabled){
+  background:#1e594d!important;border-color:#1e594d!important;transform:none!important;
+}
+#wgAccountTrigger:focus-visible{outline:2px solid #2c8a7c!important;outline-offset:3px!important}
+#wgAccountShade {background:rgba(15,30,27,.36)!important;backdrop-filter:blur(4px)}
+#wgAccountDrawer {
+  background:#fbfaf6!important;color:#163d35!important;
+  border-left:1px solid #d8e4dd!important;
+  box-shadow:-18px 0 60px rgba(18,51,43,.16)!important;
+  scrollbar-color:#bbcfc5 #fbfaf6!important;
+}
+/* The same hamburger button is moved into the drawer header and turns into X. */
+body.portal-locked #wgAccountDrawer .wg-ac-header {visibility:visible!important}
+#wgAccountDrawer .wg-ac-header {
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  min-height:54px!important;position:static!important;top:auto!important;z-index:auto!important;
+  background:#fbfaf6!important;border-bottom:1px solid #dae6df!important;
+  padding:0 0 15px!important;margin:0 0 20px!important;
+}
+#wgAccountDrawer .wg-ac-mark{color:#174b40!important;font-weight:800}
+#wgAccountDrawer .wg-ac-mark span{color:#658479!important}
+#wgAccountDrawer .wg-ac-intro{border-color:#e0e9e2!important;padding-top:18px!important}
+#wgAccountDrawer h2{color:#133e35!important}
+#wgAccountDrawer p{color:#56716a!important}
+#wgAccountDrawer .wg-ac-overline{color:#558a7d!important}
+#wgAccountDrawer .wg-ac-menu-row{
+  background:#fff!important;color:#194439!important;
+  border:1px solid #dce8df!important;border-radius:13px!important;
+  font-weight:650!important;min-height:58px!important;
+  box-shadow:0 1px 1px rgba(17,57,45,.025)!important;
+}
+#wgAccountDrawer .wg-ac-menu-row:hover,
+#wgAccountDrawer .wg-ac-menu-row:focus-visible {
+  background:#ecf5ef!important;border-color:#abcfc0!important;
+}
+#wgAccountDrawer .wg-ac-menu-row svg:last-child{color:#7b9b90!important}
+#wgAccountDrawer .wg-ac-footnote{border-color:#dfe8e1!important;color:#6e897e!important}
+#wgAccountDrawer .wg-ac-back{
+  background:#fff!important;color:#235747!important;border-color:#d4e3d9!important;
+}
+#wgAccountDrawer .wg-ac-back:hover{background:#edf6f0!important}
+#wgAccountDrawer .wg-ac-form label{color:#254e42!important}
+#wgAccountDrawer .wg-ac-form input:not([type=checkbox]),
+#wgAccountDrawer .wg-ac-form textarea,
+#wgAccountDrawer .wg-ac-form select,
+#wgAccountDrawer .wg-ac-country-picker,
+#wgAccountDrawer .wg-ac-select-trigger {
+  background:#fff!important;color:#173b34!important;
+  border:1px solid #cadcd2!important;border-radius:10px!important;
+}
+#wgAccountDrawer .wg-ac-form input[readonly]{background:#f3f6f2!important;color:#56756a!important}
+#wgAccountDrawer .wg-ac-form small,#wgAccountDrawer .wg-ac-muted{color:#658277!important}
+#wgAccountDrawer .wg-ac-section-label{border-color:#e2eae3!important;color:#538577!important}
+#wgAccountDrawer .wg-ac-switch input{accent-color:#1b6353!important}
+#wgAccountDrawer .wg-ac-save{
+  background:#17493d!important;color:#fff!important;border-radius:11px!important;
+  box-shadow:none!important;
+}
+#wgAccountDrawer .wg-ac-save:hover:not(:disabled){background:#246351!important;filter:none!important}
+#wgAccountDrawer .wg-ac-message{color:#255c4b!important}
+#wgAccountDrawer .wg-ac-message:not(:empty){background:#e9f5eb!important;border-color:#b6d7c5!important}
+#wgAccountDrawer .wg-ac-message[data-good=false]{color:#913c32!important;background:#fff0ec!important;border-color:#efc3b8!important}
+#wgAccountDrawer .wg-ac-country-popup,
+#wgAccountDrawer .wg-ac-select-popup {
+  background:#fff!important;border-color:#ccded2!important;
+  box-shadow:0 12px 26px rgba(22,62,51,.12)!important;
+}
+#wgAccountDrawer .wg-ac-country-popup button,
+#wgAccountDrawer .wg-ac-select-popup button {color:#245346!important}
+#wgAccountDrawer .wg-ac-country-popup button:hover,
+#wgAccountDrawer .wg-ac-country-popup button:focus-visible,
+#wgAccountDrawer .wg-ac-select-popup button:hover,
+#wgAccountDrawer .wg-ac-select-popup button[aria-selected=true] {
+  background:#e4f1e8!important;color:#164336!important;
+}
+#wgAccountDrawer button:focus-visible,
+#wgAccountDrawer input:focus-visible,
+#wgAccountDrawer textarea:focus-visible {
+  outline:2px solid #508f78!important;outline-offset:2px!important;
+}
+@media (max-width:680px){
+  .site-header .nav-bar{min-height:66px!important}
+  .site-header .nav-bar .brand{max-width:calc(100% - 65px)}
+  #wgAccountTrigger,html.wg-ac-open #wgAccountTrigger {
+    flex-basis:44px!important;width:44px!important;height:44px!important;min-width:44px!important;
+  }
+  #wgAccountDrawer{padding:17px 17px 29px!important;border-left:0!important}
+}
+@media (prefers-reduced-motion:reduce){
+  #wgAccountTrigger{transition:none!important}
+}
+
+
+/* WORLDS GALLERY AUTH V2.4 — environment-specific support styling */
+/* Auth/guest = the dark space identity; gallery/member = existing light design. */
+#wgAccountDrawer.wg-ac-outside {
+  background:radial-gradient(ellipse at 34% 12%,#14364b 0%,#061d30 45%,#03101f 100%)!important;
+  color:#eaf5f8!important;border-left-color:rgba(183,220,234,.19)!important;
+  scrollbar-color:#3e6074 #071b2c!important;
+}
+#wgAccountDrawer.wg-ac-outside .wg-ac-header {background:#071e2f!important;border-color:rgba(204,228,239,.17)!important}
+#wgAccountDrawer.wg-ac-outside h2,
+#wgAccountDrawer.wg-ac-outside .wg-ac-mark {color:#f2fbff!important}
+#wgAccountDrawer.wg-ac-outside p,
+#wgAccountDrawer.wg-ac-outside .wg-ac-page-head p {color:#b7ccd9!important}
+#wgAccountDrawer.wg-ac-outside .wg-ac-overline,
+#wgAccountDrawer.wg-ac-outside .wg-ac-mark span {color:#8cc8db!important}
+#wgAccountDrawer.wg-ac-outside .wg-ac-form label {color:#d6e8f0!important}
+#wgAccountDrawer.wg-ac-outside .wg-ac-form input:not([type=checkbox]),
+#wgAccountDrawer.wg-ac-outside .wg-ac-form textarea,
+#wgAccountDrawer.wg-ac-outside .wg-ac-select-trigger {background:#0b2940!important;color:#f3f8fb!important;border-color:rgba(184,219,233,.30)!important}
+#wgAccountDrawer.wg-ac-outside .wg-ac-select-popup {background:#09263c!important;border-color:rgba(184,219,233,.30)!important}
+#wgAccountDrawer.wg-ac-outside .wg-ac-select-popup button {color:#ecf7f9!important}
+#wgAccountDrawer.wg-ac-outside .wg-ac-select-popup button:hover {background:#214b64!important}
+#wgAccountDrawer.wg-ac-outside .wg-ac-save {background:linear-gradient(120deg,#dbeeea,#c3e0eb)!important;color:#103045!important}
+#wgAccountDrawer.wg-ac-outside .wg-ac-back {background:rgba(255,255,255,.06)!important;color:#e9f5fb!important;border-color:rgba(208,235,245,.24)!important}
+#wgAccountDrawer.wg-ac-outside .wg-ac-muted,
+#wgAccountDrawer.wg-ac-outside .wg-ac-form small {color:#a9c6d7!important}
+#wgAccountDrawer .wg-ac-trap {position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important;opacity:0!important;pointer-events:none!important}
+/* During the flight, the same NASA-textured WebGL scene is centered in JS. */
+#wgAuthGate.wg-gallery-flight .wg-auth-static-earth {left:50%!important;top:50%!important;transform:translate(-50%,-50%);animation:wgV24FallbackFlight 1.7s cubic-bezier(.4,0,.2,1) both}
+@keyframes wgV24FallbackFlight {from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(2.1)}}
+@media (prefers-reduced-motion:reduce) {#wgAuthGate.wg-gallery-flight .wg-auth-static-earth{animation:none!important}}
+
+
+/* WG TRANSPARENT ACCOUNT HEADER V2.4.2 */
+
+#wgAccountDrawer .wg-ac-header {
+    background: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+#wgAccountDrawer .wg-ac-header::before,
+#wgAccountDrawer .wg-ac-header::after {
+    content: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+#wgAccountDrawer .wg-ac-header button,
+#wgAccountDrawer #wgAccountTrigger,
+#wgAccountDrawer .wg-account-trigger {
+    background: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    color: inherit !important;
+}
+
+#wgAccountDrawer .wg-ac-header button:hover,
+#wgAccountDrawer .wg-ac-header button:active,
+#wgAccountDrawer .wg-ac-header button:focus {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+
+/* WG ACCOUNT FINAL TRANSPARENCY V2.4.3 */
+
+
+#wgAccountDrawer .wg-ac-header,
+#wgAccountDrawer.wg-ac-outside .wg-ac-header {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+#wgAccountDrawer #wgAccountTrigger,
+html.wg-ac-open #wgAccountDrawer #wgAccountTrigger {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    color: #174b40 !important;
+}
+
+#wgAccountDrawer.wg-ac-outside #wgAccountTrigger {
+    color: #f2fbff !important;
+}
+
+#wgAccountDrawer #wgAccountTrigger:hover:not(:disabled),
+html.wg-ac-open #wgAccountDrawer #wgAccountTrigger:hover:not(:disabled) {
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
