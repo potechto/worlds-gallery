@@ -20,9 +20,12 @@ const DB_NAME='worlds_gallery_v3_demo',DB_STORE='posts';
 const HEARTS_KEY='worldsGalleryPrototypeHeartsV1';
 let db=null, demoStories=[], uploadImages=[], chosenLayout='single', currentStoryId=null, lightboxIndex=0, lightboxImages=[];
 let hearts=[];try{hearts=JSON.parse(localStorage.getItem(HEARTS_KEY)||'[]');if(!Array.isArray(hearts))hearts=[]}catch{hearts=[]}
-const state={themes:new Set(),draftThemes:new Set(),selectedRegion:null,selectedCountry:'',selectedContinent:'',search:'',sort:'new'};
+const state={themes:new Set(),draftThemes:new Set(),selectedRegion:null,selectedCountry:'',selectedContinent:'',search:'',sort:'new',mineOnly:false};
 let globe=null,speechRunning=false,speechToken=0,speechParts=[],speechIndex=0;
-const stories=()=>[...demoStories,...seeds];
+// The current IndexedDB gallery is a local preview, not a publishable database.
+// Exclude ownerless legacy uploads and other users' browser entries.
+const currentOwner=()=>window.WorldsGalleryAuth?.getCurrentUserId?.()||null;
+const stories=()=>[...demoStories.filter(s=>currentOwner() && s.owner_id===currentOwner()),...seeds];
 function notify(message){const t=$('toast');t.textContent=message;t.classList.add('show');clearTimeout(notify.t);notify.t=setTimeout(()=>t.classList.remove('show'),3300)}
 function openDb(){return new Promise((resolve,reject)=>{if(!('indexedDB' in window))return reject(new Error('Browser storage not available'));const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(DB_STORE))r.result.createObjectStore(DB_STORE,{keyPath:'id'})};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error||new Error('Could not open browser storage'))})}
 function dbAll(){return new Promise((resolve,reject)=>{const r=db.transaction(DB_STORE,'readonly').objectStore(DB_STORE).getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error)})}
@@ -46,6 +49,7 @@ function regionMatch(post,r){if(!r)return true;const terms=[post.region||'',post
 function getFiltered(){const q=norm(state.search);
  const result=stories().filter(s=>{
   const iso=countryCode(s.country);const meta=COUNTRY_META[iso]||{};
+  if(state.mineOnly && (!currentOwner() || s.owner_id!==currentOwner()))return false;
   if(state.selectedContinent && meta.continent!==state.selectedContinent) return false;
   if(state.selectedCountry&&iso!==state.selectedCountry)return false;
   if(!regionMatch(s,state.selectedRegion))return false;
@@ -105,7 +109,7 @@ function renderRegionChoices(){const code=state.selectedCountry;const options=re
  const shown=list.slice(0,140);
  $('regionChoices').innerHTML=shown.length?shown.map(r=>`<button class="region-choice ${r.parent?'nested':''} ${state.selectedRegion?.code===r.code?'active':''}" data-region="${html(r.code)}" type="button"><span>${html(r.name)}</span><small>${html(r.type||'Subdivision')} ${r.parent?'· ↳':''}</small></button>`).join('')+(list.length>shown.length?`<div class="region-empty">${list.length-shown.length} more — use search to narrow results.</div>`:''):`<div class="region-empty">${options.length?'No matching subdivisions.':'No subdivisions listed for this country in the included directory.'}</div>`
 }
-function resetFilters(){state.themes.clear();state.selectedCountry='';state.selectedContinent='';state.selectedRegion=null;state.sort='new';state.search='';$('search').value='';$('sortFilter').value='new';$('continentFilter').value='';renderCountryOptions(false);renderGallery();if(globe)globe.reset();renderGlobeLabel()}
+function resetFilters(){state.themes.clear();state.selectedCountry='';state.selectedContinent='';state.selectedRegion=null;state.sort='new';state.search='';state.mineOnly=false;$('mineOnly').checked=false;$('search').value='';$('sortFilter').value='new';$('continentFilter').value='';renderCountryOptions(false);renderGallery();if(globe)globe.reset();renderGlobeLabel()}
 function selectRegion(code){const reg=regionOptions(state.selectedCountry).find(x=>x.code===code);if(!reg)return;state.selectedRegion={code:reg.code,name:reg.name,parent:reg.parent};$('regionDialog').close();renderGallery();notify('Region filter applied');if(globe)globe.zoomBy(.08)}
 function prepareUpload(){uploadImages=[];chosenLayout='single';$('uploadForm').reset();$('imageTools').hidden=true;$('formMessage').textContent='';renderTemplateChoices();renderCollagePreview();renderUploadRegionSuggestions();updateCharacterProgress();$('uploadDialog').showModal()}
 function renderUploadRegionSuggestions(){$('uploadRegions').innerHTML=regionOptions($('uploadCountry').value).map(x=>`<option value="${html(x.name)}"></option>`).join('')}
@@ -141,7 +145,8 @@ function validateUpload(){const author=$('author').value.trim(),country=$('uploa
 }
 async function submitUpload(e){e.preventDefault();const invalid=validateUpload();const msg=$('formMessage');if(invalid){msg.classList.remove('ok');msg.textContent=invalid;return}
  const submit=$('submitStory');submit.disabled=true;submit.textContent='Saving your demo story…';msg.textContent='';
- const s={id:'local-'+(crypto.randomUUID?crypto.randomUUID():String(Date.now())),author:$('author').value.trim(),country:countryName($('uploadCountry').value),region:$('uploadRegion').value.trim(),city:$('uploadCity').value.trim(),theme:$('uploadTheme').value,title:$('uploadTitle').value.trim(),story:$('uploadBody').value.trim(),images:[...uploadImages],layout:chosenLayout,hearts:0,created:Date.now(),sample:false};
+ const ownerId=currentOwner();if(!ownerId){msg.textContent='Please sign in again before saving a story.';submit.disabled=false;return;}
+ const s={owner_id:ownerId,id:'local-'+(crypto.randomUUID?crypto.randomUUID():String(Date.now())),author:$('author').value.trim(),country:countryName($('uploadCountry').value),region:$('uploadRegion').value.trim(),city:$('uploadCity').value.trim(),theme:$('uploadTheme').value,title:$('uploadTitle').value.trim(),story:$('uploadBody').value.trim(),images:[...uploadImages],layout:chosenLayout,hearts:0,created:Date.now(),sample:false};
  try{const persisted=await dbPut(s);demoStories.unshift(s);$('uploadDialog').close();resetFilters();notify(persisted?'Saved to your private browser demo gallery ✦':'Added for this browser session only (storage unavailable)');$('stories').scrollIntoView({behavior:'smooth',block:'start'})}
  catch(err){msg.classList.remove('ok');msg.textContent='Could not save this story in browser storage. Try smaller photos or allow site storage. '+(err?.message||'')}
  finally{submit.disabled=false;submit.innerHTML='Add to my demo gallery <span>↗</span>'}
@@ -181,6 +186,8 @@ $('search').addEventListener('input',e=>{state.search=e.target.value;renderGalle
 $('continentFilter').addEventListener('change',e=>{state.selectedContinent=e.target.value;state.selectedCountry='';state.selectedRegion=null;renderCountryOptions(false);renderGallery();globe.reset();renderGlobeLabel()});
 $('countryFilter').addEventListener('change',e=>setCountry(e.target.value,'filter'));
 $('sortFilter').addEventListener('change',e=>{state.sort=e.target.value;renderGallery()});
+$('mineOnly').addEventListener('change',e=>{state.mineOnly=e.target.checked;renderGallery()});
+document.addEventListener('wg:authenticated',()=>renderGallery());
 $('themeChoose').addEventListener('click',openThemeModal);
 $('themeOptions').addEventListener('change',e=>{if(e.target.matches('input[type="checkbox"]')){e.target.checked?state.draftThemes.add(e.target.value):state.draftThemes.delete(e.target.value);renderThemeOptions()}});
 $('themesClear').addEventListener('click',()=>{state.draftThemes.clear();renderThemeOptions()});
@@ -195,8 +202,6 @@ $('gallery').addEventListener('click',e=>{const h=e.target.closest('[data-heart]
 $('gallery').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('.card-excerpt')){e.preventDefault();openReader(e.target.dataset.openStory)}});
 $('globeSelection').addEventListener('click',e=>{if(e.target.id==='scrollGallery')$('stories').scrollIntoView({behavior:'smooth'});if(e.target.id==='globeRegionChoose')openRegionModal()});
 $('globeReset').addEventListener('click',()=>{globe.reset();setCountry('','globe')});$('globeZoomIn').addEventListener('click',()=>globe.zoomBy(.16));$('globeZoomOut').addEventListener('click',()=>globe.zoomBy(-.16));
-$('feedbackOpen').addEventListener('click',()=>{$('feedbackText').value='';$('envelopeScene').classList.remove('sent');$('feedbackStatus').textContent='No message will be transmitted.';$('feedbackSubmit').disabled=false;$('feedbackDialog').showModal()});
-$('feedbackForm').addEventListener('submit',e=>{e.preventDefault();if(!$('feedbackText').value.trim())return;$('envelopeScene').classList.add('sent');$('feedbackStatus').textContent='Preview complete — nothing was sent online.';$('feedbackSubmit').disabled=true;});
 document.querySelectorAll('[data-open-upload]').forEach(b=>b.addEventListener('click',prepareUpload));
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>$((b.dataset.close)).close()));
 $('imageInput').addEventListener('change',async e=>{const files=Array.from(e.target.files||[]);$('formMessage').textContent='';if(!files.length)return;if(files.length>4){$('formMessage').textContent='Choose at most four photos.';e.target.value='';return}

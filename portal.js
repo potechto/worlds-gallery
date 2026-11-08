@@ -319,5 +319,16 @@
   else return;e.preventDefault();
  });
  // For automated tests or accessibility inspection, read-only diagnostic for current selection.
- window.WorldsGalleryPortal={getState:()=>({phase,stage,selectedCode,group,region,province,city,otherRegion,longitude:pos.lon,latitude:pos.lat,scale:pos.scale,clock:$p('clockTime').textContent,mood:gate.dataset.sky}),searchCountry:code=>selectCountry(code),reset:resetToEarth};
+ function faceHomeCountry(code){
+  if(!code||!byName.has(code))return;
+  if(delayedPanel){clearTimeout(delayedPanel);delayedPanel=null;}
+  const place=metaFor(code),longitude=place.lon??byIso.get(code)?.lon??0,latitude=Math.max(-52,Math.min(52,place.lat??byIso.get(code)?.lat??0));
+  selectedCode='';group='';region='';province='';city='';otherRegion='';stage='country';phase='globe';
+  gate.hidden=false;gate.dataset.phase='globe';$p('portalDrill').hidden=true;$p('portalDrill').innerHTML='';
+  $p('portalSearchPane').hidden=true;searchOpen=false;$p('portalHover').hidden=true;
+  pos.lon=target.lon=longitude;pos.lat=target.lat=latitude;pos.scale=target.scale=1;
+  velocityLon=velocityLat=0;lastFacing='';lastClockAt=0;
+  $p('portalFacing').textContent=`FACING ${byName.get(code).toUpperCase()}`;
+ }
+ window.WorldsGalleryPortal={getState:()=>({phase,stage,selectedCode,group,region,province,city,otherRegion,longitude:pos.lon,latitude:pos.lat,scale:pos.scale,clock:$p('clockTime').textContent,mood:gate.dataset.sky}),searchCountry:code=>selectCountry(code),faceHomeCountry,reset:resetToEarth};
 })();

@@ -7,28 +7,27 @@
   const countryList = typeof COUNTRIES !== 'undefined' ? COUNTRIES : [];
   const countryName = code => countryList.find(c=>c[0]===code)?.[1] || code || 'Unknown';
   const api = () => window.WorldsGalleryAuth?.getClient?.();
-  let user = null, profile = null, activePage = 'menu';
+  let user = null, profile = null, activePage = 'home', previousPage = 'home';
   let open = false, loading = false, lastFocus = null, flightBusy = false, bypassFlight = false;
   const styles = {
     menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
     close: '<path d="M5 5l14 14M19 5L5 19"/>',
     arrow: '<path d="m9 18 6-6-6-6"/>',
     back: '<path d="m15 18-6-6 6-6"/>',
+    home: '<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z"/><path d="M9 21v-8h6v8"/>',
     user: '<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',
-    settings: '<path d="M4 7h16M7 7v10M4 17h16M17 7v10"/>',
-    support: '<path d="M4 10a8 8 0 0 1 16 0v7M4 15h3v5H5a2 2 0 0 1-2-2v-1a2 2 0 0 1 1-2ZM20 15h-3v5h2a2 2 0 0 0 2-2v-1a2 2 0 0 0-1-2Z"/>',
+    settings: '<path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06-1.87 1.87-.06-.06A1.7 1.7 0 0 0 16 18.4a1.7 1.7 0 0 0-1 1.56V20h-2.65v-.04a1.7 1.7 0 0 0-2.58-1.46l-.07.04-1.87-1.87.05-.06A1.7 1.7 0 0 0 7.53 15a1.7 1.7 0 0 0-1.56-1H5.9v-2.65h.07a1.7 1.7 0 0 0 1.56-1 1.7 1.7 0 0 0-.35-1.86l-.05-.06L9 6.56l.06.05a1.7 1.7 0 0 0 1.86.35 1.7 1.7 0 0 0 1-1.56V5.3h2.65v.1a1.7 1.7 0 0 0 1 1.56 1.7 1.7 0 0 0 1.86-.35l.06-.05 1.87 1.87-.05.06A1.7 1.7 0 0 0 19.4 10.35a1.7 1.7 0 0 0 1.56 1h.06V14h-.06A1.7 1.7 0 0 0 19.4 15Z"/>',
+    support: '<path d="M4 12v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="11" width="4" height="8" rx="2"/><rect x="17" y="11" width="4" height="8" rx="2"/><path d="M20 19c0 2-2 3-5 3h-2"/>',
     exit: '<path d="M9 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M15 16l4-4-4-4M8 12h11"/>',
     earth: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 4.5 6 4.5 9s-1.5 6-4.5 9M12 3c-3 3-4.5 6-4.5 9s1.5 6 4.5 9"/>',
     story: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="m7 16 4-5 3 3 2-2 2 4"/><circle cx="9" cy="9" r="1"/>'
   };
   const icon = (n,size=21) => `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${styles[n]}</svg>`;
-
   const trigger = document.createElement('button');
   trigger.type='button';trigger.id='wgAccountTrigger';trigger.hidden=true;
   trigger.className='wg-account-trigger';trigger.innerHTML=icon('menu');
   trigger.setAttribute('aria-label','Open account menu');trigger.setAttribute('aria-expanded','false');
-  trigger.setAttribute('aria-controls','wgAccountDrawer');
-  // Put the single account control in the gallery navigation, never on the globe.
+  trigger.setAttribute('aria-controls','wgAccountMenu');
   const galleryNav = document.querySelector('.site-header .nav-bar');
   const originalShare = galleryNav?.querySelector('.nav-share[data-open-upload]');
   if (!galleryNav || !originalShare) {
@@ -37,120 +36,129 @@
   }
   originalShare.insertAdjacentElement('afterend', trigger);
 
-  const shade = document.createElement('div');shade.id='wgAccountShade';shade.hidden=true;
-  document.body.appendChild(shade);
-  const drawer = document.createElement('aside');
+  // Menu is an independent lightweight floating surface, not a page drawer.
+  const menu = document.createElement('div');
+  menu.id='wgAccountMenu';menu.hidden=true;menu.setAttribute('role','group');
+  menu.setAttribute('aria-label','Account navigation');document.body.appendChild(menu);
+
+  // Account sections are full, independently navigable in-app views.
+  const drawer = document.createElement('section');
   drawer.id='wgAccountDrawer';drawer.hidden=true;drawer.setAttribute('role','dialog');
-  drawer.setAttribute('aria-modal','true');drawer.setAttribute('aria-label','Worlds Gallery account menu');
-  drawer.innerHTML=`<header class="wg-ac-header"><span class="wg-ac-mark">WORLDS.GALLERY <span>/ ACCOUNT</span></span></header><div id="wgAcContent" class="wg-ac-content"></div>`;
+  drawer.setAttribute('aria-modal','true');drawer.setAttribute('aria-label','Worlds Gallery personal space');
+  drawer.innerHTML=`<header class="wg-ac-header"><span class="wg-ac-mark">WORLDS.GALLERY <span id="wgAcPageMark">/ PERSONAL SPACE</span></span><button type="button" id="wgAcPageClose" aria-label="Close this page and return to gallery" class="wg-ac-page-close">${icon('close',22)}</button></header><div id="wgAcContent" class="wg-ac-content"></div>`;
   document.body.appendChild(drawer);
   const drawerHeader = drawer.querySelector('.wg-ac-header');
+  const pageClose = byId('wgAcPageClose');
+  const content = byId('wgAcContent');
   const isGallery = () => !!user &&
     document.documentElement.classList.contains('wg-auth-ok') &&
     !document.body.classList.contains('portal-locked');
   function syncTrigger() {
-    if (open) return;
+    if(activePage!=='home')return;
     trigger.hidden = !isGallery() || flightBusy;
   }
-  // The portal changes its body class when entering or leaving the gallery.
-  new MutationObserver(syncTrigger).observe(document.body, {
-    attributes: true, attributeFilter: ['class']
-  });
+  new MutationObserver(syncTrigger).observe(document.body, {attributes: true,attributeFilter: ['class']});
 
-  // Available even on the signed-out Create Account and Sign In screens.
   const guest = document.createElement('button');
   guest.id='wgGuestSupport';guest.type='button';guest.textContent='Customer support / feedback';
   guest.className='wg-auth-text-button wg-ac-guest-help';
   const panel=byId('wgAuthGate')?.querySelector('.wg-auth-panel');
-  if(panel) panel.appendChild(guest);
+  if(panel)panel.appendChild(guest);
 
   const black = document.createElement('div');black.id='wgGalleryBlackout';black.hidden=true;
   black.setAttribute('aria-hidden','true');document.body.appendChild(black);
-
-  const content = byId('wgAcContent');
   const action = (label,key,ic) => `<button class="wg-ac-menu-row" type="button" data-ac="${key}">${icon(ic)}<span>${label}</span>${icon('arrow',17)}</button>`;
+  const labels={home:'Home',profile:'My profile',settings:'Settings & privacy',support:'Support & feedback'};
+  const pageIcons={home:'home',profile:'user',settings:'settings',support:'support'};
   function flash(msg,good=true) {
     const el=byId('wgAcMessage');if(!el)return;
-    el.textContent=msg;
-    el.dataset.good=good?'true':'false';
+    el.textContent=msg;el.dataset.good=good?'true':'false';
     el.scrollIntoView({block:'nearest',behavior:'smooth'});
   }
-  function title(text,sub,back=true) {
-    return `<div class="wg-ac-page-head">${back?`<button class="wg-ac-back" id="wgAcBack" type="button" aria-label="Back to account menu">${icon('back',19)}</button>`:''}<div><span class="wg-ac-overline">PERSONAL SPACE</span><h2>${esc(text)}</h2><p>${esc(sub)}</p></div></div><p id="wgAcMessage" class="wg-ac-message" role="status" aria-live="polite"></p>`;
+  // There is no nested previous screen inside a page. Close with X, or
+  // switch pages using the floating hamburger (which includes the last view).
+  function title(text,sub) {
+    return `<div class="wg-ac-page-head"><div><span class="wg-ac-overline">PERSONAL SPACE</span><h2 tabindex="-1">${esc(text)}</h2><p>${esc(sub)}</p></div></div><p id="wgAcMessage" class="wg-ac-message" role="status" aria-live="polite"></p>`;
+  }
+  function positionMenu() {
+    if(!open)return;
+    const rect=trigger.getBoundingClientRect();
+    const width=Math.min(340,window.innerWidth-24);
+    menu.style.width=width+'px';
+    menu.style.left=Math.max(12,Math.min(window.innerWidth-width-12,rect.right-width))+'px';
+    menu.style.top=Math.min(window.innerHeight-80,rect.bottom+9)+'px';
   }
   function renderMenu() {
-    activePage='menu';
     const name=profile?.display_name || user?.email?.split('@')[0] || 'Your account';
-    content.innerHTML=`<div class="wg-ac-intro"><span class="wg-ac-overline">YOUR WORLD</span><h2>${esc(name)}</h2><p>${user?`@${esc(profile?.username||'member')} · ${esc(profile?.home_country_name||'Worlds Gallery')}`:'Help and support are available from here.'}</p></div><div class="wg-ac-menu-items">${user?action('My profile','profile','user')+action('Share your story','share','story')+action('Return to Earth','earth','earth')+action('Settings & privacy','settings','settings'):''}${action('Support & feedback','support','support')}${user?action('Sign out','signout','exit'):''}</div><div class="wg-ac-footnote">Your profile and uploaded content remain protected by your account privacy settings.</div>`;
-    content.querySelectorAll('[data-ac]').forEach(button=>button.addEventListener('click',()=>{
-      if(button.dataset.ac==='signout') {closeDrawer();byId('wgLogout')?.click();return;}
-      if(button.dataset.ac==='share') {
-        closeDrawer();originalShare.click();return;
-      }
-      if(button.dataset.ac==='earth') {
-        closeDrawer();byId('arrivalBackEarth')?.click();syncTrigger();return;
-      }
-      renderPage(button.dataset.ac);
+    const back=activePage==='home'?'':action(labels[previousPage]||'Home',previousPage,pageIcons[previousPage]||'home');
+    const pages=[['profile','My profile','user'],['settings','Settings & privacy','settings'],['support','Support & feedback','support']]
+      .filter(([key])=>key!==activePage && key!==previousPage)
+      .map(([key,label,ic])=>action(label,key,ic)).join('');
+    menu.innerHTML=`<div class="wg-ac-floating-head"><span class="wg-ac-overline">YOUR WORLD</span><strong>${esc(name)}</strong><small>@${esc(profile?.username||'member')}</small></div><div class="wg-ac-menu-items">${back}${pages}${action('Share your story','share','story')}${action('Return to Earth','earth','earth')}${action('Sign out','signout','exit')}</div>`;
+    menu.querySelectorAll('[data-ac]').forEach(button=>button.addEventListener('click',()=>{
+      const choice=button.dataset.ac;
+      setMenuOpen(false);
+      if(choice==='signout'){closePage();byId('wgLogout')?.click();return;}
+      if(choice==='share'){closePage();originalShare.click();return;}
+      if(choice==='earth'){closePage();byId('arrivalBackEarth')?.click();syncTrigger();return;}
+      renderPage(choice);
     }));
   }
-  function renderPage(page) {
-    activePage=page;
-    if(page==='profile') renderProfile();
-    else if(page==='settings') renderSettings();
-    else if(page==='support') renderSupport();
-    else renderMenu();
-    byId('wgAcBack')?.addEventListener('click',renderMenu);
-    drawer.querySelector('h2')?.setAttribute('tabindex','-1');
-    requestAnimationFrame(()=>drawer.querySelector('h2')?.focus({preventScroll:true}));
-  }
   function setMenuOpen(show) {
-    if (show === open) return;
-    if (show) lastFocus = document.activeElement;
-    open = show;
-    shade.hidden = !show;
-    drawer.hidden = !show;
-    drawer.classList.toggle('wg-ac-outside',!user);
-    document.documentElement.classList.toggle('wg-ac-open',show);
-    trigger.setAttribute('aria-expanded', String(show));
-    trigger.setAttribute('aria-label', show ? 'Close account menu' : 'Open account menu');
-    trigger.innerHTML = icon(show ? 'close' : 'menu');
-    if (show) {
-      // Move the SAME hamburger/X into the drawer header so it never floats
-      // over 'Sign out' or crosses into the Earth screen.
-      drawerHeader.appendChild(trigger);
-      trigger.hidden = false;
-      renderMenu();
-      trigger.focus({preventScroll:true});
-    } else {
-      originalShare.insertAdjacentElement('afterend',trigger);
-      syncTrigger();
-      const focus = lastFocus;
-      lastFocus = null;
-      if (focus?.isConnected && !focus.hidden && focus.getClientRects().length) {
-        focus.focus({preventScroll:true});
-      }
-    }
+    if(!user || (activePage==='home' && !isGallery()))show=false;
+    open=show;menu.hidden=!show;
+    trigger.setAttribute('aria-expanded',String(show));
+    trigger.setAttribute('aria-label',show?'Close account menu':'Open account menu');
+    if(show){renderMenu();positionMenu();menu.querySelector('[data-ac]')?.focus({preventScroll:true});}
   }
-  function closeDrawer(){setMenuOpen(false);}
+  function closePage() {
+    setMenuOpen(false);
+    drawer.hidden=true;
+    document.documentElement.classList.remove('wg-ac-page-open');
+    activePage='home';previousPage='home';
+    originalShare.insertAdjacentElement('afterend',trigger);
+    syncTrigger();
+    if(lastFocus?.isConnected && lastFocus.getClientRects().length)lastFocus.focus({preventScroll:true});
+    lastFocus=null;
+  }
+  function renderPage(page) {
+    if(page==='home'){closePage();return;}
+    if(!['profile','settings','support'].includes(page) || (!user && page!=='support'))return;
+    if(activePage==='home')lastFocus=document.activeElement;
+    if(page!==activePage)previousPage=activePage;
+    activePage=page;setMenuOpen(false);
+    drawer.hidden=false;drawer.scrollTop=0;
+    drawer.classList.toggle('wg-ac-outside',!user);
+    document.documentElement.classList.add('wg-ac-page-open');
+    byId('wgAcPageMark').textContent='/ '+labels[page].toUpperCase();
+    if(user){drawerHeader.insertBefore(trigger,pageClose);trigger.hidden=false;}
+    else{originalShare.insertAdjacentElement('afterend',trigger);trigger.hidden=true;}
+    if(page==='profile')renderProfile();
+    else if(page==='settings')renderSettings();
+    else renderSupport();
+    requestAnimationFrame(()=>content.querySelector('h2')?.focus({preventScroll:true}));
+  }
   trigger.addEventListener('click',()=>setMenuOpen(!open));
-  shade.addEventListener('click',closeDrawer);
-  guest.addEventListener('click',()=>{setMenuOpen(true);renderPage('support');});
-  // The old gallery footer links to a non-sending demo envelope.
-  // Redirect that control to the real, private support form instead.
+  pageClose.addEventListener('click',closePage);
+  guest.addEventListener('click',()=>renderPage('support'));
   document.addEventListener('click',e=>{
-    if(!e.target.closest?.('#feedbackOpen'))return;
-    e.preventDefault();e.stopImmediatePropagation();
-    setMenuOpen(true);renderPage('support');
-  },true);
+    if(open&&!menu.contains(e.target)&&!trigger.contains(e.target))setMenuOpen(false);
+  });
+  window.addEventListener('resize',positionMenu);
+  window.addEventListener('scroll',positionMenu,true);
   document.addEventListener('keydown',e=>{
-    if(!open)return;
-    if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();closeDrawer();return;}
-    if(e.key==='Tab'){
-      const controls=[...drawer.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled)')].filter(el=>el.offsetParent!==null);
-      const focusables=[...controls,trigger];if(!focusables.length)return;
-      const first=focusables[0],last=focusables[focusables.length-1];
-      if(e.shiftKey && document.activeElement===first){e.preventDefault();last.focus();}
-      else if(!e.shiftKey && document.activeElement===last){e.preventDefault();first.focus();}
+    if(e.key==='Escape'){
+      if(open){e.preventDefault();setMenuOpen(false);trigger.focus({preventScroll:true});}
+      else if(activePage!=='home'){e.preventDefault();closePage();}
+      return;
+    }
+    if(e.key==='Tab'&&activePage!=='home'){
+      const elements=[...drawer.querySelectorAll('button:not(:disabled),input:not(:disabled):not([tabindex="-1"]),select:not(:disabled):not([tabindex="-1"]),textarea:not(:disabled)')]
+        .filter(el=>el.getClientRects().length && !el.closest('[hidden]'));
+      if(open)elements.push(...[...menu.querySelectorAll('button')].filter(el=>el.getClientRects().length));
+      if(!elements.length)return;
+      if(e.shiftKey&&document.activeElement===elements[0]){e.preventDefault();elements[elements.length-1].focus();}
+      else if(!e.shiftKey&&document.activeElement===elements[elements.length-1]){e.preventDefault();elements[0].focus();}
     }
   },true);
 
@@ -205,10 +213,10 @@
     content.innerHTML=title('My profile','Manage your identity and saved starting place.')+`
       <form id="wgAcProfileForm" class="wg-ac-form">
         <div class="wg-ac-two">
-          <label>Username <input name="username" value="${esc(a.username||'')}" minlength="3" maxlength="10" ${String(a.username||'').length>10?'':'pattern="[A-Za-z0-9_]{3,10}"'} autocomplete="username" required><small>3–10 characters · A–Z, 0–9, _</small></label>
-          <label>Display name <input name="display_name" value="${esc(a.display_name||'')}" maxlength="10" required><small>Up to 10 characters</small></label>
+          <label>Username <input name="username" value="${esc(a.username||'')}" minlength="3" maxlength="24" pattern="[A-Za-z0-9_]{3,24}" autocomplete="username" required><small>3–24 characters · A–Z, 0–9, _</small></label>
+          <label>Display name <input name="display_name" value="${esc(a.display_name||'')}" maxlength="70" required><small>Up to 70 characters</small></label>
         </div>
-        <label>Email (account address)<input value="${esc(user.email||'')}" type="email" readonly></label>
+        <label>Email (account address)<input name="account_email" value="${esc(user.email||'')}" type="email" autocomplete="email" maxlength="254" required><small>Changing your email requires verification through Supabase Auth.</small></label>
         <label>My home country <input type="hidden" id="wgAcCountryCode" name="home_country_code" value="${esc(a.home_country_code||'')}"><button class="wg-ac-country-picker" id="wgAcCountryPicker" type="button" aria-expanded="false" aria-controls="wgAcCountryList"><span>${esc(countryName(a.home_country_code))}</span>${icon('arrow',15)}</button><div id="wgAcCountryList" class="wg-ac-country-popup" hidden></div></label>
         <div class="wg-ac-two"><label>Region / state <input name="home_region" value="${esc(a.home_region||'')}" maxlength="100"></label><label>Province <input name="home_province" value="${esc(a.home_province||'')}" maxlength="100"></label></div>
         <label>City / municipality <input name="home_city" value="${esc(a.home_city||'')}" maxlength="100"></label>
@@ -223,10 +231,8 @@
       const username=String(values.get('username')||'').trim();
       const display_name=String(values.get('display_name')||'').trim();
       const code=String(values.get('home_country_code')||'').trim();
-      const grandfatherUsername=username===profile?.username && username.length>10;
-      const grandfatherDisplay=display_name===profile?.display_name && display_name.length>10;
-      if((!/^[A-Za-z0-9_]{3,10}$/.test(username) && !grandfatherUsername)||!display_name||(display_name.length>10 && !grandfatherDisplay)){
-        flash('New usernames must be 3–10 characters, and new display names up to 10. Existing longer names can remain unchanged.',false);return;
+      if(!/^[A-Za-z0-9_]{3,24}$/.test(username)||!display_name||display_name.length>70){
+        flash('Username: 3–24 characters (letters, numbers or _). Display name: 1–70 characters.',false);return;
       }
       if(!countryList.find(([id])=>id===code)){flash('Select a valid home country.',false);return;}
       const data={username,display_name,home_country_code:code,home_country_name:countryName(code),home_region:String(values.get('home_region')||'').trim()||null,home_province:String(values.get('home_province')||'').trim()||null,home_city:String(values.get('home_city')||'').trim()||null};
@@ -234,7 +240,13 @@
       const result=await api().from('wg_profiles').update(data).eq('user_id',user.id).select('*').single();
       loading=false;form.querySelector('[type=submit]').disabled=false;
       if(result.error){flash(result.error.message||'Could not save profile.',false);return;}
-      profile=result.data;flash('Profile saved. Your new home country applies on your next sign-in.');
+      profile=result.data;
+      const email=String(values.get('account_email')||'').trim().toLowerCase();
+      if(email && email!==String(user.email||'').toLowerCase()){
+        const changed=await api().auth.updateUser({email},{emailRedirectTo:location.origin+location.pathname});
+        if(changed.error){flash('Profile saved, but the email-change request failed: '+changed.error.message,false);return;}
+        flash('Profile saved. Check your current and new inboxes for email-change verification. Your new address is not active until verified.');
+      }else flash('Profile saved. Your new home country applies on your next sign-in.');
     });
   }
   // A deliberate downward-only menu, including settings and support forms.
@@ -325,11 +337,21 @@
       flash('Your settings have been saved privately.');
     });
   }
-  // V2.4: Guest and member support share this existing drawer form.
-  // Guests write ONLY through the public Edge Function. No direct anonymous table grant.
+  // Guests use the protected Edge Function; members use authenticated RLS.
+  // Local cooldown improves UX; authoritative enforcement must remain server-side.
+  const cooldownMs=3*60*60*1000;
+  const cooldownKey=()=>`wg-support-cooldown-v1:${user?.id||'guest'}`;
+  function cooldownUntil(){try{return Number(localStorage.getItem(cooldownKey())||0)||0;}catch{return 0;}}
+  function rememberCooldown(){try{localStorage.setItem(cooldownKey(),String(Date.now()+cooldownMs));}catch{}}
   function renderSupport(){
     const isGuest = !user;
     drawer.classList.toggle('wg-ac-outside',isGuest);
+    const remaining=Math.max(0,cooldownUntil()-Date.now());
+    if(remaining){
+      const hours=Math.floor(remaining/3600000),minutes=Math.ceil((remaining%3600000)/60000);
+      content.innerHTML=title('Support & feedback','')+`<div class="wg-ac-thanks"><h3>Thank you for your feedback.</h3><p>You can submit another concern in approximately ${hours?hours+' hour'+(hours===1?'':'s')+' and ':''}${minutes} minute${minutes===1?'':'s'}.</p></div>`;
+      return;
+    }
     content.innerHTML=title('Support & feedback',isGuest
       ? 'Contact Worlds Gallery without signing in.'
       : 'Tell us what needs attention. This goes into a private support queue.')+`
@@ -379,10 +401,9 @@
           }).select('id').single();
           if(result.error){flash('Support request could not be submitted: '+result.error.message,false);return;}
         }
-        form.reset();
-        form.querySelectorAll('select').forEach(el=>el.dispatchEvent(new Event('change',{bubbles:true})));
-        byId('wgAcSupportCount').textContent='0';
-        flash('Your concern was saved to the private Worlds Gallery support queue. Email forwarding is not active yet.');
+        rememberCooldown();
+        content.innerHTML='<div class="wg-ac-thanks" role="status" aria-live="polite"><h2 tabindex="-1">Thank you for your feedback.</h2></div>';
+        content.querySelector('h2')?.focus({preventScroll:true});
       } catch(error) {
         flash('Could not submit the concern. Please check your connection and try again.',false);
       } finally {

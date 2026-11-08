@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#f8f6f0">
   <title>Worlds Gallery — Every picture has a world behind it</title>
-  <meta name="description" content="A free, global gallery of photographs, collages and the human stories behind them. Interactive prototype; fictional sample stories.">
-  <link rel="stylesheet" href="styles.css?v=6a31ccca4772">
+  <meta name="description" content="Worlds Gallery is a photo-first world explorer where every picture has a story behind it.">
+  <link rel="stylesheet" href="styles.css?v=ux-20261108">
 <link rel="stylesheet" href="portal.css?v=f52be93964a3">
 <link rel="stylesheet" href="assets/vendor/maplibre/maplibre-gl.css?v=ab1e70d59ec4">
 <link rel="stylesheet" href="wg_global_map.css?v=ac4a25ab8663">
@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="wg_image_fix.css?v=2df6a32cf4a7">
 <link rel="stylesheet" href="wg_landmark_discovery.css?v=7f81a92fdd24">
 <link rel="stylesheet" href="wg_auth.css?v=a646f1b23fa2">
-<link rel="stylesheet" href="wg_account.css?v=2f2d991d9677">
+<link rel="stylesheet" href="wg_account.css?v=ux-20261108">
 
 </head>
 <body class="portal-locked">
@@ -50,7 +50,7 @@
 
 <header class="site-header"><div class="shell nav-bar">
   <a class="brand" href="#home" aria-label="Worlds Gallery home"><span class="brand-symbol">W<span class="brand-dot">✦</span></span><span>Worlds <em>Gallery.</em></span></a>
-  <nav class="nav-links" aria-label="Main navigation"><a href="#map-section">The world</a><a href="#stories">Stories</a><a href="#about">Our purpose</a></nav>
+  <nav class="nav-links" aria-label="Main navigation"><a href="#map-section">The world</a><a href="#stories">Gallery</a><a href="#about">Our purpose</a></nav>
   <button type="button" class="button button-primary nav-share" data-open-upload>Share your story <span aria-hidden="true">↗</span></button>
 </div></header>
 <main id="home">
@@ -62,7 +62,7 @@
     <div class="hero-copy"><div class="eyebrow"><span class="tiny-sun">✳</span> ONE PLANET. COUNTLESS STORIES.</div>
       <h1>Every picture<br>has a <em>world</em><br>behind it.</h1>
       <p class="hero-subtitle">A thoughtful gallery for ordinary moments and extraordinary feelings. Explore memories, journeys, and dreams through the people who lived them.</p>
-      <div class="hero-actions"><button type="button" class="button button-primary" data-open-upload>Tell your story <span>↗</span></button><a href="#stories" class="button button-light">Explore the gallery <span>↓</span></a></div>
+      <div class="hero-actions"><button type="button" class="button button-primary" data-open-upload>Tell your story <span>↗</span></button></div>
       <div class="hero-trust"><span class="hero-spark">✧</span> From anywhere in the world. Always free to explore.</div>
       <div class="mini-stats"><div><b id="statStories">7</b><span>Demo stories</span></div><div><b id="statCountries">5</b><span>Countries represented</span></div><div><b>249</b><span>Country directory</span></div></div>
     </div>
@@ -78,7 +78,7 @@
     <div class="section-eyebrow"><span></span> THE OPEN STORYBOOK</div>
     <div class="gallery-heading"><div><h2>Explore the <em>gallery.</em></h2><p>Every photograph holds a place, a person, and a piece of a life.</p></div><span class="demo-label">✦ Fictional sample stories · Browser-only demo</span></div>
     <div class="filter-panel">
-      <div class="filter-top"><label class="searchbox" for="search"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.8"/><path d="m16 16 5 5"/></svg><input id="search" type="search" placeholder="Search names, titles, memories, places..." aria-label="Search gallery"></label><button class="button select-themes" id="themeChoose" type="button"><span>✦ Select themes</span><span class="countbubble" id="themeCount">0</span><span aria-hidden="true">▾</span></button></div>
+      <div class="filter-top"><label class="searchbox" for="search"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.8"/><path d="m16 16 5 5"/></svg><input id="search" type="search" placeholder="Search names, titles, memories, places..." aria-label="Search gallery"></label><label class="wg-mine-toggle" for="mineOnly"><input id="mineOnly" type="checkbox"><span>View mine only</span></label><button class="button select-themes" id="themeChoose" type="button"><span>✦ Select themes</span><span class="countbubble" id="themeCount">0</span><span aria-hidden="true">▾</span></button></div>
       <div class="filter-bottom">
         <label class="filter-field"><span>World region</span><select id="continentFilter" aria-label="Filter by world region"><option value="">All world regions</option><option>Africa</option><option>Americas</option><option>Asia</option><option>Europe</option><option>Oceania</option><option>Antarctic</option></select></label>
         <label class="filter-field"><span>Country or territory</span><select id="countryFilter" aria-label="Filter by country"><option value="">All countries</option></select></label>
@@ -94,7 +94,7 @@
 
   <section id="about" class="about-section"><div class="shell about-inner"><div><div class="eyebrow">A HUMAN ARCHIVE, BUILT WITH CARE</div><h2>Not a competition<br>for attention.<br><em>A place for meaning.</em></h2></div><div class="about-right"><p>One photo. Up to four moments in a collage. At least 1,000 characters to tell the fuller story. Discover what life feels like across countries, generations and different perspectives.</p><div class="about-steps"><span>01 <strong>Capture a moment</strong></span><span>02 <strong>Choose your collage design</strong></span><span>03 <strong>Tell the story behind it</strong></span><span>04 <strong>Explore with empathy</strong></span></div><small>Public launch will require accounts, content moderation, privacy protections, consent and reporting. These features are not implemented in the demo.</small></div></div></section>
 </main>
-<footer><div class="shell footrow"><span class="brand footbrand"><span class="brand-symbol">W</span><span>Worlds <em>Gallery.</em></span></span><button type="button" class="link-button" id="feedbackOpen">✉ Leave feedback</button><span>Concept V5 · All samples fictional · Not publicly hosted</span><a href="#home">Back to the top ↑</a></div></footer>
+<footer><div class="shell footrow"><span class="brand footbrand"><span class="brand-symbol">W</span><span>Worlds <em>Gallery.</em></span></span><a href="#home">Back to the top ↑</a></div></footer>
 
 <dialog class="modal" id="themesDialog" aria-label="Choose story themes"><div class="modal-header"><div><div class="eyebrow small">EXPLORE YOUR INTERESTS</div><h3>Choose your themes</h3></div><button type="button" class="close-button" data-close="themesDialog" aria-label="Close">×</button></div><div class="modal-body"><p class="modal-hint">Choose one, several, or none. Selected themes will appear under your filters; matching stories can belong to <b>any</b> selected theme.</p><div class="theme-modal-grid" id="themeOptions"></div></div><div class="modal-footer"><button type="button" class="button button-light" id="themesClear">Clear selection</button><button type="button" class="button button-primary" id="themesApply">Apply themes <span>✓</span></button></div></dialog>
 
@@ -115,18 +115,18 @@
 
 <dialog class="lightbox" id="lightboxDialog" aria-label="View photo at full size"><div class="lightbox-top"><span id="lightboxCounter">Photo 1 of 1</span><button type="button" class="close-button lightbox-close" data-close="lightboxDialog" aria-label="Close photo"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><div class="lightbox-middle"><button type="button" id="lightboxPrev" class="photo-arrow" aria-label="Previous image"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg></button><img id="lightboxImage" alt="Selected story image"><button type="button" id="lightboxNext" class="photo-arrow" aria-label="Next image"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg></button></div><div id="lightboxCaption" class="lightbox-caption">View original frame</div></dialog>
 
-<dialog class="modal feedback-dialog" id="feedbackDialog" aria-label="Feedback demonstration"><div class="modal-header"><div><div class="eyebrow small">HELP US SHAPE THIS WORLD</div><h3>A note for the gallery</h3></div><button type="button" class="close-button" data-close="feedbackDialog" aria-label="Close">×</button></div><div class="modal-body"><p class="modal-hint">Try our animated feedback envelope. This is a <b>visual demo only</b>: your message will not be sent or saved online.</p><div class="envelope-scene" id="envelopeScene"><div class="envelope-paper" id="envelopePaper">Dear Worlds Gallery, ✦</div><div class="envelope-back"></div><div class="envelope-flap"></div><div class="envelope-front"></div><div class="mail-bin" aria-hidden="true">▣</div></div><form id="feedbackForm"><label class="form-field" for="feedbackText"><span>Your feedback</span><textarea id="feedbackText" class="input" rows="4" maxlength="1000" required placeholder="What would make Worlds Gallery better?"></textarea></label><div class="feedback-buttons"><span id="feedbackStatus" class="micro-hint">No message will be transmitted.</span><button type="submit" class="button button-primary" id="feedbackSubmit">Preview sending ✉</button></div></form></div></dialog>
+
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="data.js?v=39a174caa60a"></script><script src="world_geometry.js?v=b65c5365c640"></script><script src="ph_coastline.js?v=fe3b853d6dcc"></script><script src="ph_admin_geo.js?v=56699b9621e3"></script><script src="place_highlights.js?v=092981cd69b4"></script><script src="globe.js?v=0ea3b51f80da"></script><script src="app.js?v=7cc61ac8791b"></script><script src="timezones.js?v=1633b3a9ceba"></script><script src="portal.js?v=764c9b32e470"></script>
+<script src="data.js?v=39a174caa60a"></script><script src="world_geometry.js?v=b65c5365c640"></script><script src="ph_coastline.js?v=fe3b853d6dcc"></script><script src="ph_admin_geo.js?v=56699b9621e3"></script><script src="place_highlights.js?v=092981cd69b4"></script><script src="globe.js?v=0ea3b51f80da"></script><script src="app.js?v=ux-20261108"></script><script src="timezones.js?v=1633b3a9ceba"></script><script src="portal.js?v=ux-20261108"></script>
 <script src="assets/vendor/maplibre/maplibre-gl.js?v=45a9b07a9189"></script>
 <script src="wg_global_map.js?v=c46231b55e3a"></script>
 <script src="wg_world_knowledge.js?v=3ac5824820fe"></script>
 <script src="wg_landmark_discovery.js?v=68d3b0fda4ac"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
-<script src="wg_auth.js?v=78e929841516"></script>
+<script src="wg_auth.js?v=ux-20261108"></script>
 <script type="module" src="wg_cinematic.js?v=99a7ef27dd41"></script>
-<script src="wg_account.js?v=f01b3c829b69"></script>
+<script src="wg_account.js?v=ux-20261108"></script>
 
 </body>
 </html>

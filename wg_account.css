@@ -305,3 +305,86 @@ html.wg-ac-open #wgAccountDrawer #wgAccountTrigger:hover:not(:disabled) {
     box-shadow: none !important;
     transform: none !important;
 }
+
+/* Worlds Gallery UX milestone: floating account navigation and independent full pages. */
+#wgAccountMenu[hidden]{display:none!important}
+#wgAccountMenu{
+  position:fixed;z-index:35300;box-sizing:border-box;max-height:min(80dvh,650px);overflow:auto;
+  padding:12px;border:1px solid #d6e6db;border-radius:18px;
+  background:rgba(255,255,252,.98);color:#173d34;
+  box-shadow:0 20px 52px rgba(13,43,35,.19);backdrop-filter:blur(14px);
+  font:400 13px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+#wgAccountMenu *,#wgAccountMenu *::before,#wgAccountMenu *::after{box-sizing:border-box}
+#wgAccountMenu .wg-ac-floating-head{display:flex;flex-direction:column;gap:3px;padding:9px 12px 14px;border-bottom:1px solid #e2eae3}
+#wgAccountMenu .wg-ac-overline{color:#568a77;font-size:10px;letter-spacing:.16em;font-weight:750}
+#wgAccountMenu .wg-ac-floating-head strong{color:#194d3b;font-size:17px;line-height:1.3;overflow-wrap:anywhere}
+#wgAccountMenu .wg-ac-floating-head small{color:#6a877b}
+#wgAccountMenu .wg-ac-menu-items{display:grid;gap:4px;padding-top:9px}
+#wgAccountMenu .wg-ac-menu-row{display:grid;grid-template-columns:22px 1fr 17px;align-items:center;gap:12px;
+ width:100%;min-height:43px;padding:9px 11px;border:0;border-radius:10px;
+ background:transparent;color:#194638;font:600 12px system-ui,-apple-system,'Segoe UI',sans-serif;text-align:left;cursor:pointer}
+#wgAccountMenu .wg-ac-menu-row svg:last-child{opacity:.48}
+#wgAccountMenu .wg-ac-menu-row:hover,#wgAccountMenu .wg-ac-menu-row:focus-visible{background:#e6f1e8;color:#103b2e;outline:none}
+#wgAccountDrawer[hidden]{display:none!important}
+html.wg-ac-page-open{overflow:hidden!important}
+#wgAccountDrawer{
+  position:fixed!important;inset:0!important;left:0!important;right:0!important;top:0!important;bottom:0!important;
+  width:100%!important;max-width:none!important;height:100dvh!important;min-height:100dvh!important;max-height:100dvh!important;
+  z-index:35020!important;overflow-x:hidden!important;overflow-y:auto!important;
+  padding:22px clamp(16px,4vw,56px) 55px!important;
+  background:#f4f8f3!important;color:#163d35!important;border:0!important;box-shadow:none!important;
+}
+#wgAccountDrawer .wg-ac-header{
+  max-width:1050px;width:100%;margin:0 auto 20px!important;padding:0 0 14px!important;
+  display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:14px!important;
+  min-height:55px!important;
+}
+#wgAccountDrawer .wg-ac-header .wg-ac-mark{margin-right:auto;font-size:11px}
+#wgAccountDrawer .wg-ac-content{
+  width:min(100%,860px);margin:28px auto 0;padding:clamp(22px,3vw,42px);
+  background:#fff;border:1px solid #dce9df;border-radius:24px;
+  box-shadow:0 15px 45px rgba(31,67,47,.06);
+}
+#wgAccountDrawer .wg-ac-page-head{margin-bottom:10px}
+#wgAccountDrawer .wg-ac-page-head h2{font-size:clamp(29px,4vw,44px);line-height:1.14}
+#wgAccountDrawer .wg-ac-page-head p{font-size:13px;line-height:1.7}
+#wgAccountDrawer .wg-ac-form{max-width:730px;margin:auto;padding:16px 0 4px;gap:18px}
+#wgAccountDrawer .wg-ac-form label{font-size:13px}
+#wgAccountDrawer .wg-ac-form input:not([type=checkbox]),
+#wgAccountDrawer .wg-ac-form textarea,
+#wgAccountDrawer .wg-ac-country-picker,
+#wgAccountDrawer .wg-ac-select-trigger{font-size:14px!important;min-height:47px}
+#wgAccountDrawer .wg-ac-page-close{
+  display:grid;place-items:center;flex:0 0 41px;width:41px;height:41px;
+  border:1px solid #d4e4db;border-radius:12px;background:#fff;color:#184c3d;cursor:pointer;
+}
+#wgAccountDrawer .wg-ac-page-close:hover{background:#e8f2ed}
+#wgAccountDrawer .wg-ac-page-close:focus-visible{outline:2px solid #4a8c73;outline-offset:2px}
+#wgAccountDrawer .wg-ac-thanks{min-height:240px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;text-align:center;padding:32px 12px}
+#wgAccountDrawer .wg-ac-thanks h2,#wgAccountDrawer .wg-ac-thanks h3{font-size:clamp(27px,4vw,38px);font-weight:650;letter-spacing:-.035em;line-height:1.2;margin:0;color:#174e3b;outline:none}
+#wgAccountDrawer .wg-ac-thanks p{font-size:13px;max-width:440px}
+#wgAccountDrawer.wg-ac-outside{background:radial-gradient(ellipse at 28% 15%,#183b52 0%,#071b2e 50%,#03101f 100%)!important;color:#ebf8fa!important}
+#wgAccountDrawer.wg-ac-outside .wg-ac-content{background:#0c2639;border-color:rgba(183,220,234,.23);box-shadow:0 15px 50px rgba(0,0,0,.16)}
+#wgAccountDrawer.wg-ac-outside .wg-ac-page-close{background:transparent;color:#ecf8fa;border-color:rgba(202,231,241,.32)}
+#wgAccountDrawer.wg-ac-outside .wg-ac-page-close:hover{background:#1a3d51}
+#wgAccountDrawer.wg-ac-outside .wg-ac-thanks h2,#wgAccountDrawer.wg-ac-outside .wg-ac-thanks h3{color:#f2fbff}
+/* Dark highlighted selections must keep all text visible. */
+#wgAccountDrawer.wg-ac-outside .wg-ac-select-popup button:hover,
+#wgAccountDrawer.wg-ac-outside .wg-ac-select-popup button:focus-visible,
+#wgAccountDrawer.wg-ac-outside .wg-ac-select-popup button[aria-selected=true],
+#wgAccountDrawer.wg-ac-outside .wg-ac-country-popup button:hover,
+#wgAccountDrawer.wg-ac-outside .wg-ac-country-popup button:focus-visible,
+#wgAccountDrawer.wg-ac-outside .wg-ac-country-popup button[aria-selected=true]{background:#214961!important;color:#f6fcff!important}
+#wgAccountDrawer .wg-ac-select-popup button:focus-visible,
+#wgAccountDrawer .wg-ac-country-popup button[aria-selected=true]{background:#d6ebdf!important;color:#153c30!important}
+@media(max-width:680px){
+ #wgAccountDrawer{padding:16px 14px 40px!important}
+ #wgAccountDrawer .wg-ac-header{gap:8px!important}
+ #wgAccountDrawer .wg-ac-mark{font-size:9px!important;letter-spacing:.08em!important}
+ #wgAccountDrawer .wg-ac-content{border-radius:16px;padding:21px 16px;margin:15px auto 0}
+ #wgAccountDrawer .wg-ac-two{grid-template-columns:1fr}
+ #wgAccountDrawer .wg-ac-page-close{flex-basis:39px;width:39px;height:39px}
+ #wgAccountMenu{max-height:75dvh}
+}
+@media(prefers-reduced-motion:reduce){#wgAccountMenu,#wgAccountDrawer{scroll-behavior:auto}}

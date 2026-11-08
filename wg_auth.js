@@ -339,7 +339,7 @@
     return;
   }
   const db = window.supabase.createClient(URL, KEY, {auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}});
-  window.WorldsGalleryAuth = {getUser: () => db.auth.getUser(), getClient: () => db};
+  window.WorldsGalleryAuth = {getUser: () => db.auth.getUser(), getClient: () => db, getCurrentUserId: () => currentUser?.id || null};
   const profileData = form => {
     const data = new FormData(form);
     const code = String(data.get('country_code') || '').toUpperCase();
@@ -407,8 +407,8 @@
     logout.hidden = false;
     document.dispatchEvent(new CustomEvent('wg:authenticated',{detail:{user,profile}}));
     document.body.classList.add('portal-locked');
-    if (window.WorldsGalleryPortal?.searchCountry) {
-      setTimeout(() => window.WorldsGalleryPortal.searchCountry(profile.home_country_code), 120);
+    if (window.WorldsGalleryPortal?.faceHomeCountry) {
+      window.WorldsGalleryPortal.faceHomeCountry(profile.home_country_code);
     }
   }
   byId('wgSignInForm').addEventListener('submit', async event => {
