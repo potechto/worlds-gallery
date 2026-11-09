@@ -92,9 +92,11 @@
   try {
     if (sessionStorage.getItem('wg-auth-after-logout') === 'signin') entryMode = 'signin';
     sessionStorage.removeItem('wg-auth-after-logout');
+    if(entryMode!=='signin'){const prev=sessionStorage.getItem('wg-auth-mode');if(['signin','signup'].includes(prev))entryMode=prev;}
   } catch {}
   function setMode(next) {
     mode = next;
+    if(next==='signin'||next==='signup'){try{sessionStorage.setItem('wg-auth-mode',next)}catch{}}
     byId('wgAuthTabs').hidden = next === 'setup';
     const title = byId('wgAuthPanelTitle');
     const subtitle = byId('wgAuthPanelSubtitle');
@@ -106,6 +108,7 @@
     byId('wgTabSignIn').setAttribute('aria-pressed', String(next === 'signin'));
     byId('wgTabSignUp').setAttribute('aria-pressed', String(next === 'signup'));
     status('');
+    document.dispatchEvent(new CustomEvent('wg:auth-mode',{detail:{mode:next}}));
   }
   setMode(entryMode);
   byId('wgTabSignIn').addEventListener('click', () => setMode('signin'));
@@ -335,7 +338,19 @@
     gate.querySelectorAll('button[type=submit]').forEach(b => b.disabled = on);
   }
   if (!window.supabase?.createClient) {
-    status('Supabase client did not load. Check the network connection and refresh the page.');
+    // WG_AUTH_CDN_FAILURE_GUARD_V216
+    const message = 'Login service unavailable. Supabase could not load from either CDN. Check your network connection and refresh.';
+
+    ['wgSignInForm', 'wgSignUpForm', 'wgSetupForm'].forEach(id => {
+      byId(id)?.addEventListener('submit', event => {
+        event.preventDefault();
+        status(message, 'error');
+      });
+    });
+
+    document.documentElement.classList.remove('wg-refresh-restore');
+    status(message, 'error');
+    document.dispatchEvent(new Event('wg:guest-ready'));
     return;
   }
   const db = window.supabase.createClient(URL, KEY, {auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}});
@@ -407,9 +422,9 @@
     logout.hidden = false;
     document.dispatchEvent(new CustomEvent('wg:authenticated',{detail:{user,profile}}));
     document.body.classList.add('portal-locked');
-    if (window.WorldsGalleryPortal?.faceHomeCountry) {
-      window.WorldsGalleryPortal.faceHomeCountry(profile.home_country_code);
-    }
+    const resumed=window.WorldsGalleryViewState?.restoreForUser?.(user.id)===true;
+    if(!resumed&&window.WorldsGalleryPortal?.faceHomeCountry)window.WorldsGalleryPortal.faceHomeCountry(profile.home_country_code);
+    document.documentElement.classList.remove('wg-refresh-restore');
   }
   byId('wgSignInForm').addEventListener('submit', async event => {
     event.preventDefault(); if (busy) return;
@@ -477,7 +492,8 @@
       if (result.error) throw result.error;
       setProtectedAccess(false);
       document.documentElement.classList.remove('wg-auth-ok');
-      try { sessionStorage.setItem('wg-auth-after-logout', 'signin'); } catch {}
+      window.WorldsGalleryViewState?.clear?.();
+      try { sessionStorage.setItem('wg-auth-after-logout', 'signin');sessionStorage.setItem('wg-auth-mode','signin'); } catch {}
       location.replace(location.pathname);
     } catch (err) {alert('Sign out failed: ' + (err.message || 'Unknown error')); logout.disabled = false;}
   });
@@ -485,7 +501,8 @@
     if (event === 'SIGNED_OUT' && document.documentElement.classList.contains('wg-auth-ok')) {
       setProtectedAccess(false);
       document.documentElement.classList.remove('wg-auth-ok');
-      try { sessionStorage.setItem('wg-auth-after-logout', 'signin'); } catch {}
+      window.WorldsGalleryViewState?.clear?.();
+      try { sessionStorage.setItem('wg-auth-after-logout', 'signin');sessionStorage.setItem('wg-auth-mode','signin'); } catch {}
       location.replace(location.pathname);
     }
   });
@@ -494,7 +511,7 @@
     try {
       const {data,error} = await db.auth.getUser();
       if (data?.user) await enter(data.user);
-      else status(error && error.name !== 'AuthSessionMissingError' ? 'Could not verify session: ' + error.message : 'Create an account to begin, or sign in if you already have one.');
-    } catch (err) {status('Could not verify your session: ' + (err.message || 'Network error'));}
+      else {status(error && error.name !== 'AuthSessionMissingError' ? 'Could not verify session: ' + error.message : 'Create an account to begin, or sign in if you already have one.');document.dispatchEvent(new Event('wg:guest-ready'));document.documentElement.classList.remove('wg-refresh-restore');}
+    } catch (err) {status('Could not verify your session: ' + (err.message || 'Network error'));document.documentElement.classList.remove('wg-refresh-restore');}
   })();
 })();

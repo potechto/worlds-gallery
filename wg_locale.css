@@ -1,0 +1,5 @@
+/* Locale selector intentionally sits outside the three-column navigation. */
+.wg-locale-control{position:fixed;right:14px;bottom:14px;z-index:5000;background:#fdfef7;color:#1c513e;border:1px solid #b6d5c4;border-radius:14px;padding:5px 10px;box-shadow:0 3px 12px #0002;display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700}
+.wg-locale-control select{max-width:128px;border:0;background:transparent;color:inherit;font:inherit;cursor:pointer}
+.wg-draft-actions{display:flex;gap:15px;flex-wrap:wrap}
+@media(max-width:500px){.wg-locale-label{display:none}.wg-locale-control{bottom:8px;right:8px;padding:7px}}

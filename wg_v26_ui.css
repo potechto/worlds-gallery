@@ -1,0 +1,15 @@
+/* V2.6: coherent rounded line-icon presentation. */
+.wg-v26-icon{display:inline-block;flex:0 0 auto;vertical-align:middle;stroke-linecap:round;stroke-linejoin:round}
+#wgAccountTrigger{border-radius:14px!important;background:linear-gradient(145deg,#154b40,#103747)!important;color:#ecfbf7!important;border:1px solid rgba(165,227,210,.55)!important;box-shadow:0 12px 28px rgba(0,24,32,.25)!important}
+#wgAccountTrigger:hover{background:linear-gradient(145deg,#1d6c55,#165368)!important;transform:translateY(-2px)}
+.wg-ac-menu-row svg{stroke-width:2!important;flex-shrink:0}
+.wg-ac-menu-row{border-radius:13px!important;transition:background .17s,border-color .17s,transform .17s!important}
+.wg-ac-menu-row:hover{transform:translateX(2px)}
+.wg-ac-menu-row svg:first-child{color:#9ae1ce}
+#globeReset,#arrivalShuffle,#portalSearchToggle{display:inline-flex;align-items:center;justify-content:center}
+#globeReset svg,#arrivalShuffle svg,#portalSearchToggle svg{height:19px;width:19px}
+.button .wg-v26-icon{height:16px;width:16px}
+.footrow a .wg-v26-icon{margin-left:5px}
+.wg-locale-control{border-radius:15px!important;box-shadow:0 9px 24px rgba(8,30,29,.16)!important}
+.wg-locale-auto{color:#174b3d;border:1px solid #bad9ca;background:#eaf5ef;cursor:pointer;border-radius:8px;font:700 11px/1 system-ui;padding:7px 8px}
+.wg-locale-auto[aria-pressed="true"]{background:#205546;color:#fff;border-color:#205546}

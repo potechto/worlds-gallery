@@ -22,7 +22,7 @@
     earth: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 4.5 6 4.5 9s-1.5 6-4.5 9M12 3c-3 3-4.5 6-4.5 9s1.5 6 4.5 9"/>',
     story: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="m7 16 4-5 3 3 2-2 2 4"/><circle cx="9" cy="9" r="1"/>'
   };
-  const icon = (n,size=21) => `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${styles[n]}</svg>`;
+  const icon = (n,size=21) => `<svg class=\"wg-v26-icon\" viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${styles[n]}</svg>`;
   const trigger = document.createElement('button');
   trigger.type='button';trigger.id='wgAccountTrigger';trigger.hidden=true;
   trigger.className='wg-account-trigger';trigger.innerHTML=icon('menu');
@@ -94,15 +94,17 @@
     const pages=[['profile','My profile','user'],['settings','Settings & privacy','settings'],['support','Support & feedback','support']]
       .filter(([key])=>key!==activePage && key!==previousPage)
       .map(([key,label,ic])=>action(label,key,ic)).join('');
-    menu.innerHTML=`<div class="wg-ac-floating-head"><span class="wg-ac-overline">YOUR WORLD</span><strong>${esc(name)}</strong><small>@${esc(profile?.username||'member')}</small></div><div class="wg-ac-menu-items">${back}${pages}${action('Share your story','share','story')}${action('Return to Earth','earth','earth')}${action('Sign out','signout','exit')}</div>`;
+    menu.innerHTML=`<div class="wg-ac-floating-head"><span class="wg-ac-overline">YOUR WORLD</span><strong>${esc(name)}</strong><small>@${esc(profile?.username||'member')}</small></div><div class="wg-ac-menu-items">${back}${pages}${action('My stories','my-stories','story')}${action('Share your story','share','story')}${action('Return to Earth','earth','earth')}${action('Sign out','signout','exit')}</div>`;
     menu.querySelectorAll('[data-ac]').forEach(button=>button.addEventListener('click',()=>{
       const choice=button.dataset.ac;
       setMenuOpen(false);
       if(choice==='signout'){closePage();byId('wgLogout')?.click();return;}
+      if(choice==='my-stories'){closePage();const mine=byId('mineOnly');if(mine){mine.checked=true;mine.dispatchEvent(new Event('change',{bubbles:true}));byId('stories')?.scrollIntoView({behavior:'smooth'});}return;}
       if(choice==='share'){closePage();originalShare.click();return;}
       if(choice==='earth'){closePage();byId('arrivalBackEarth')?.click();syncTrigger();return;}
       renderPage(choice);
     }));
+    document.dispatchEvent(new Event('wg:menu-rendered'));
   }
   function setMenuOpen(show) {
     if(!user || (activePage==='home' && !isGallery()))show=false;
@@ -136,6 +138,7 @@
     if(page==='profile')renderProfile();
     else if(page==='settings')renderSettings();
     else renderSupport();
+    document.dispatchEvent(new CustomEvent('wg:account-page',{detail:{page}}));
     requestAnimationFrame(()=>content.querySelector('h2')?.focus({preventScroll:true}));
   }
   trigger.addEventListener('click',()=>setMenuOpen(!open));
@@ -179,7 +182,7 @@
       for(const [code,name] of options){
         const opt=document.createElement('button');opt.type='button';opt.setAttribute('role','option');opt.textContent=name;opt.dataset.code=code;
         opt.setAttribute('aria-selected',String(code===input.value));
-        opt.addEventListener('click',()=>{input.value=code;button.querySelector('span').textContent=name;close();button.focus();});
+        opt.addEventListener('click',()=>{input.value=code;button.querySelector('span').textContent=name;document.dispatchEvent(new CustomEvent('wg:country-selected',{detail:{code,source:'profile'}}));close();button.focus();});
         list.appendChild(opt);
       }
       if(!options.length)list.textContent='No matches';
@@ -307,6 +310,8 @@
         <label class="wg-ac-switch"><input name="show_detailed_location" type="checkbox"> <span>Display my detailed locality (when published)</span></label>
         <label class="wg-ac-switch"><input name="allow_comments" type="checkbox"> <span>Allow comments (future feature)</span></label>
         <div class="wg-ac-section-label">CONTENT & ACCESSIBILITY</div>
+        <label>Website language<select name="wg_interface_language" id="wgSettingsLanguage"><option value="en">English</option><option value="ko">한국어 (Korean)</option><option value="ja">日本語 (Japanese)</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="es">Español</option></select></label>
+        <p class="wg-ac-muted">Language selection is saved for this browser and account. Story text remains in the author's original language.</p>
         <label>Sensitive content filter<select name="sensitive_content_filter"><option value="strict">Strict — recommended</option><option value="standard">Standard</option></select></label>
         <label class="wg-ac-switch"><input name="reduce_motion" type="checkbox"> <span>Reduce animations and motion</span></label>
         <p class="wg-ac-muted">Saving a public preference does not publish photos or profile data yet. All protected records remain restricted by Supabase security rules until the moderated gallery is built.</p>
@@ -314,6 +319,7 @@
       </form>`;
     const form=byId('wgAcSettingsForm');
     enhanceSelects(form);
+    if(byId('wgSettingsLanguage'))byId('wgSettingsLanguage').value=window.WorldsGalleryLocale?.get?.()||'en';
     (async()=>{
       const [pr,co]=await Promise.all([api().from('wg_privacy_settings').select('*').eq('user_id',user.id).maybeSingle(),api().from('wg_content_preferences').select('*').eq('user_id',user.id).maybeSingle()]);
       if(activePage!=='settings')return;
@@ -334,82 +340,100 @@
       loading=false;form.querySelector('[type=submit]').disabled=false;
       if(p.error||c.error){flash((p.error||c.error).message||'Could not save settings.',false);return;}
       document.documentElement.classList.toggle('wg-reduce-motion',pref.reduce_motion);
+      window.WorldsGalleryLocale?.set?.(String(d.get('wg_interface_language')||'en'));
       flash('Your settings have been saved privately.');
     });
   }
-  // Guests use the protected Edge Function; members use authenticated RLS.
-  // Local cooldown improves UX; authoritative enforcement must remain server-side.
+  // Private support transport; server-enforced three-hour cooldown.
   const cooldownMs=3*60*60*1000;
   const cooldownKey=()=>`wg-support-cooldown-v1:${user?.id||'guest'}`;
-  function cooldownUntil(){try{return Number(localStorage.getItem(cooldownKey())||0)||0;}catch{return 0;}}
-  function rememberCooldown(){try{localStorage.setItem(cooldownKey(),String(Date.now()+cooldownMs));}catch{}}
-  function renderSupport(){
-    const isGuest = !user;
-    drawer.classList.toggle('wg-ac-outside',isGuest);
-    const remaining=Math.max(0,cooldownUntil()-Date.now());
-    if(remaining){
-      const hours=Math.floor(remaining/3600000),minutes=Math.ceil((remaining%3600000)/60000);
-      content.innerHTML=title('Support & feedback','')+`<div class="wg-ac-thanks"><h3>Thank you for your feedback.</h3><p>You can submit another concern in approximately ${hours?hours+' hour'+(hours===1?'':'s')+' and ':''}${minutes} minute${minutes===1?'':'s'}.</p></div>`;
-      return;
-    }
-    content.innerHTML=title('Support & feedback',isGuest
-      ? 'Contact Worlds Gallery without signing in.'
-      : 'Tell us what needs attention. This goes into a private support queue.')+`
-      <form class="wg-ac-form" id="wgAcSupportForm">
-        ${isGuest?`<div class="wg-ac-two">
-          <label>Email address (required)<input name="submitter_email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com" required></label>
-          <label>Phone (optional)<input name="submitter_phone" type="tel" autocomplete="tel" maxlength="40" placeholder="Optional contact number"></label>
-        </div><label class="wg-ac-trap" aria-hidden="true">Website<input name="website" type="text" autocomplete="off" tabindex="-1"></label>`:''}
-        <label>Concern Type<select name="concern_type" required><option value="">Choose one</option><option>Accounts</option><option>Profile</option><option>Posting/Contents</option><option>Suggestions</option></select></label>
-        <label>Concern Details<textarea name="details" id="wgAcSupportDetails" maxlength="1000" minlength="10" rows="7" required placeholder="Describe what happened or what you'd like us to improve."></textarea><small><span id="wgAcSupportCount">0</span> / 1,000 characters</small></label>
-        <p class="wg-ac-muted">${isGuest
-          ? 'Your email is used only to respond about this concern. Phone is optional. We store the request privately; email forwarding is not yet enabled.'
-          : 'Your request is stored privately. Email notifications are not active yet.'}</p>
-        <button class="wg-ac-save" type="submit">Submit concern</button>
-      </form>`;
+  let supportClock=0,supportEpoch=0;
+  const clockStop=()=>{if(supportClock){clearInterval(supportClock);supportClock=0}};
+  function localCooldown(){try{return Number(localStorage.getItem(cooldownKey())||0)||0}catch{return 0}}
+  function rememberCooldown(until){if(!user){try{localStorage.setItem(cooldownKey(),String(until))}catch{}}}
+  function humanClock(ms){const sec=Math.max(0,Math.ceil(ms/1000));const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}
+  async function authoritativeCooldown(){
+    if(!user)return localCooldown();
+    const client=api();if(!client)return localCooldown();
+    const [tickets,reset]=await Promise.all([
+      client.from('wg_support_tickets').select('created_at').eq('user_id',user.id).eq('source','member').order('created_at',{ascending:false}).limit(1),
+      client.from('wg_support_cooldown_resets').select('reset_at').eq('user_id',user.id).maybeSingle()
+    ]);
+    if(tickets.error)throw tickets.error;
+    const recent=tickets.data?.[0]?.created_at;
+    if(!recent)return 0;
+    const at=Date.parse(recent);
+    const resetAt=reset.error?null:reset.data?.reset_at;
+    if(resetAt&&at<=Date.parse(resetAt))return 0;
+    return at+cooldownMs;
+  }
+  function supportArt(){return `<div class="wg-mail-art" aria-hidden="true"><span class="wg-mail-shadow"></span><span class="wg-mail-envelope"><span class="wg-mail-flap"></span><span class="wg-mail-letter"><i></i><i></i><i></i></span><span class="wg-mail-face"></span></span></div>`;}
+  function showCooldown(until,animate=false){
+    clockStop();supportEpoch++;
+    const thanksWords='Thankyou for contacting us'.split(' ');
+    let idx=0;
+    const thanksLetters=thanksWords.map(word=>`<span class="wg-mail-word">${[...word].map(letter=>{const j=idx++;const dx=((j*47)%170)-85,dy=((j*71)%110)-55;return `<span class="wg-mail-char" style="--j:${j};--dx:${dx}px;--dy:${dy}px">${letter}</span>`}).join('')}</span>`).join(' ');
+    const shell=`<div class="wg-mail-sequence ${animate?'wg-mail-playing':'wg-mail-finished'}" role="status" aria-live="polite">
+      <div class="wg-mail-stage" aria-hidden="true"><div class="wg-mail-paper"><span></span><span></span><span></span></div><div class="wg-mail-send-envelope"><div class="wg-mail-send-flap"></div></div><div class="wg-mail-box"><div class="wg-mail-box-slot"></div><div class="wg-mail-box-front"></div></div><div class="wg-mail-particles">${Array.from({length:18},(_,i)=>`<i style="--i:${i}"></i>`).join('')}</div></div>
+      <div class="wg-mail-result"><h2 tabindex="-1" aria-label="Thankyou for contacting us">${thanksLetters}</h2><p>Your message has been saved in our private support queue.</p><p class="wg-mail-cooldown-label">You can contact us again in</p><strong class="wg-mail-clock" role="timer" aria-label="Remaining cooldown">${humanClock(until-Date.now())}</strong><small>Hours : Minutes : Seconds</small><p class="wg-mail-delivery">Email notification delivery is separate from ticket saving.</p></div>
+    </div>`;
+    content.innerHTML=shell;
+    const stage=content.querySelector('.wg-mail-sequence');
+    const titleEl=content.querySelector('.wg-mail-result h2');
+    if(animate&&!window.matchMedia('(prefers-reduced-motion:reduce)').matches&&!document.documentElement.classList.contains('wg-reduce-motion')){
+      setTimeout(()=>{if(stage.isConnected)stage.classList.add('wg-mail-done')},2600);
+    }else stage.classList.add('wg-mail-done');
+    function update(){if(!stage.isConnected){clockStop();return}const remain=until-Date.now();stage.querySelector('.wg-mail-clock').textContent=humanClock(remain);if(remain<=0){clockStop();if(activePage==='support')renderSupport();}}
+    update();supportClock=setInterval(update,1000);
+    if(!animate)titleEl.focus({preventScroll:true});
+    else setTimeout(()=>{if(titleEl.isConnected)titleEl.focus({preventScroll:true})},2600);
+  }
+  function supportForm(isGuest){
+    content.innerHTML=title('Support & feedback',isGuest?'Contact Worlds Gallery without signing in.':'Tell us what needs attention. This goes into a private support queue.')+`
+      <section class="wg-mail-compose" aria-label="Support letter">
+        <div class="wg-mail-heading">${supportArt()}<div><span class="wg-ac-overline">A LETTER TO WORLDS GALLERY</span><h3>Write to us</h3><p>Send a question, suggestion, or concern.</p></div></div>
+        <form class="wg-ac-form" id="wgAcSupportForm">
+          ${isGuest?`<div class="wg-ac-two"><label>Email address (required)<input name="submitter_email" type="email" autocomplete="email" maxlength="254" required></label><label>Phone (optional)<input name="submitter_phone" type="tel" maxlength="40"></label></div><label class="wg-ac-trap" aria-hidden="true">Website<input name="website" type="text" autocomplete="off" tabindex="-1"></label>`:''}
+          <label>Concern Type<select name="concern_type" required><option value="">Choose one</option><option>Accounts</option><option>Profile</option><option>Posting/Contents</option><option>Suggestions</option></select></label>
+          <label>Concern Details<textarea name="details" id="wgAcSupportDetails" maxlength="1000" minlength="10" rows="7" required placeholder="Write your letter here..."></textarea><small><span id="wgAcSupportCount">0</span> / 1,000 characters</small></label>
+          <p class="wg-ac-muted">Submissions are stored privately. Email alerts depend on sender configuration.</p><button class="wg-ac-save" type="submit">Send letter</button>
+        </form></section>`;
     const form=byId('wgAcSupportForm'),details=byId('wgAcSupportDetails');
     enhanceSelects(form);
     details.addEventListener('input',()=>byId('wgAcSupportCount').textContent=String(details.value.length));
     form.addEventListener('submit',async event=>{
-      event.preventDefault();
-      if(loading)return;
-      const data=new FormData(form);
-      const type=String(data.get('concern_type')||'').trim();
-      const body=String(data.get('details')||'').trim();
-      if(!['Accounts','Profile','Posting/Contents','Suggestions'].includes(type)||body.length<10||body.length>1000){
-        flash('Choose a concern type and enter 10–1,000 characters.',false);return;
-      }
-      const email=String(data.get('submitter_email')||'').trim();
-      const phone=String(data.get('submitter_phone')||'').trim();
-      if(isGuest && (!form.reportValidity()||email.length>254||phone.length>40))return;
-      loading=true;
-      const submit=form.querySelector('[type=submit]');submit.disabled=true;
-      try {
+      event.preventDefault();if(loading)return;
+      const data=new FormData(form),type=String(data.get('concern_type')||'').trim(),body=String(data.get('details')||'').trim();
+      if(!['Accounts','Profile','Posting/Contents','Suggestions'].includes(type)||body.length<10||body.length>1000){flash('Choose a concern type and enter 10–1,000 characters.',false);return;}
+      const email=String(data.get('submitter_email')||'').trim(),phone=String(data.get('submitter_phone')||'').trim();
+      if(isGuest&&(!form.reportValidity()||email.length>254||phone.length>40))return;
+      loading=true;const submit=form.querySelector('[type=submit]');submit.disabled=true;
+      try{
+        let saved=false,realTime=Date.now();
         if(isGuest){
-          // Edge Function has its own origin, field, honeypot and rate-limit checks.
-          const result=await api().functions.invoke('wg-guest-support',{
-            body:{email,phone,concern_type:type,details:body,website:String(data.get('website')||'')}
-          });
-          if(result.error || !result.data?.ok){
-            flash(result.data?.error||'Guest support is unavailable or rate-limited. Please try again later.',false);
-            return;
-          }
-        } else {
-          const result=await api().from('wg_support_tickets').insert({
-            user_id:user.id,source:'member',concern_type:type,details:body,
-            submitter_email:user.email||null
-          }).select('id').single();
+          const result=await api().functions.invoke('wg-guest-support',{body:{email,phone,concern_type:type,details:body,website:String(data.get('website')||'')}});
+          if(result.error||!result.data?.ok){flash(result.data?.error||'Guest support unavailable or rate-limited. Please try again later.',false);return;}
+          saved=true;
+        }else{
+          const result=await api().from('wg_support_tickets').insert({user_id:user.id,source:'member',concern_type:type,details:body,submitter_email:user.email||null}).select('id,created_at').single();
           if(result.error){flash('Support request could not be submitted: '+result.error.message,false);return;}
+          saved=true;realTime=Date.parse(result.data.created_at)||Date.now();
+          Promise.resolve().then(()=>api().functions.invoke('wg-notify-support',{body:{ticket_id:result.data.id}})).then(notice=>{if(notice.error||!notice.data?.email_sent)console.info('Ticket saved, email notification pending.');}).catch(()=>console.info('Ticket saved, email notification pending.'));
         }
-        rememberCooldown();
-        content.innerHTML='<div class="wg-ac-thanks" role="status" aria-live="polite"><h2 tabindex="-1">Thank you for your feedback.</h2></div>';
-        content.querySelector('h2')?.focus({preventScroll:true});
-      } catch(error) {
-        flash('Could not submit the concern. Please check your connection and try again.',false);
-      } finally {
-        loading=false;submit.disabled=false;
-      }
+        if(saved){const until=realTime+cooldownMs;rememberCooldown(until);showCooldown(until,true);}
+      }catch(error){flash('Could not submit the concern. Please check your connection and try again.',false);}
+      finally{loading=false;submit.disabled=false;}
     });
+  }
+  async function renderSupport(){
+    clockStop();const epoch=++supportEpoch,isGuest=!user;
+    drawer.classList.toggle('wg-ac-outside',isGuest);
+    content.innerHTML=title('Support & feedback','')+'<p class="wg-ac-muted" role="status">Checking support availability…</p>';
+    try{
+      const until=await authoritativeCooldown();
+      if(epoch!==supportEpoch||activePage!=='support')return;
+      if(until>Date.now())showCooldown(until,false);else supportForm(isGuest);
+    }catch(err){if(epoch!==supportEpoch||activePage!=='support')return;content.innerHTML=title('Support & feedback','')+'<p role="alert">Unable to check your support cooldown. Please check your connection and reopen Support.</p>';}
   }
   document.addEventListener('wg:authenticated',e=>{
     user=e.detail?.user||null;profile=e.detail?.profile||null;
@@ -426,6 +450,7 @@
     }
   }).catch(()=>{});}
 
+  window.WorldsGalleryAccount={getPage:()=>activePage,restorePage:page=>renderPage(page)};
   // An actual cinematic handoff, reusing the live WebGL Earth and 3D aircraft.
   // Capture the gallery CTA before the existing portal's direct click handler.
   document.addEventListener('click',e=>{

@@ -1,0 +1,70 @@
+/* Worlds Gallery V2.7: restore without intermediate Earth frame. */
+html.wg-refresh-restore #worldPortal,html.wg-refresh-restore #wgAuthGate{visibility:hidden!important}
+/* Locale control joins the footer in authenticated mode. Never overlays the footer action. */
+html.wg-auth-ok .footrow .wg-locale-control{position:static!important;inset:auto!important;z-index:auto!important;margin:0!important;box-shadow:none!important;flex:0 1 auto}
+html:not(.wg-auth-ok) .wg-locale-control,html.wg-auth-ok body.portal-locked>.wg-locale-control{position:fixed!important;top:12px!important;bottom:auto!important;right:12px!important;max-width:calc(100vw - 24px)}
+.footrow{display:flex!important;flex-wrap:wrap!important;gap:15px!important;align-items:center!important;justify-content:space-between!important;padding-top:18px;padding-bottom:18px}
+.footrow .footbrand{margin-right:auto}
+.footrow .wg-locale-control{order:2}
+.footrow a[href="#home"]{order:3;flex-shrink:0}
+@media(max-width:700px){.footrow .wg-locale-control{order:4;flex-basis:100%;justify-content:center}.footrow .footbrand{font-size:18px}.footrow a[href="#home"]{order:2}}
+@media(max-width:420px){.wg-locale-control select{max-width:115px!important}.footrow{gap:12px!important}.footrow .wg-locale-control{width:100%;justify-content:center}}
+/* A hand-written letter, enveloped before entering a mailbox. */
+#wgAccountDrawer .wg-mail-compose{max-width:690px;margin:25px auto 0;padding:22px;border:1px solid #d9e5db;border-radius:19px;background:linear-gradient(135deg,#fffefb,#edf6ef)}
+#wgAccountDrawer.wg-ac-outside .wg-mail-compose{background:rgba(255,255,255,.06);border-color:#49677d}
+#wgAccountDrawer .wg-mail-heading{display:flex;align-items:center;gap:22px;padding:12px 0 22px;border-bottom:1px solid rgba(79,130,107,.21)}
+#wgAccountDrawer .wg-mail-heading h3{margin:4px 0;font:500 clamp(25px,4vw,35px) Georgia,serif;color:inherit}
+#wgAccountDrawer .wg-mail-heading p{margin:0}
+.wg-mail-art{position:relative;width:140px;height:105px;flex:none;perspective:300px}
+.wg-mail-envelope{position:absolute;left:10px;top:27px;width:125px;height:70px;background:#d8e5db;border-radius:5px;box-shadow:0 11px 25px #123a2b25;overflow:hidden}
+.wg-mail-face{position:absolute;inset:0;background:linear-gradient(153deg,transparent 49%,#f3f6ed 50%) left/50% 100% no-repeat,linear-gradient(-153deg,transparent 49%,#e8f0e5 50%) right/50% 100% no-repeat;border:1px solid #c7d9c9}
+.wg-mail-flap{position:absolute;top:0;left:0;width:100%;height:67%;background:#aecbba;clip-path:polygon(0 0,100% 0,50% 100%);z-index:2}
+.wg-mail-letter{position:absolute;top:8px;left:27px;width:73px;height:53px;background:#fff;border-radius:3px;transform:translateY(-9px);box-shadow:0 2px 6px #3332}
+.wg-mail-letter i{display:block;height:2px;background:#c7d8c9;margin:8px 10px}
+.wg-mail-shadow{position:absolute;bottom:2px;left:20px;width:110px;height:9px;background:#184d3b22;filter:blur(5px);border-radius:100%}
+.wg-mail-sequence{position:relative;max-width:660px;margin:12px auto;text-align:center;padding:24px 16px 30px;min-height:360px}
+.wg-mail-stage{position:relative;width:min(100%,460px);height:190px;margin:0 auto 8px;perspective:550px;overflow:visible}
+.wg-mail-paper{position:absolute;left:calc(50% - 52px);top:5px;width:104px;height:114px;background:repeating-linear-gradient(to bottom,#fffdf6 0px,#fffdf6 17px,#e2e8de 18px,#fffdf6 19px);border:1px solid #ccd6c9;box-shadow:0 6px 16px #20423220;border-radius:4px;z-index:5}
+.wg-mail-paper span{display:block;height:4px;width:65%;margin:20px auto 0;background:#b4c8b5}
+.wg-mail-send-envelope{position:absolute;left:calc(50% - 74px);top:75px;width:148px;height:94px;border-radius:5px;background:linear-gradient(145deg,#d3e3d8,#a4c9b5);border:1px solid #89ad96;box-shadow:0 12px 24px #112d2724;z-index:6}
+.wg-mail-send-envelope::after{content:"";position:absolute;inset:2px;background:linear-gradient(35deg,transparent 50%,#ecf4eb 51%) left/50% 100% no-repeat,linear-gradient(-35deg,transparent 50%,#d9e9d9 51%) right/50% 100% no-repeat}
+.wg-mail-send-flap{position:absolute;inset:0;background:#9dbfa8;clip-path:polygon(0 0,100% 0,50% 57%);transform-origin:top;z-index:3}
+.wg-mail-box{position:absolute;left:calc(50% - 56px);top:50px;width:112px;height:124px;opacity:0;transform:translateY(26px) scale(.8);z-index:7}
+.wg-mail-box-front{position:absolute;inset:15px 0 0;border-radius:56px 56px 13px 13px;background:#225f4b;box-shadow:0 6px 16px #173b3933}
+.wg-mail-box-front::after{content:"MAIL";position:absolute;top:48px;left:25%;width:50%;padding:4px;border:1px solid #e2eecb;color:#e2eecb;font:700 11px system-ui;letter-spacing:.2em}
+.wg-mail-box-slot{position:absolute;top:38px;left:21px;width:71px;height:11px;border:3px solid #d0e4d2;background:#09251e;border-radius:4px;z-index:2}
+.wg-mail-particles i{position:absolute;left:50%;top:105px;width:7px;height:7px;border-radius:2px;background:#2e8066;opacity:0;--angle:calc(var(--i)*20deg)}
+.wg-mail-result{opacity:0;transform:translateY(12px)}
+.wg-mail-result h2{font:500 clamp(26px,4vw,39px) Georgia,serif!important;letter-spacing:-.02em!important;color:#1b5643!important;margin:8px 0 12px!important}
+.wg-mail-cooldown-label{font-weight:600!important;margin-top:14px!important}
+.wg-mail-clock{font:700 clamp(32px,8vw,52px)/1.4 ui-monospace,Consolas,monospace;letter-spacing:.035em;color:#194f3d;display:block;font-variant-numeric:tabular-nums}
+.wg-mail-result small{font-size:11px;color:#6a8478;display:block}
+#wgAccountDrawer .wg-mail-delivery{font-size:11px;opacity:.85;margin-top:16px}
+.wg-mail-finished .wg-mail-stage{height:70px;opacity:.55;transform:scale(.55)}
+.wg-mail-finished .wg-mail-result,.wg-mail-done .wg-mail-result{opacity:1;transform:none;transition:opacity .7s,transform .7s}
+.wg-mail-playing .wg-mail-paper{animation:wgPaperIn 1.15s .2s ease-in-out forwards}
+.wg-mail-playing .wg-mail-send-flap{animation:wgFlap 1.1s 1.35s ease-in-out forwards}
+.wg-mail-playing .wg-mail-send-envelope{animation:wgMailRise 1.2s 2.15s ease-in forwards}
+.wg-mail-playing .wg-mail-box{animation:wgBoxAppear 1s 2.8s ease-out forwards,wgBoxScatter 1s 4.1s ease-in forwards}
+.wg-mail-playing .wg-mail-particles i{animation:wgParticle 1.2s 4.35s ease-out forwards}
+.wg-mail-playing .wg-mail-result{transition:opacity 1s 5s,transform 1s 5s}
+@keyframes wgPaperIn{0%{transform:translateY(0) scale(1);opacity:1}75%{transform:translateY(75px) scale(.72);opacity:1}100%{transform:translateY(75px) scale(.6);opacity:0}}
+@keyframes wgFlap{0%{transform:rotateX(0)}100%{transform:rotateX(180deg)}}
+@keyframes wgMailRise{0%{transform:translateY(0) rotate(0);opacity:1}50%{transform:translateY(-80px) rotate(-5deg);opacity:1}100%{transform:translateY(-35px) scale(.35);opacity:0}}
+@keyframes wgBoxAppear{0%{opacity:0;transform:translateY(26px) scale(.7)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes wgBoxScatter{0%{opacity:1;filter:blur(0)}100%{opacity:0;filter:blur(14px);transform:scale(1.4)}}
+@keyframes wgParticle{0%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(calc(110px * cos(var(--angle))),calc(90px * sin(var(--angle))))}}
+#wgAccountDrawer.wg-ac-outside .wg-mail-result h2,#wgAccountDrawer.wg-ac-outside .wg-mail-clock{color:#e6f6ea!important}
+@media(max-width:600px){#wgAccountDrawer .wg-mail-compose{padding:12px}.wg-mail-art{width:95px;transform:scale(.73);transform-origin:left center;margin-right:-23px}.wg-mail-heading{gap:7px!important}.wg-mail-sequence{padding:14px 8px;min-height:320px}}
+@media(prefers-reduced-motion:reduce){.wg-mail-playing *{animation:none!important}.wg-mail-playing .wg-mail-result{opacity:1!important;transform:none!important;transition:none!important}}
+html.wg-reduce-motion .wg-mail-playing *{animation:none!important}
+html.wg-reduce-motion .wg-mail-playing .wg-mail-result{opacity:1!important;transform:none!important}
+
+/* Final mailbox fragments resolve into the thank-you lettering. */
+.wg-mail-word{display:inline-block;white-space:nowrap}
+.wg-mail-char{display:inline-block;transform:translate(0,0);opacity:1}
+.wg-mail-playing .wg-mail-result{animation:wgMailResultReveal .45s 4.85s ease-out forwards}
+.wg-mail-playing .wg-mail-char{animation:wgMailTextForm 1.05s ease-out both;animation-delay:calc(4.65s + var(--j)*.023s)}
+@keyframes wgMailResultReveal{to{opacity:1;transform:translateY(0)}}
+@keyframes wgMailTextForm{from{opacity:0;filter:blur(4px);transform:translate(var(--dx),var(--dy)) scale(.35)}to{opacity:1;filter:blur(0);transform:translate(0,0) scale(1)}}
+@media(prefers-reduced-motion:reduce){.wg-mail-playing .wg-mail-result{animation:none;opacity:1;transform:none}.wg-mail-playing .wg-mail-char{animation:none;opacity:1;transform:none}}

@@ -1,0 +1,175 @@
+/* Worlds Gallery V2.14. One-window physical insertion and illustrated postal cyclist.
+   All rules are scoped to the original account drawer, never a new modal. */
+#wgAccountDrawer .wg-v214-inline{
+ width:100%;max-width:730px;margin:0 auto;padding:8px 7px 20px;text-align:center;position:relative;isolation:isolate;
+}
+#wgAccountDrawer .wg-v214-inline .wg-mail-stage{
+ display:block!important;position:relative;width:min(100%,475px);height:224px;margin:0 auto;
+ overflow:visible!important;transform:none!important;opacity:1!important;perspective:800px!important;
+ background:transparent!important;animation:none!important;transition:none!important;
+}
+#wgAccountDrawer .wg-v214-scene {position:relative;width:100%;height:224px;overflow:hidden;isolation:isolate;perspective:800px}
+#wgAccountDrawer .wg-v214-halo{position:absolute;left:13%;right:9%;top:25px;height:152px;border-radius:50%;background:radial-gradient(ellipse,#d6eddaa8,transparent 71%);z-index:0}
+#wgAccountDrawer .wg-v214-envelope{
+ position:absolute;left:4.5%;top:111px;width:126px;height:80px;
+ transform-origin:center center;transform:rotateZ(-9deg);
+ backface-visibility:visible;z-index:6;filter:drop-shadow(0 8px 8px #264e3c2b);
+ clip-path:none;will-change:transform,clip-path;
+}
+#wgAccountDrawer .wg-v214-env-back{position:absolute;inset:0;border-radius:7px;background:#f0d8b4;border:2px solid #d2b58b}
+#wgAccountDrawer .wg-v214-paper{position:absolute;top:-14px;left:15px;right:15px;height:47px;padding:8px 9px;background:#fffdfa;border:1px solid #d7dccf;border-radius:3px;box-sizing:border-box;z-index:2}
+#wgAccountDrawer .wg-v214-paper i{display:block;width:83%;height:3px;margin:5px 0;background:#a9bfb6;border-radius:3px}
+#wgAccountDrawer .wg-v214-paper i:last-child{width:58%}
+#wgAccountDrawer .wg-v214-env-left,#wgAccountDrawer .wg-v214-env-right{position:absolute;inset:0;border-radius:6px;z-index:3}
+#wgAccountDrawer .wg-v214-env-left{background:#f8e6c9;clip-path:polygon(0 0,52% 53%,0 100%)}
+#wgAccountDrawer .wg-v214-env-right{background:#eacc9e;clip-path:polygon(100% 0,47% 53%,100% 100%)}
+#wgAccountDrawer .wg-v214-env-front{position:absolute;inset:0;background:linear-gradient(150deg,#fff1d7,#f1d8aa);clip-path:polygon(0 100%,50% 35%,100% 100%);z-index:4;border-radius:7px}
+#wgAccountDrawer .wg-v214-env-flap{position:absolute;inset:0 0 auto;height:57px;background:linear-gradient(150deg,#e4c99b,#f1d6b1);clip-path:polygon(0 0,100% 0,50% 98%);z-index:5;transform-origin:top center;backface-visibility:visible}
+#wgAccountDrawer .wg-v214-env-seal{position:absolute;left:50%;top:33px;transform:translateX(-50%);width:22px;height:22px;border:2px solid #f4e7cb;border-radius:50%;display:grid;place-items:center;background:#4c8064;color:white;font:700 8px/1 system-ui,sans-serif;z-index:7}
+#wgAccountDrawer .wg-v214-mailbox{position:absolute;right:4%;top:12px;width:162px;height:198px;z-index:3;pointer-events:none}
+#wgAccountDrawer .wg-v214-post{position:absolute;bottom:-4px;left:68px;width:27px;height:61px;background:linear-gradient(90deg,#a59468,#d8c795 52%,#8c7652);border-radius:5px}
+#wgAccountDrawer .wg-v214-case{position:absolute;inset:0 3px 25px;border-radius:71px 71px 16px 16px;background:linear-gradient(145deg,#3c816a,#265d46 55%,#1c4737);border:2px solid #24543f;box-shadow:inset 4px 5px 11px #ffffff1d,0 14px 18px #183f3424}
+#wgAccountDrawer .wg-v214-shine{position:absolute;top:8px;left:21px;right:21px;height:27px;border-radius:45px 45px 3px 3px;background:linear-gradient(#ffffff27,transparent)}
+#wgAccountDrawer .wg-v214-brand{position:absolute;left:0;right:0;top:25px;color:#d3e7d8;font:800 7px/1.2 system-ui,sans-serif;letter-spacing:.12em}
+#wgAccountDrawer .wg-v214-slot{position:absolute;left:14px;right:14px;top:64px;height:14px;border-radius:6px;border:3px solid #a9ceb1;background:#0f2a22;box-sizing:border-box;z-index:4;box-shadow:inset 0 3px 4px #071813,0 2px 0 #153727}
+#wgAccountDrawer .wg-v214-slot-inner{position:absolute;inset:1px 3px;border-radius:2px;background:#051a15}
+#wgAccountDrawer .wg-v214-slot-lip{position:absolute;z-index:10;pointer-events:none;border:3px solid #a9caae;box-sizing:border-box;border-top-color:#c5dac3;border-radius:6px;background:linear-gradient(to bottom,#183b2ba8 0 23%,transparent 23% 78%,#163c2c 78% 100%);box-shadow:inset 0 0 0 1px #14473555,0 1px 3px #0b30282e}
+#wgAccountDrawer .wg-v214-mail-label{position:absolute;left:36px;right:36px;top:98px;padding:6px 2px;border:1px solid #d4e8d186;border-radius:5px;font:750 12px/1 system-ui,sans-serif;letter-spacing:.14em;color:#e8f3e1}
+#wgAccountDrawer .wg-v214-inline.wg-v214-dissolve .wg-v214-mailbox,
+#wgAccountDrawer .wg-v214-inline.wg-v214-dissolve .wg-v214-slot-lip,
+#wgAccountDrawer .wg-v214-inline.wg-v214-dissolve .wg-v214-halo{opacity:0;filter:blur(4px);transform:scale(.975);transition:opacity .13s ease,filter .13s ease,transform .13s ease}
+/* No invisible result height during insertion; the original drawer stays compact. */
+#wgAccountDrawer .wg-v214-inline:not(.wg-v214-complete) .wg-mail-result{display:none!important}
+/* Show the original live server cooldown within the SAME drawer. */
+#wgAccountDrawer .wg-v214-inline .wg-mail-result{display:block!important;visibility:hidden;opacity:0!important;pointer-events:none!important;transform:none!important;transition:none!important;animation:none!important;min-height:0}
+#wgAccountDrawer .wg-v214-inline.wg-v214-complete .wg-mail-stage{display:none!important}
+#wgAccountDrawer .wg-v214-inline.wg-v214-complete .wg-mail-result{display:block!important;visibility:visible;opacity:1!important;pointer-events:auto!important;animation:wgV214Show .24s ease both!important}
+@keyframes wgV214Show{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+#wgAccountDrawer .wg-v214-heading{margin:0 auto 6px}
+#wgAccountDrawer .wg-v214-letter-check{width:60px;height:60px;margin:0 auto 2px}
+#wgAccountDrawer .wg-v214-letter-check svg{display:block;width:100%;height:100%}
+#wgAccountDrawer .wg-v214-title{font:650 clamp(26px,4.7vw,44px)/1.15 Georgia,'Times New Roman',serif!important;color:#174b37;margin:2px auto 8px!important;letter-spacing:-.012em}
+#wgAccountDrawer .wg-v214-eyebrow{color:#4e8062;font:750 10px/1.4 system-ui,sans-serif;letter-spacing:.2em;margin-bottom:6px}
+#wgAccountDrawer .wg-v214-subtitle{font:400 clamp(13px,2vw,16px)/1.55 system-ui,sans-serif;color:#658176;margin:0 auto 13px!important;max-width:560px}
+/* Illustrative travelling scenery; anchored rider, independent rotating wheels. */
+#wgAccountDrawer .wg-v214-ride-wrap{margin:0 auto 12px;width:min(100%,590px)}
+#wgAccountDrawer .wg-v214-ride{width:100%;height:198px;position:relative;overflow:hidden;isolation:isolate;border-radius:20px;border:1px solid #d1e2d4;background:linear-gradient(180deg,#e8f5f6 0%,#dbedec 52%,#d7eacb 52%,#afd4a4 75%,#a1cca1 75%);box-shadow:inset 0 -6px 14px #3b74531c}
+#wgAccountDrawer .wg-v214-clouds{position:absolute;left:-160px;right:-160px;top:14px;height:54px;background:radial-gradient(ellipse at 13% 35%,#ffffffc6 0 23px,transparent 25px),radial-gradient(ellipse at 36% 60%,#ffffffa8 0 27px,transparent 29px),radial-gradient(ellipse at 70% 48%,#ffffffc6 0 29px,transparent 31px);animation:wgV214Cloud 13s linear infinite}
+#wgAccountDrawer .wg-v214-hills{position:absolute;left:-230px;right:-230px;bottom:42px;height:74px}
+#wgAccountDrawer .wg-v214-hills-back{opacity:.7;background:radial-gradient(ellipse 90px 42px at 12% 82%,#89b8a1 98%,transparent 102%),radial-gradient(ellipse 110px 43px at 38% 81%,#80b39a 98%,transparent 102%),radial-gradient(ellipse 120px 45px at 70% 87%,#8bbda3 98%,transparent 102%);animation:wgV214Far 10s linear infinite}
+#wgAccountDrawer .wg-v214-hills-front{height:54px;bottom:36px;opacity:.75;background:radial-gradient(ellipse 100px 44px at 12% 89%,#8abfa0 98%,transparent 101%),radial-gradient(ellipse 115px 47px at 38% 93%,#77b68c 98%,transparent 101%),radial-gradient(ellipse 124px 47px at 73% 94%,#84bd95 98%,transparent 101%);animation:wgV214Near 4s linear infinite}
+#wgAccountDrawer .wg-v214-grass{position:absolute;bottom:39px;left:0;right:0;height:15px;background:#7ab487}
+#wgAccountDrawer .wg-v214-road{position:absolute;left:-160px;right:-160px;bottom:0;height:43px;background:linear-gradient(180deg,#697977,#556562);border-top:3px solid #eef5cb}
+#wgAccountDrawer .wg-v214-lanes{position:absolute;left:0;right:0;top:22px;height:4px;background:repeating-linear-gradient(90deg,#fbeab8 0 36px,transparent 36px 100px);animation:wgV214Road .65s linear infinite}
+#wgAccountDrawer .wg-v214-speed-lines{position:absolute;left:6%;right:4%;top:40px;bottom:20px;pointer-events:none}
+#wgAccountDrawer .wg-v214-speed-lines i{position:absolute;right:-80px;display:block;width:45px;height:2px;border-radius:6px;background:linear-gradient(90deg,transparent,#ffffffca,transparent);animation:wgV214Wind 2s linear infinite}
+#wgAccountDrawer .wg-v214-speed-lines i:nth-child(1){top:18%;animation-delay:-.2s;width:70px}
+#wgAccountDrawer .wg-v214-speed-lines i:nth-child(2){top:44%;animation-delay:-1.4s;width:55px}
+#wgAccountDrawer .wg-v214-speed-lines i:nth-child(3){top:65%;animation-delay:-.8s;width:95px}
+#wgAccountDrawer .wg-v214-speed-lines i:nth-child(4){top:84%;animation-delay:-1.1s;width:36px}
+#wgAccountDrawer .wg-v214-rider-anchor{position:absolute;left:50%;width:365px;max-width:94%;bottom:22px;transform:translateX(-50%);height:173px;display:flex;align-items:flex-end;justify-content:center;animation:wgV214RiderBob 1.2s ease-in-out infinite}
+#wgAccountDrawer .wg-v214-cyclist{width:100%;height:186px;overflow:visible;filter:drop-shadow(0 5px 4px #183d3820)}
+#wgAccountDrawer .wg-v214-wheel{transform-box:view-box;animation:wgV214Wheel .72s linear infinite}
+#wgAccountDrawer .wg-v214-flying-letters{position:absolute;left:0;top:20px;bottom:44px;right:0;pointer-events:none}
+#wgAccountDrawer .wg-v214-flying-letters span{position:absolute;display:block;left:-45px;color:#fafaf2;text-shadow:0 1px 2px #7c9485;font-size:19px;animation:wgV214Letter 5.7s linear infinite;opacity:0}
+#wgAccountDrawer .wg-v214-flying-letters span:nth-child(1){top:24%;animation-delay:-1.2s;font-size:16px}
+#wgAccountDrawer .wg-v214-flying-letters span:nth-child(2){top:50%;animation-delay:-4s;font-size:21px}
+#wgAccountDrawer .wg-v214-flying-letters span:nth-child(3){top:77%;animation-delay:-2.9s;font-size:14px}
+@keyframes wgV214Cloud{to{transform:translateX(-160px)}}
+@keyframes wgV214Far{to{transform:translateX(-170px)}}
+@keyframes wgV214Near{to{transform:translateX(-190px)}}
+@keyframes wgV214Road{to{transform:translateX(-100px)}}
+@keyframes wgV214Wind{0%{transform:translateX(0);opacity:0}15%{opacity:.6}85%{opacity:.6}100%{transform:translateX(-620px);opacity:0}}
+@keyframes wgV214Letter{0%{transform:translate(0,0) rotate(-10deg);opacity:0}14%{opacity:.6}80%{opacity:.65}100%{transform:translate(640px,-13px) rotate(26deg);opacity:0}}
+@keyframes wgV214Wheel{to{transform:rotate(360deg)}}
+@keyframes wgV214RiderBob{50%{transform:translateX(-50%) translateY(-1.6px)}}
+#wgAccountDrawer .wg-v214-timer-block{margin:9px auto;width:min(100%,460px);padding:13px 18px 15px;background:linear-gradient(160deg,#f7fbf4,#e9f5e9);border:1px solid #c8decd;border-radius:23px;box-shadow:0 8px 22px #28614312}
+#wgAccountDrawer .wg-v214-timer-label{font:650 14px/1.4 system-ui,sans-serif;color:#507763;margin:0 0 5px!important}
+#wgAccountDrawer .wg-v214-timer{display:block!important;font:750 clamp(31px,6.6vw,49px)/1.1 ui-monospace,Consolas,monospace!important;color:#15523c!important;letter-spacing:.06em;font-variant-numeric:tabular-nums;margin:5px auto!important}
+#wgAccountDrawer .wg-v214-timer-caption{font:500 11px/1.5 system-ui,sans-serif;color:#779389;letter-spacing:.03em}
+#wgAccountDrawer .wg-v214-note{font:400 12px/1.5 system-ui,sans-serif!important;color:#799186!important;margin:11px auto 0!important;max-width:510px}
+#wgAccountDrawer .wg-v211-preview-button,#wgAccountDrawer [data-wg-v211-preview],#wgAccountDrawer .wg-v211-back{display:none!important}
+@media(max-width:540px){
+ #wgAccountDrawer .wg-v214-inline{padding:4px 3px 12px}
+ #wgAccountDrawer .wg-v214-inline .wg-mail-stage,#wgAccountDrawer .wg-v214-scene{height:192px}
+ #wgAccountDrawer .wg-v214-envelope{left:3%;top:104px;width:111px;height:70px}
+ #wgAccountDrawer .wg-v214-mailbox{right:0;top:5px;transform:scale(.85);transform-origin:top right}
+ #wgAccountDrawer .wg-v214-ride{height:158px;border-radius:15px}
+ #wgAccountDrawer .wg-v214-rider-anchor{width:303px;height:151px;bottom:14px}
+ #wgAccountDrawer .wg-v214-cyclist{height:166px}
+ #wgAccountDrawer .wg-v214-timer-block{padding:13px 8px;border-radius:18px}
+ #wgAccountDrawer .wg-v214-timer{font-size:clamp(29px,8vw,42px)!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #wgAccountDrawer .wg-v214-inline .wg-mail-stage{display:none!important}
+ #wgAccountDrawer .wg-v214-inline .wg-mail-result{visibility:visible!important;opacity:1!important;animation:none!important}
+ #wgAccountDrawer .wg-v214-ride *{animation:none!important}
+}
+html.wg-reduce-motion #wgAccountDrawer .wg-v214-inline .wg-mail-stage{display:none!important}
+html.wg-reduce-motion #wgAccountDrawer .wg-v214-inline .wg-mail-result{visibility:visible!important;opacity:1!important;animation:none!important}
+html.wg-reduce-motion #wgAccountDrawer .wg-v214-ride *{animation:none!important}
+
+/* Worlds Gallery V2.15 — Support Window Centering */
+
+#wgAccountDrawer .wg-v214-inline {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: max(260px, calc(100dvh - 172px)) !important;
+  margin-inline: auto !important;
+  padding: 16px 0 20px !important;
+  text-align: center !important;
+}
+
+#wgAccountDrawer .wg-v214-inline .wg-mail-stage,
+#wgAccountDrawer .wg-v214-inline .wg-mail-result {
+  flex: 0 0 auto !important;
+  align-self: center !important;
+  margin-inline: auto !important;
+  max-width: 100% !important;
+  text-align: center !important;
+}
+
+#wgAccountDrawer .wg-v214-inline .wg-mail-result {
+  width: 100% !important;
+}
+
+#wgAccountDrawer .wg-v214-inline .wg-v214-scene,
+#wgAccountDrawer .wg-v214-inline .wg-v214-ride-wrap,
+#wgAccountDrawer .wg-v214-inline .wg-v214-heading,
+#wgAccountDrawer .wg-v214-inline .wg-v214-timer-block {
+  margin-inline: auto !important;
+}
+
+#wgAccountDrawer:has(.wg-v214-inline) {
+  overscroll-behavior-y: contain;
+  scroll-padding-block: 18px;
+}
+
+#wgAccountDrawer #wgAcContent:has(.wg-v214-inline) {
+  padding-bottom: 78px !important;
+}
+
+#wgAccountDrawer .wg-v214-cyclist {
+  height: 158px !important;
+}
+
+@media (max-width: 540px) {
+  #wgAccountDrawer .wg-v214-inline {
+    min-height: max(240px, calc(100dvh - 155px)) !important;
+    padding: 12px 0 18px !important;
+  }
+
+  #wgAccountDrawer .wg-v214-cyclist {
+    height: 142px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #wgAccountDrawer .wg-v214-inline {
+    scroll-behavior: auto !important;
+  }
+}

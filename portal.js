@@ -187,7 +187,7 @@
  globeCanvas.addEventListener('pointerleave',()=>{$p('portalHover').hidden=true});
  globeCanvas.addEventListener('wheel',e=>{if(phase!=='globe')return;e.preventDefault();target.scale=Math.max(.77,Math.min(1.48,target.scale+(e.deltaY<0?.11:-.11)));starKick=3;}, {passive:false});
  function showTip(message,x=window.innerWidth/2,y=window.innerHeight*.78){const tip=$p('portalHover');tip.hidden=false;tip.textContent=message;tip.style.left=Math.min(window.innerWidth-280,Math.max(8,x))+'px';tip.style.top=Math.min(window.innerHeight-48,Math.max(12,y))+'px';setTimeout(()=>{tip.hidden=true},1600)}
- function selectCountry(code){if(!code||!byName.has(code))return;selectedCode=code;group='';region='';province='';city='';otherRegion='';stage='country';phase='zoom';gate.dataset.phase='zoom';$p('portalHover').hidden=true;$p('portalSearchPane').hidden=true;searchOpen=false;
+ function selectCountry(code){if(!code||!byName.has(code))return;document.dispatchEvent(new CustomEvent('wg:country-selected',{detail:{code,source:'portal'}}));selectedCode=code;group='';region='';province='';city='';otherRegion='';stage='country';phase='zoom';gate.dataset.phase='zoom';$p('portalHover').hidden=true;$p('portalSearchPane').hidden=true;searchOpen=false;
   const place=metaFor(code);target.lon=place.lon??byIso.get(code)?.lon??0;target.lat=Math.max(-52,Math.min(52,place.lat??byIso.get(code)?.lat??0));target.scale=1.67;velocityLon=velocityLat=0;lastClockAt=0;
   if(delayedPanel)clearTimeout(delayedPanel);delayedPanel=setTimeout(()=>{phase='drill';gate.dataset.phase='drill';renderDrill()},940);
  }
@@ -330,5 +330,31 @@
   velocityLon=velocityLat=0;lastFacing='';lastClockAt=0;
   $p('portalFacing').textContent=`FACING ${byName.get(code).toUpperCase()}`;
  }
- window.WorldsGalleryPortal={getState:()=>({phase,stage,selectedCode,group,region,province,city,otherRegion,longitude:pos.lon,latitude:pos.lat,scale:pos.scale,clock:$p('clockTime').textContent,mood:gate.dataset.sky}),searchCountry:code=>selectCountry(code),faceHomeCountry,reset:resetToEarth};
+ function restoreView(saved, area){
+  if(!saved || !['portal','gallery'].includes(area))return false;
+  const code=String(saved.selectedCode||'');if(code&&!byName.has(code))return false;
+  const limit=(v,lo,hi,def)=>Number.isFinite(Number(v))?Math.max(lo,Math.min(hi,Number(v))):def;
+  if(delayedPanel){clearTimeout(delayedPanel);delayedPanel=null}
+  velocityLon=velocityLat=0;dragging=false;
+  pos.lon=target.lon=limit(saved.longitude,-180,180,120.8);
+  pos.lat=target.lat=limit(saved.latitude,-68,68,15.6);
+  pos.scale=target.scale=limit(saved.scale,.7,2.2,1);
+  selectedCode=code;group=String(saved.group||'');region=String(saved.region||'');province=String(saved.province||'');city=String(saved.city||'');otherRegion=String(saved.otherRegion||'');
+  stage=['country','group','region','province','city','other-region'].includes(saved.stage)?saved.stage:'country';
+  $p('portalSearchPane').hidden=true;searchOpen=false;$p('portalHover').hidden=true;
+  if(area==='gallery'){
+   phase='drill';gate.hidden=true;gate.classList.remove('portal-exit');gate.classList.add('portal-entered');
+   document.body.classList.remove('portal-locked');
+   if(code){try{setCountry(code,'portal');renderRegionLabel()}catch(e){console.warn('Restore gallery country:',e)}
+    $p('arrivalRibbon').hidden=false;$p('arrivalCountry').textContent=byName.get(code);
+    $p('arrivalLocality').textContent=[group,region,province,city,otherRegion].filter(Boolean).join(' · ')||'All stories and regions';}
+  }else{
+   phase=code&&saved.phase!=='globe'?'drill':'globe';gate.hidden=false;gate.classList.remove('portal-exit','portal-entered');
+   document.body.classList.add('portal-locked');gate.dataset.phase=phase;
+   if(phase==='drill')renderDrill();else{$p('portalDrill').hidden=true;$p('portalDrill').innerHTML=''}
+  }
+  if(code)document.dispatchEvent(new CustomEvent('wg:country-selected',{detail:{code,source:'restored'}}));
+  lastClockAt=0;lastFacing='';return true;
+ }
+ window.WorldsGalleryPortal={getState:()=>({phase,stage,selectedCode,group,region,province,city,otherRegion,longitude:pos.lon,latitude:pos.lat,scale:pos.scale,clock:$p('clockTime').textContent,mood:gate.dataset.sky}),searchCountry:code=>selectCountry(code),faceHomeCountry,reset:resetToEarth,restoreView};
 })();

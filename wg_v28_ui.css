@@ -1,0 +1,94 @@
+/* V2.8 additive polish: floating selector, custom story sort, profile and letter. */
+html body > .wg-locale-control,
+html.wg-auth-ok body:not(.portal-locked) > .wg-locale-control {
+  position:fixed!important;z-index:5000!important;top:auto!important;
+  margin:0!important;display:flex!important;align-items:center!important;
+  max-width:min(310px,calc(100vw - 24px))!important;
+  padding:7px 9px!important;border-radius:999px!important;
+  border:1px solid #bad6c6!important;background:#fffefa!important;
+  box-shadow:0 8px 24px rgba(8,48,38,.15)!important;
+}
+.wg-locale-control select{min-width:90px;max-width:120px!important}
+.footrow .wg-locale-control{order:initial!important}
+.footrow a[href="#home"] .wg-v26-icon{display:none!important}
+.footrow a[href="#home"]{display:inline-flex!important;align-items:center!important;gap:5px!important}
+@media(max-width:500px){html body > .wg-locale-control{padding:6px 8px!important;gap:5px!important}.wg-locale-control select{min-width:75px;max-width:105px!important}}
+
+/* Keep the underlying native select as the state source, but present an accessible, grouped menu. */
+.filter-top .wg-mine-toggle{display:none!important}
+.filter-field.sort{position:relative;min-width:0}
+#sortFilter.wg-v28-native-sort{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;clip-path:inset(50%)}
+.wg-v28-sort{position:relative;width:100%}
+.wg-v28-sort-trigger{width:100%;min-height:50px;padding:11px 14px;border:1px solid #cfdfd4;border-radius:13px;background:#fff;color:#1b4339;display:flex;align-items:center;justify-content:space-between;text-align:left;font:500 15px system-ui;cursor:pointer}
+.wg-v28-sort-trigger:focus-visible{outline:3px solid #8ab9a6;outline-offset:2px}
+.wg-v28-sort-popup{position:absolute;top:calc(100% + 7px);right:0;width:max(100%,220px);max-width:calc(100vw - 25px);padding:8px;z-index:1200;border:1px solid #d0ded3;border-radius:15px;background:#fff;box-shadow:0 15px 36px #122e272b}
+.wg-v28-sort-popup[hidden]{display:none}
+.wg-v28-sort-option{display:block;width:100%;text-align:left;border:0;background:transparent;border-radius:9px;color:#234438;padding:10px 12px;cursor:pointer;font:500 14px system-ui}
+.wg-v28-sort-option:hover,.wg-v28-sort-option[aria-pressed="true"]{background:#e5f0e9}
+.wg-v28-sort-popup .wg-v28-mine{display:flex!important;width:100%;min-height:45px;margin-top:5px;padding:9px 12px!important;border:1px solid #c6decf!important;border-radius:10px!important;background:#f3f9f5!important;color:#184c3a!important;justify-content:flex-start!important;font:600 14px system-ui;white-space:normal}
+.wg-v28-sort-popup .wg-v28-mine input{flex:none;width:17px;height:17px}
+
+/* Responsive account layout with clearer hierarchy. */
+#wgAccountDrawer .wg-ac-content,#wgAccountDrawer .wg-ac-inner{max-width:100%;min-width:0}
+#wgAccountDrawer .wg-v28-profile-heading{padding:16px 0 8px;border-top:1px solid #d9e5dc;display:flex;flex-direction:column;gap:5px}
+#wgAccountDrawer .wg-v28-profile-heading strong{font-size:17px;color:inherit}
+#wgAccountDrawer .wg-v28-profile-heading small{opacity:.7;line-height:1.5}
+#wgAccountDrawer .wg-ac-form{max-width:780px;margin-left:auto;margin-right:auto}
+#wgAccountDrawer .wg-ac-form>label,#wgAccountDrawer .wg-ac-form>.wg-ac-two{min-width:0}
+#wgAccountDrawer .wg-ac-form input,#wgAccountDrawer .wg-ac-form textarea{max-width:100%;box-sizing:border-box}
+#wgAccountDrawer .wg-v28-settings>.wg-ac-section-label{font-size:12px;letter-spacing:.13em;margin:22px 0 5px;padding:13px 0 7px;border-bottom:1px solid #d9e6dc}
+#wgAccountDrawer .wg-v28-settings>.wg-ac-switch{border-radius:13px;padding:13px 14px!important;margin:3px 0;background:rgba(132,175,145,.09)}
+#wgAccountDrawer .wg-v28-settings>.wg-ac-switch:focus-within{outline:2px solid #86b69f}
+
+/* Avatar studio: two independently hosted generators + user's own upload. */
+#wgAccountDrawer .wg-v28-avatar-card{background:linear-gradient(145deg,#eff7f0,#fffef8);border:1px solid #cedfd2;border-radius:20px;padding:clamp(14px,3vw,24px);margin-bottom:18px;color:#183e34}
+.wg-v28-avatar-head{display:flex;gap:16px;align-items:center}
+.wg-v28-avatar-head strong{display:block;font-size:20px}
+.wg-v28-avatar-head p{font-size:13px;line-height:1.5;margin:4px 0;opacity:.75}
+.wg-v28-avatar-picture{width:94px;height:94px;flex:none;overflow:hidden;border-radius:50%;border:4px solid white;background:#d7e7db;box-shadow:0 7px 22px #16482a25}
+.wg-v28-avatar-picture img{width:100%;height:100%;object-fit:cover;transition:transform .22s}
+.wg-v28-avatar-picture:hover img{transform:scale(1.08) rotate(2deg)}
+.wg-v28-avatar-choices,.wg-v28-avatar-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+.wg-v28-avatar-choices button,.wg-v28-avatar-actions button,.wg-v28-upload{background:#fff;border:1px solid #b9d3c2;color:#20483c;border-radius:10px;padding:10px 12px;font:600 13px system-ui;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.wg-v28-avatar-choices button:hover,.wg-v28-avatar-actions button:hover,.wg-v28-upload:hover{background:#e2f0e6}
+.wg-v28-upload input{display:none}
+.wg-v28-avatar-save{display:flex;gap:11px;align-items:center;flex-wrap:wrap;margin-top:17px}
+.wg-v28-avatar-save button{border:0;border-radius:10px;background:#1e5844;color:white;padding:12px 17px;font:700 13px system-ui;cursor:pointer}
+.wg-v28-avatar-save button:disabled{opacity:.5}
+.wg-v28-avatar-save small{font-size:12px;line-height:1.4;color:#406454}
+
+/* Letter composition: the actual form IS the writing paper, outside the envelope. */
+#wgAccountDrawer .wg-v28-letter{max-width:760px;margin:20px auto;padding:clamp(12px,3vw,25px);border-radius:22px;background:linear-gradient(140deg,#f4f0e7,#e2ede5);overflow:visible}
+#wgAccountDrawer .wg-v28-letter .wg-mail-heading{border:0;display:flex;justify-content:space-between;align-items:center;gap:15px}
+#wgAccountDrawer .wg-v28-letter .wg-mail-art{order:2;flex:none;transform:scale(1.02)}
+#wgAccountDrawer .wg-v28-letter .wg-v28-mail-instruction{font-size:12px;opacity:.7;margin:0 0 13px}
+#wgAccountDrawer .wg-v28-letter-paper{position:relative;padding:clamp(17px,3vw,28px)!important;border-radius:4px!important;border:1px solid #c8c1ae;background:repeating-linear-gradient(to bottom,#fffdf5 0px,#fffdf5 31px,#e3e9e1 32px,#fffdf5 33px)!important;box-shadow:0 12px 25px #1b322525;transform:rotate(-.35deg);max-width:570px!important;margin:0 auto!important}
+#wgAccountDrawer .wg-v28-letter-paper::before{content:"";position:absolute;left:28px;top:0;bottom:0;border-left:1px solid #dda3a3;opacity:.55;pointer-events:none}
+#wgAccountDrawer .wg-v28-letter-paper>label,#wgAccountDrawer .wg-v28-letter-paper>.wg-ac-two{position:relative;z-index:1}
+#wgAccountDrawer .wg-v28-letter-paper .wg-ac-save{margin-top:10px}
+@media(max-width:620px){#wgAccountDrawer .wg-v28-letter .wg-mail-art{transform:scale(.76);transform-origin:right center;margin-left:-26px}#wgAccountDrawer .wg-v28-avatar-head{align-items:flex-start}.wg-v28-avatar-picture{width:74px;height:74px}.wg-v28-avatar-choices button{flex:1 1 40%}#wgAccountDrawer .wg-ac-two{grid-template-columns:minmax(0,1fr)!important}}
+/* Mail flight refinement: letter folds, envelope rises, reaches the dark slot, disappears inside. */
+.wg-mail-playing .wg-mail-paper{transform-origin:center center;animation:wgV28FoldPaper 1.25s .15s ease-in-out forwards!important}
+.wg-mail-playing .wg-mail-send-envelope{z-index:8;animation:wgV28EnvelopeFlight 1.85s 1.9s cubic-bezier(.36,.02,.23,1) forwards!important}
+.wg-mail-playing .wg-mail-box{animation:wgV28MailBox 1s 2.4s ease-out forwards,wgBoxScatter 1s 4.2s ease-in forwards!important}
+.wg-mail-playing .wg-mail-box-front{z-index:9}
+.wg-mail-playing .wg-mail-box-slot{z-index:10}
+@keyframes wgV28FoldPaper{
+  0%{transform:translateY(0) scale(1,1);opacity:1}
+  28%{transform:translateY(3px) scale(1,.72);opacity:1}
+  55%{transform:translateY(36px) scale(.87,.44);opacity:1}
+  90%{transform:translateY(78px) scale(.68,.35);opacity:1}
+  100%{transform:translateY(79px) scale(.6,.24);opacity:0}
+}
+@keyframes wgV28EnvelopeFlight{
+  0%{transform:translateY(0) rotate(0deg) scale(1);opacity:1}
+  40%{transform:translateY(-96px) rotate(-11deg) scale(.83);opacity:1}
+  74%{transform:translateY(-11px) rotate(2deg) scale(.36);opacity:1}
+  90%{transform:translateY(4px) rotate(0deg) scale(.22);opacity:1}
+  100%{transform:translateY(17px) rotate(0deg) scale(.15);opacity:0}
+}
+@keyframes wgV28MailBox{
+  0%{opacity:0;transform:translateY(28px) scale(.65)}
+  100%{opacity:1;transform:translateY(0) scale(1)}
+}
+@media(prefers-reduced-motion:reduce){.wg-mail-playing .wg-mail-paper,.wg-mail-playing .wg-mail-send-envelope,.wg-mail-playing .wg-mail-box{animation:none!important}}

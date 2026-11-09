@@ -25,7 +25,89 @@ let globe=null,speechRunning=false,speechToken=0,speechParts=[],speechIndex=0;
 // The current IndexedDB gallery is a local preview, not a publishable database.
 // Exclude ownerless legacy uploads and other users' browser entries.
 const currentOwner=()=>window.WorldsGalleryAuth?.getCurrentUserId?.()||null;
-const stories=()=>[...demoStories.filter(s=>currentOwner() && s.owner_id===currentOwner()),...seeds];
+const stories=()=>[...cloudStories,...demoStories.filter(s=>currentOwner() && s.owner_id===currentOwner()),...seeds];
+let cloudStories=[],cloudUser=null,cloudRevision=0;
+const cloudClient=()=>window.WorldsGalleryAuth?.getClient?.();
+const CLOUD_BUCKET='wg-private-photos';
+const cloudReady=()=>Boolean(currentOwner() && cloudClient());
+function cloudError(error){return error?.message || 'Cloud request failed';}
+async function fetchCloudStories(){
+ const uid=currentOwner(),revision=++cloudRevision;
+ if(!uid){cloudUser=null;cloudStories=[];renderGallery();return;}
+ const client=cloudClient();if(!client)return;
+ const [storyResult,photoResult]=await Promise.all([
+  client.from('wg_stories').select('*').eq('user_id',uid).order('created_at',{ascending:false}),
+  client.from('wg_story_photos').select('story_id,storage_path,position').eq('user_id',uid).order('position')
+ ]);
+ if(revision!==cloudRevision||uid!==currentOwner())return;
+ if(storyResult.error||photoResult.error){notify('Cloud drafts unavailable: '+cloudError(storyResult.error||photoResult.error));return;}
+ const photosByStory=new Map();
+ for(const row of photoResult.data||[]){const a=photosByStory.get(row.story_id)||[];a.push(row);photosByStory.set(row.story_id,a);}
+ const next=[];
+ for(const row of storyResult.data||[]){
+  if(revision!==cloudRevision||uid!==currentOwner())return;
+  const photoRows=(photosByStory.get(row.id)||[]).sort((a,b)=>a.position-b.position);
+  const paths=photoRows.map(x=>x.storage_path);
+  const images=[];
+  for(const path of paths){
+   const result=await client.storage.from(CLOUD_BUCKET).createSignedUrl(path,3600);
+   if(result.error){images.push('');}else images.push(result.data.signedUrl);
+  }
+  next.push({id:row.id,owner_id:row.user_id,author:row.author,country:row.country_name,region:row.region,city:row.city,theme:row.theme,title:row.title,story:row.body,layout:row.layout,language_code:row.language_code,images:images.filter(Boolean),paths,created:Date.parse(row.created_at),sample:false,cloud:true,status:row.status});
+ }
+ if(revision!==cloudRevision||uid!==currentOwner())return;
+ cloudUser=uid;cloudStories=next;renderGallery();
+}
+async function saveCloudDraft(){
+ if(!cloudReady())throw new Error('Sign in before creating a cloud draft.');
+ const uid=currentOwner(),client=cloudClient();
+ const payload={user_id:uid,author:$('author').value.trim(),country_code:$('uploadCountry').value,country_name:countryName($('uploadCountry').value),region:$('uploadRegion').value.trim(),city:$('uploadCity').value.trim(),theme:$('uploadTheme').value,title:$('uploadTitle').value.trim(),body:$('uploadBody').value.trim(),layout:chosenLayout,language_code:$('storyLanguage').value,status:'draft'};
+ const inserted=await client.from('wg_stories').insert(payload).select('id').single();
+ if(inserted.error)throw inserted.error;
+ const storyId=inserted.data.id,uploaded=[];
+ try{
+  for(let i=0;i<uploadImages.length;i++){
+   if(currentOwner()!==uid)throw new Error('Session changed during upload.');
+   const dataUrl=uploadImages[i];const mime=dataUrl.startsWith('data:image/webp')?'image/webp':'image/jpeg';
+   const response=await fetch(dataUrl);const blob=await response.blob();
+   if(blob.size>10*1024*1024)throw new Error('A compressed photo exceeds 10 MB.');
+   const path=uid+'/'+storyId+'/'+i+'-'+crypto.randomUUID()+'.'+(mime==='image/webp'?'webp':'jpg');
+   const object=await client.storage.from(CLOUD_BUCKET).upload(path,blob,{contentType:mime,upsert:false,cacheControl:'3600'});
+   if(object.error)throw object.error;
+   uploaded.push(path);
+   const meta=await client.from('wg_story_photos').insert({story_id:storyId,user_id:uid,storage_path:path,position:i,mime_type:mime});
+   if(meta.error)throw meta.error;
+  }
+  return storyId;
+ }catch(error){
+  if(uploaded.length)await client.storage.from(CLOUD_BUCKET).remove(uploaded);
+  await client.from('wg_stories').delete().eq('id',storyId).eq('user_id',uid);
+  throw error;
+ }
+}
+async function removeCloudStory(s){
+ const uid=currentOwner();if(!uid||s.owner_id!==uid)return;
+ if(!confirm('Delete this private cloud draft and its photos permanently?'))return;
+ const client=cloudClient();const deleted=await client.from('wg_stories').delete().eq('id',s.id).eq('user_id',uid).select('id');
+ if(deleted.error){notify('Delete failed: '+cloudError(deleted.error));return;}
+ const paths=s.paths||[];let removeIssue=false;
+ if(paths.length){const result=await client.storage.from(CLOUD_BUCKET).remove(paths);removeIssue=!!result.error;}
+ stopSpeech();$('readDialog').close();await fetchCloudStories();
+ notify(removeIssue?'Draft deleted, but photo cleanup requires review.':'Cloud draft deleted');
+}
+function openCloudEditor(s){
+ if(!s.cloud||s.owner_id!==currentOwner()||s.status!=='draft')return;
+ const dialog=$('cloudEditDialog'),form=$('cloudEditForm');
+ form.elements.namedItem('story_id').value=s.id;
+ form.elements.namedItem('title').value=s.title;
+ form.elements.namedItem('author').value=s.author;
+ form.elements.namedItem('body').value=s.story;
+ form.elements.namedItem('region').value=s.region||'';
+ form.elements.namedItem('city').value=s.city||'';
+ form.elements.namedItem('language_code').value=s.language_code||'en';
+ $('cloudEditStatus').textContent='';$('readDialog').close();dialog.showModal();
+}
+
 function notify(message){const t=$('toast');t.textContent=message;t.classList.add('show');clearTimeout(notify.t);notify.t=setTimeout(()=>t.classList.remove('show'),3300)}
 function openDb(){return new Promise((resolve,reject)=>{if(!('indexedDB' in window))return reject(new Error('Browser storage not available'));const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(DB_STORE))r.result.createObjectStore(DB_STORE,{keyPath:'id'})};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error||new Error('Could not open browser storage'))})}
 function dbAll(){return new Promise((resolve,reject)=>{const r=db.transaction(DB_STORE,'readonly').objectStore(DB_STORE).getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error)})}
@@ -72,7 +154,7 @@ function renderStats(){const all=stories();$('statStories').textContent=all.leng
 function renderGallery(){const items=getFiltered();$('resultsCount').textContent=`Showing ${items.length} of ${stories().length} stories`;
  $('gallery').innerHTML=items.length?items.map(s=>{
   const t=themeFor(s.theme),liked=hearts.includes(s.id);
-  return `<article class="story-card" data-id="${html(s.id)}"><button class="card-image-button" type="button" data-open-story="${html(s.id)}" aria-label="Read ${html(s.title)}">${collageMarkup(s.images,s.layout||(s.images.length===1?'single':(s.images.length===2?'duo-vertical':(s.images.length===3?'trio-hero':'quad-grid'))))}${s.images.length>1?`<span class="image-count">▧ ${s.images.length} photos</span>`:''}</button><div class="card-text"><div class="card-meta"><span>${html(s.country)}</span><span class="sample-label">${s.sample?'Demo story':'Your local story'}</span></div><div class="category">${t.icon} ${html(t.name)}</div><h3 class="card-title">${html(s.title)}</h3><p class="card-excerpt" data-open-story="${html(s.id)}" role="button" tabindex="0">${html(s.story.slice(0,300))}</p><div class="card-footer"><span class="byline"><span class="avatar">${html(s.author.slice(0,1).toUpperCase())}</span><span>${html(s.author)}</span></span><button type="button" class="heart ${liked?'active':''}" data-heart="${html(s.id)}" aria-label="Heart ${html(s.title)}" aria-pressed="${liked}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.9a5.5 5.5 0 0 0-7.8 0L12 6l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.3a5.5 5.5 0 0 0 0-7.8Z"/></svg><span>${heartCount(s)}</span></button></div></div></article>`
+  return `<article class="story-card" data-id="${html(s.id)}"><button class="card-image-button" type="button" data-open-story="${html(s.id)}" aria-label="Read ${html(s.title)}">${collageMarkup(s.images,s.layout||(s.images.length===1?'single':(s.images.length===2?'duo-vertical':(s.images.length===3?'trio-hero':'quad-grid'))))}${s.images.length>1?`<span class="image-count">▧ ${s.images.length} photos</span>`:''}</button><div class="card-text"><div class="card-meta"><span>${html(s.country)}</span><span class="sample-label">${s.sample?'Demo story':s.cloud?'Private draft':'Local demo'}</span></div><div class="category">${t.icon} ${html(t.name)}</div><h3 class="card-title">${html(s.title)}</h3><p class="card-excerpt" data-open-story="${html(s.id)}" role="button" tabindex="0">${html(s.story.slice(0,300))}</p><div class="card-footer"><span class="byline"><span class="avatar">${html(s.author.slice(0,1).toUpperCase())}</span><span>${html(s.author)}</span></span><button type="button" class="heart ${liked?'active':''}" data-heart="${html(s.id)}" aria-label="Heart ${html(s.title)}" aria-pressed="${liked}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.9a5.5 5.5 0 0 0-7.8 0L12 6l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.3a5.5 5.5 0 0 0 0-7.8Z"/></svg><span>${heartCount(s)}</span></button></div></div></article>`
  }).join(''):`<div class="empty-state"><div style="font-size:39px">✧</div><h3>No stories in this corner yet.</h3><p>Try a different place, theme or search. Your chosen country can be the first to share.</p><button class="button button-light" type="button" data-reset>Clear all filters</button></div>`;
  renderStats();renderChips();
 }
@@ -111,7 +193,7 @@ function renderRegionChoices(){const code=state.selectedCountry;const options=re
 }
 function resetFilters(){state.themes.clear();state.selectedCountry='';state.selectedContinent='';state.selectedRegion=null;state.sort='new';state.search='';state.mineOnly=false;$('mineOnly').checked=false;$('search').value='';$('sortFilter').value='new';$('continentFilter').value='';renderCountryOptions(false);renderGallery();if(globe)globe.reset();renderGlobeLabel()}
 function selectRegion(code){const reg=regionOptions(state.selectedCountry).find(x=>x.code===code);if(!reg)return;state.selectedRegion={code:reg.code,name:reg.name,parent:reg.parent};$('regionDialog').close();renderGallery();notify('Region filter applied');if(globe)globe.zoomBy(.08)}
-function prepareUpload(){uploadImages=[];chosenLayout='single';$('uploadForm').reset();$('imageTools').hidden=true;$('formMessage').textContent='';renderTemplateChoices();renderCollagePreview();renderUploadRegionSuggestions();updateCharacterProgress();$('uploadDialog').showModal()}
+function prepareUpload(){uploadImages=[];chosenLayout='single';$('uploadForm').reset();$('storyLanguage').value=window.WorldsGalleryLocale?.get?.()||'en';$('imageTools').hidden=true;$('formMessage').textContent='';renderTemplateChoices();renderCollagePreview();renderUploadRegionSuggestions();updateCharacterProgress();$('uploadDialog').showModal()}
 function renderUploadRegionSuggestions(){$('uploadRegions').innerHTML=regionOptions($('uploadCountry').value).map(x=>`<option value="${html(x.name)}"></option>`).join('')}
 function compressImage(file){return new Promise((resolve,reject)=>{
   if(!['image/jpeg','image/png','image/webp'].includes(file.type))return reject(new Error('Only JPG, PNG or WebP photos are supported.'));
@@ -144,24 +226,29 @@ function validateUpload(){const author=$('author').value.trim(),country=$('uploa
  return '';
 }
 async function submitUpload(e){e.preventDefault();const invalid=validateUpload();const msg=$('formMessage');if(invalid){msg.classList.remove('ok');msg.textContent=invalid;return}
- const submit=$('submitStory');submit.disabled=true;submit.textContent='Saving your demo story…';msg.textContent='';
+ const submit=$('submitStory');submit.disabled=true;submit.textContent='Saving private cloud draft…';msg.textContent='';
  const ownerId=currentOwner();if(!ownerId){msg.textContent='Please sign in again before saving a story.';submit.disabled=false;return;}
- const s={owner_id:ownerId,id:'local-'+(crypto.randomUUID?crypto.randomUUID():String(Date.now())),author:$('author').value.trim(),country:countryName($('uploadCountry').value),region:$('uploadRegion').value.trim(),city:$('uploadCity').value.trim(),theme:$('uploadTheme').value,title:$('uploadTitle').value.trim(),story:$('uploadBody').value.trim(),images:[...uploadImages],layout:chosenLayout,hearts:0,created:Date.now(),sample:false};
- try{const persisted=await dbPut(s);demoStories.unshift(s);$('uploadDialog').close();resetFilters();notify(persisted?'Saved to your private browser demo gallery ✦':'Added for this browser session only (storage unavailable)');$('stories').scrollIntoView({behavior:'smooth',block:'start'})}
- catch(err){msg.classList.remove('ok');msg.textContent='Could not save this story in browser storage. Try smaller photos or allow site storage. '+(err?.message||'')}
- finally{submit.disabled=false;submit.innerHTML='Add to my demo gallery <span>↗</span>'}
+ try{await saveCloudDraft();$('uploadDialog').close();resetFilters();await fetchCloudStories();notify('Private cloud draft saved. Only you can see it.');$('stories').scrollIntoView({behavior:'smooth',block:'start'})}
+ catch(err){msg.classList.remove('ok');msg.textContent='Could not save cloud draft: '+cloudError(err)}
+ finally{submit.disabled=false;submit.textContent='Save private draft'}
 }
 function stopSpeech(){speechToken++;speechRunning=false;speechParts=[];speechIndex=0;if('speechSynthesis' in window){window.speechSynthesis.cancel()}updateSpeechUi()}
 function updateSpeechUi(){const btn=$('ttsButton'),status=$('ttsStatus');if(!btn)return;btn.classList.toggle('active',speechRunning);btn.setAttribute('aria-pressed',String(speechRunning));btn.innerHTML=speechRunning?'■ <span>Stop</span>':'♫ <span>Listen</span>';if(status)status.textContent=speechRunning?'Reading aloud…':'Starts from the title every time.'}
-function chooseVoice(){if(!('speechSynthesis' in window))return null;const voices=window.speechSynthesis.getVoices(),choice=$('voiceSelect')?.value;if(choice){const picked=voices.find(v=>v.voiceURI===choice);if(picked)return picked}
- const fem=/\b(zira|samantha|aria|jenny|sonia|susan|victoria|karen|ava|tessa|moira|female|helen|sara|emma|allison|serena|natasha|hazel|fiona|jessa)\b/i;
- const english=voices.filter(v=>v.lang.toLowerCase().startsWith('en'));
- const score=v=>(/natural|neural|online/i.test(v.name)?100:0)+(fem.test(v.name)?30:0)+(/microsoft/i.test(v.name)?10:0)+(v.localService?5:0);
- return english.sort((x,y)=>score(y)-score(x))[0]||voices[0]||null
+function chooseVoice(locale){
+ if(!('speechSynthesis' in window))return null;
+ const preferred=($('voiceSelect')?.value==='male'?'male':'female');
+ const genderName=preferred==='female'?/zira|samantha|aria|jenny|sonia|susan|victoria|karen|ava|tessa|moira|female|helen|sara|emma|allison|serena|natasha|hazel|fiona|jessa/i:/david|mark|guy|ryan|daniel|george|male|alex|fred|thomas|james|andrew/i;
+ const voices=window.speechSynthesis.getVoices();
+ const base=(locale||'en').split('-')[0].toLowerCase();
+ const eligible=voices.filter(v=>v.lang.toLowerCase().split('-')[0]===base);
+ if(!eligible.length)return null;
+ const score=v=>(genderName.test(v.name)?100:0)+(/natural|neural|online/i.test(v.name)?25:0)+(v.localService?5:0);
+ return eligible.sort((a,b)=>score(b)-score(a))[0];
 }
 function loadVoices(){const control=$('voiceSelect');if(!control||!('speechSynthesis' in window))return;
- const all=window.speechSynthesis.getVoices();if(!all.length){control.innerHTML='<option value="">Default browser voice</option>';return}
- const preferred=chooseVoice();control.innerHTML='<option value="">Automatic voice</option>'+all.map(v=>`<option value="${html(v.voiceURI)}">${html(v.name)} · ${html(v.lang)}</option>`).join('');if(preferred)control.value=preferred.voiceURI;
+ const all=window.speechSynthesis.getVoices();if(!all.length){control.innerHTML='<option value="female">Soft female</option><option value="male">Soft male</option>';control.value=localStorage.getItem('wg_voice_style')==='male'?'male':'female';return}
+ control.innerHTML='<option value="female">Soft female</option><option value="male">Soft male</option>';
+ control.value=localStorage.getItem('wg_voice_style')==='male'?'male':'female';
 }
 function splitSpeech(text){const sentences=text.match(/[^.!?\n]+[.!?]?\s*|\n+/g)||[text];let result=[],buff='';
  for(const phrase of sentences){if((buff+phrase).length>190&&buff){result.push(buff.trim());buff=''}if(phrase.length>190){const words=phrase.split(/\s+/);for(const word of words){if((buff+' '+word).length>190&&buff){result.push(buff.trim());buff=''}buff+=(buff?' ':'')+word}}else buff+=phrase}
@@ -169,12 +256,12 @@ function splitSpeech(text){const sentences=text.match(/[^.!?\n]+[.!?]?\s*|\n+/g)
 }
 function playSpeech(){if(!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window)){notify('Text-to-speech is unavailable in this browser.');return}const s=stories().find(x=>x.id===currentStoryId);if(!s)return;
  if(speechRunning){stopSpeech();return}stopSpeech();speechRunning=true;const myToken=speechToken;
- speechParts=splitSpeech(`${s.title}. Shared by ${s.author}. ${s.story}`);speechIndex=0;updateSpeechUi();const voice=chooseVoice();
- function next(){if(!speechRunning||myToken!==speechToken)return;if(speechIndex>=speechParts.length){speechRunning=false;updateSpeechUi();return}const utterance=new SpeechSynthesisUtterance(speechParts[speechIndex++]);if(voice){utterance.voice=voice;utterance.lang=voice.lang}else utterance.lang='en-US';utterance.rate=Number($('narrationSpeed')?.value||0.9);utterance.pitch=1.01;utterance.onend=next;utterance.onerror=err=>{if(myToken!==speechToken||!speechRunning)return;speechRunning=false;updateSpeechUi();if(err.error!=='canceled'&&err.error!=='interrupted')notify('Voice playback stopped. Try a different installed voice.')};window.speechSynthesis.speak(utterance)}
+ speechParts=splitSpeech(`${s.title}. ${s.story}`);speechIndex=0;updateSpeechUi();const locale=s.language_code||window.WorldsGalleryLocale?.get?.()||'en';const voice=chooseVoice(locale);if(!voice){speechRunning=false;updateSpeechUi();notify('No '+locale+' voice installed. Please add a matching voice in your device settings.');return;}
+ function next(){if(!speechRunning||myToken!==speechToken)return;if(speechIndex>=speechParts.length){speechRunning=false;updateSpeechUi();return}const utterance=new SpeechSynthesisUtterance(speechParts[speechIndex++]);if(voice)utterance.voice=voice;utterance.lang=voice?.lang||locale;utterance.rate=Number($('narrationSpeed')?.value||0.9);utterance.pitch=1.01;utterance.onend=next;utterance.onerror=err=>{if(myToken!==speechToken||!speechRunning)return;speechRunning=false;updateSpeechUi();if(err.error!=='canceled'&&err.error!=='interrupted')notify('Voice playback stopped. Try a different installed voice.')};window.speechSynthesis.speak(utterance)}
  next()
 }
 function readerContent(s){const t=themeFor(s.theme);
- return `<div class="read-gallery">${collageMarkup(s.images,s.layout||(s.images.length===1?'single':(s.images.length===2?'duo-vertical':(s.images.length===3?'trio-hero':'quad-grid'))),{lightbox:true})}</div><p class="tap-photo">⌕ Tap a collage photo to see its full frame (${s.images.length} ${s.images.length===1?'photo':'photos'})</p><div class="read-theme">${t.icon} ${html(t.name)} · ${html([s.country,s.region,s.city].filter(Boolean).join(' · '))}</div><div class="read-heading"><h2>${html(s.title)}</h2><div class="tts-block"><button type="button" id="ttsButton" class="tts-toggle" aria-pressed="false" title="Read title, author and story aloud">♫ <span>Listen</span></button></div></div><p class="read-byline">Shared by <b>${html(s.author)}</b> · ${s.sample?'Fictional demonstration':'Saved only in your browser'}</p><div class="tts-settings"><span>♪ Built-in narration · voice quality depends on your device</span><label for="voiceSelect">Voice:</label><select id="voiceSelect" aria-label="Narration voice"><option value="">Automatic voice</option></select><label for="narrationSpeed">Pace:</label><select id="narrationSpeed" aria-label="Narration pace"><option value="0.82">Relaxed</option><option value="0.9" selected>Gentle</option><option value="1.0">Normal</option></select><span class="tts-status" id="ttsStatus">Starts from the title every time.</span></div><div class="reading-body" dir="auto">${html(s.story)}</div><div class="reader-bottom"><button class="heart ${hearts.includes(s.id)?'active':''}" type="button" data-heart="${html(s.id)}" aria-pressed="${hearts.includes(s.id)}" aria-label="Heart story"><svg viewBox="0 0 24 24"><path d="M20.8 4.9a5.5 5.5 0 0 0-7.8 0L12 6l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.3a5.5 5.5 0 0 0 0-7.8Z"/></svg><span>${heartCount(s)} hearts</span></button>${s.sample?'<span class="micro-hint">Original fictional sample</span>':`<button type="button" class="link-button" id="removeLocalStory">Delete local demo story</button>`}</div>`
+ return `<div class="read-gallery">${collageMarkup(s.images,s.layout||(s.images.length===1?'single':(s.images.length===2?'duo-vertical':(s.images.length===3?'trio-hero':'quad-grid'))),{lightbox:true})}</div><p class="tap-photo">⌕ Tap a collage photo to see its full frame (${s.images.length} ${s.images.length===1?'photo':'photos'})</p><div class="read-theme">${t.icon} ${html(t.name)} · ${html([s.country,s.region,s.city].filter(Boolean).join(' · '))}</div><div class="read-heading"><h2>${html(s.title)}</h2><div class="tts-block"><button type="button" id="ttsButton" class="tts-toggle" aria-pressed="false" title="Read title, author and story aloud">♫ <span>Listen</span></button></div></div><p class="read-byline">Shared by <b>${html(s.author)}</b> · ${s.sample?'Fictional demonstration':s.cloud?'Private cloud draft':'Local browser demo'}</p><div class="tts-settings"><span>♪ Built-in narration · depends on installed voices</span><label for="voiceSelect">Voice:</label><select id="voiceSelect" aria-label="Narration voice"><option value="female">Soft female</option><option value="male">Soft male</option></select><label for="narrationSpeed">Pace:</label><select id="narrationSpeed" aria-label="Narration pace"><option value="0.82">Relaxed</option><option value="0.9" selected>Gentle</option><option value="1.0">Normal</option></select><span class="tts-status" id="ttsStatus">Starts from the title every time.</span></div><div class="reading-body" dir="auto">${html(s.story)}</div><div class="reader-bottom"><button class="heart ${hearts.includes(s.id)?'active':''}" type="button" data-heart="${html(s.id)}" aria-pressed="${hearts.includes(s.id)}" aria-label="Heart story"><svg viewBox="0 0 24 24"><path d="M20.8 4.9a5.5 5.5 0 0 0-7.8 0L12 6l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.3a5.5 5.5 0 0 0 0-7.8Z"/></svg><span>${heartCount(s)} hearts</span></button>${s.sample?'<span class="micro-hint">Original fictional sample</span>':s.cloud?`<div class="wg-draft-actions"><button type="button" class="link-button" id="editCloudStory">Edit draft</button><button type="button" class="link-button" id="removeCloudStory">Delete draft</button></div>`:`<button type="button" class="link-button" id="removeLocalStory">Delete local demo story</button>`}</div>`
 }
 function openReader(id){const s=stories().find(st=>st.id===id);if(!s)return;stopSpeech();currentStoryId=id;$('readMeta').textContent='From '+[s.country,s.region].filter(Boolean).join(' · ');$('readBody').innerHTML=readerContent(s);$('readDialog').showModal();loadVoices()}
 async function removeStory(){const s=demoStories.find(st=>st.id===currentStoryId);if(!s)return;if(!confirm('Delete this story from your browser demo?'))return;try{await dbDelete(s.id);demoStories=demoStories.filter(x=>x.id!==s.id);stopSpeech();$('readDialog').close();renderGallery();notify('Local demo story deleted')}catch{notify('Could not delete story in this browser')}}
@@ -187,7 +274,7 @@ $('continentFilter').addEventListener('change',e=>{state.selectedContinent=e.tar
 $('countryFilter').addEventListener('change',e=>setCountry(e.target.value,'filter'));
 $('sortFilter').addEventListener('change',e=>{state.sort=e.target.value;renderGallery()});
 $('mineOnly').addEventListener('change',e=>{state.mineOnly=e.target.checked;renderGallery()});
-document.addEventListener('wg:authenticated',()=>renderGallery());
+document.addEventListener('wg:authenticated',()=>{fetchCloudStories();renderGallery()});document.addEventListener('wg:signedout',()=>{cloudRevision++;cloudStories=[];cloudUser=null;renderGallery()});
 $('themeChoose').addEventListener('click',openThemeModal);
 $('themeOptions').addEventListener('change',e=>{if(e.target.matches('input[type="checkbox"]')){e.target.checked?state.draftThemes.add(e.target.value):state.draftThemes.delete(e.target.value);renderThemeOptions()}});
 $('themesClear').addEventListener('click',()=>{state.draftThemes.clear();renderThemeOptions()});
@@ -216,16 +303,17 @@ $('collagePreview').addEventListener('click',e=>{const tile=e.target.closest('[d
 $('uploadCountry').addEventListener('change',()=>{$('uploadRegion').value='';renderUploadRegionSuggestions()});
 $('uploadBody').addEventListener('input',updateCharacterProgress);
 $('uploadForm').addEventListener('submit',submitUpload);
-$('readBody').addEventListener('click',e=>{const tile=e.target.closest('[data-photo-index]');if(tile){const s=stories().find(st=>st.id===currentStoryId);if(s)openLightbox(s.images,Number(tile.dataset.photoIndex));return}const h=e.target.closest('[data-heart]');if(h){toggleHeart(h.dataset.heart);return}if(e.target.closest('#ttsButton')){playSpeech();return}if(e.target.closest('#removeLocalStory'))removeStory()});
+$('readBody').addEventListener('click',e=>{const tile=e.target.closest('[data-photo-index]');if(tile){const s=stories().find(st=>st.id===currentStoryId);if(s)openLightbox(s.images,Number(tile.dataset.photoIndex));return}const h=e.target.closest('[data-heart]');if(h){toggleHeart(h.dataset.heart);return}if(e.target.closest('#ttsButton')){playSpeech();return}if(e.target.closest('#removeLocalStory'))removeStory();if(e.target.closest('#editCloudStory')){const s=cloudStories.find(x=>x.id===currentStoryId);if(s)openCloudEditor(s)}if(e.target.closest('#removeCloudStory')){const s=cloudStories.find(x=>x.id===currentStoryId);if(s)removeCloudStory(s)}});
 $('readBody').addEventListener('keydown',e=>{const tile=e.target.closest('[data-photo-index]');if(tile&&(e.key==='Enter'||e.key===' ')){e.preventDefault();const s=stories().find(st=>st.id===currentStoryId);if(s)openLightbox(s.images,Number(tile.dataset.photoIndex))}});
-$('readDialog').addEventListener('close',stopSpeech);
+$('readDialog').addEventListener('close',stopSpeech);$('readBody').addEventListener('change',e=>{if(e.target.id==='voiceSelect')localStorage.setItem('wg_voice_style',e.target.value)});
+$('cloudEditForm').addEventListener('submit',async e=>{e.preventDefault();const form=e.currentTarget, d=new FormData(form),uid=currentOwner(),id=String(d.get('story_id'));const s=cloudStories.find(x=>x.id===id&&x.owner_id===uid);const status=$('cloudEditStatus');if(!s||s.status!=='draft'){status.textContent='Draft unavailable.';return}const body=String(d.get('body')).trim();if(countGraphemes(body)<1000||body.length>15000){status.textContent='Story must contain 1,000–15,000 characters.';return}const submit=form.querySelector('[type=submit]');submit.disabled=true;try{const res=await cloudClient().from('wg_stories').update({author:String(d.get('author')).trim(),title:String(d.get('title')).trim(),body,region:String(d.get('region')).trim(),city:String(d.get('city')).trim(),language_code:String(d.get('language_code'))}).eq('id',id).eq('user_id',uid).select('id');if(res.error)throw res.error;$('cloudEditDialog').close();await fetchCloudStories();notify('Draft updated')}catch(err){status.textContent=cloudError(err)}finally{submit.disabled=false}});
 $('lightboxPrev').addEventListener('click',()=>lightboxMove(-1));$('lightboxNext').addEventListener('click',()=>lightboxMove(1));
 $('lightboxDialog').addEventListener('close',()=>{lightboxImages=[];$('lightboxImage').removeAttribute('src')});
 document.addEventListener('keydown',e=>{if(!$('lightboxDialog').open)return;if(e.key==='ArrowLeft')lightboxMove(-1);if(e.key==='ArrowRight')lightboxMove(1)});
 if('speechSynthesis' in window)window.speechSynthesis.addEventListener?.('voiceschanged',()=>{if($('readDialog').open)loadVoices()});
 async function init(){renderCountryOptions(false);renderUploadCountries();renderRegionLabel();renderTemplateChoices();renderCollagePreview();renderGallery();renderGlobeLabel();
  globe=createWorldGlobe($('globeCanvas'),code=>{if(!COUNTRIES.some(c=>c[0]===code)){notify('Map selection unavailable for this territory. Use the country filter below.');return}setCountry(code,'globe')});
- try{db=await openDb();demoStories=await dbAll();renderGallery()}catch{demoStories=readFallbackStories();renderGallery();notify('Browser storage fallback enabled. Demo posts may be session-only on this device.')}
+ try{db=await openDb();demoStories=await dbAll();renderGallery()}catch{demoStories=readFallbackStories();renderGallery();notify('Browser storage fallback enabled. Demo posts may be session-only on this device.')};if(currentOwner())fetchCloudStories();
 }
 
 /* WG PORTAL PHOTO ZOOM + SEARCH V5 */
@@ -307,4 +395,5 @@ function enablePortalPhotoZoom() {
 
 enablePortalPhotoZoom();
 
+window.WorldsGalleryReader={getStoryId:()=>currentStoryId,openStory:id=>{if(!stories().some(s=>s.id===id))return false;openReader(id);return true},openPhoto:index=>{const s=stories().find(x=>x.id===currentStoryId);if(!s?.images?.length)return false;openLightbox(s.images,Math.max(0,Math.min(s.images.length-1,Number(index)||0)));return true}};
 init();
