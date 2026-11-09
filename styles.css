@@ -83,3 +83,89 @@ dialog{border:0;padding:0}dialog::backdrop{background:rgba(17,36,29,.64);backdro
   .filter-top .wg-mine-toggle,
   .filter-top .select-themes {flex-basis:100%}
 }
+
+
+/* WG V2.19: owner-only preparation; no submit or public publishing endpoint. */
+.wg-review-modal{width:min(660px,calc(100vw - 26px))}
+.wg-review-heading{font-size:13px;color:var(--deep);letter-spacing:.3px;margin:21px 0 10px}
+.wg-review-facts{padding:0;margin:0;list-style:none;display:grid;gap:8px}
+.wg-review-facts li{border:1px solid var(--border);background:#fafbf7;border-radius:11px;padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--ink)}
+.wg-review-facts li span{font-weight:900;font-size:15px;min-width:16px}
+.wg-review-facts .wg-review-ok span{color:#2c805a}
+.wg-review-facts .wg-review-missing span{color:#af7646}
+.wg-review-disclaimer{font-size:12px;line-height:1.7;color:var(--muted);margin:0 0 12px}
+.wg-review-confirmations{display:grid;gap:9px}
+.wg-review-confirmations label{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--border);background:#fff;border-radius:12px;padding:13px;font-size:12px;line-height:1.6;color:#52665d;cursor:pointer}
+.wg-review-confirmations input{margin:3px 0 0;flex:0 0 auto;accent-color:var(--deep);width:17px;height:17px}
+.wg-review-status{background:#fdf4e9;border:1px solid #ecd7bf;border-radius:12px;padding:13px;font-size:12px;line-height:1.65;color:#805e3d;margin:18px 0 0}
+.wg-review-status.wg-review-ready{background:#edf6ed;border-color:#c9dec9;color:#315f42}
+.wg-review-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px;margin-top:18px}
+@media(max-width:420px){.wg-review-actions{flex-direction:column}.wg-review-actions .button{width:100%}}
+
+/* WG_V2231_POST_UX: owner menu and truthful private-post audience */
+.wg-post-audience{border:1px solid #dde8e0;border-radius:14px;padding:13px 15px;margin:20px 0;background:#f8fbf8}
+.wg-post-audience legend{font-size:13px;font-weight:800;color:#375b48;padding:0 7px}
+.wg-post-audience label{display:flex;align-items:flex-start;gap:12px;padding:9px 3px;font-size:13px;color:#365e4a}
+.wg-post-audience label+label{border-top:1px solid #e6eee5}
+.wg-post-audience input{margin-top:4px;accent-color:#366c50}
+.wg-post-audience small{display:block;font-weight:400;color:#778f80;margin-top:3px;line-height:1.5}
+.wg-audience-future{opacity:.62}
+.wg-post-menu{position:relative;margin-left:auto;flex:0 0 auto;font-size:13px;z-index:2}
+.wg-post-menu summary{cursor:pointer;list-style:none;border:1px solid #dde9df;color:#3f6251;background:#f1f7f0;border-radius:10px;display:grid;place-items:center;width:37px;height:37px;font-size:23px;line-height:1}
+.wg-post-menu summary::-webkit-details-marker{display:none}
+.wg-post-menu summary:focus-visible,.wg-post-menu button:focus-visible{outline:3px solid #8bc4a7;outline-offset:2px}
+.wg-post-menu-options{position:absolute;right:0;bottom:calc(100% + 8px);min-width:174px;border-radius:12px;z-index:20;padding:6px;background:#fff;box-shadow:0 12px 32px rgba(20,44,32,.19);border:1px solid #e2eae1}
+.wg-post-menu-options button{width:100%;padding:10px 11px;text-align:left;border:0;border-radius:7px;background:transparent;color:#385b47;font:600 12px/1.3 system-ui,sans-serif;cursor:pointer}
+.wg-post-menu-options button:hover{background:#edf5eb}
+.wg-post-menu-options button[data-post-delete]{color:#a74039}
+.story-card:has(.wg-post-menu[open]){overflow:visible;z-index:4}
+.reader-bottom .wg-draft-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-left:auto}
+@media(max-width:420px){.wg-post-audience{padding:10px 12px}.reader-bottom{flex-wrap:wrap}.wg-post-menu-options{min-width:155px}}
+
+/* V2.23.3 combined: posting privacy, rule acknowledgements and blocked link notices. */
+.wg-link-warning{border:1px solid #dd9e79;background:#fff1ea;color:#833923;padding:11px 14px;border-radius:12px;margin:12px 0;line-height:1.5;font-size:14px;font-weight:650}
+.wg-link-warning[hidden]{display:none!important}
+.wg-post-policy{margin:18px 0;border:1px solid #cddfd3;border-radius:17px;background:#f6faf6;padding:19px 21px;color:#214e3f}
+.wg-post-policy-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;margin-bottom:7px}
+.wg-post-policy-header strong{font-size:16px}
+.wg-policy-link{background:transparent;color:#28614f;border:0;text-decoration:underline;font:650 14px/1.4 system-ui,sans-serif;cursor:pointer;padding:5px}
+.wg-policy-link:focus-visible{outline:3px solid #80b49c;outline-offset:2px;border-radius:5px}
+.wg-post-policy-note{font:400 13px/1.6 system-ui,sans-serif;color:#486b5a;margin:0 0 12px}
+.wg-post-policy label{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:1px solid #e0ebe2;font:450 13px/1.55 system-ui,sans-serif;cursor:pointer}
+.wg-post-policy label input{margin-top:3px;flex:0 0 auto;accent-color:#245e48;width:17px;height:17px}
+.wg-policy-rules{margin:0;padding:0 0 0 22px;color:#2c5745;font:450 14px/1.65 system-ui,sans-serif}
+.wg-policy-rules li{margin:0 0 14px;padding-left:5px}
+.wg-policy-caveat{margin:16px 0;padding:13px 15px;border-radius:12px;background:#f3f7f4;font:450 12px/1.6 system-ui,sans-serif;color:#5b7166}
+.wg-policy-dialog-footer{display:flex;justify-content:flex-end;padding:4px 0 12px}
+.wg-policy-dialog .modal-body{max-height:70vh;overflow-y:auto}
+.wg-post-policy-edit{padding:12px 14px;margin:10px 0}
+@media(max-width:560px){.wg-post-policy{padding:14px 12px}.wg-policy-dialog .modal-body{max-height:68vh}.wg-policy-rules{font-size:13px}}
+
+
+/* Worlds Gallery V2.23.4: calm, accessible beta notice immediately above the main nav. */
+.site-header .wg-beta-marquee{
+  width:100%;max-width:100%;overflow:hidden;position:relative;
+  border-bottom:1px solid #d3e5d8;background:#eaf4eb;color:#245e48;
+  font:700 12px/1.3 system-ui,-apple-system,sans-serif;
+  letter-spacing:.035em;padding:8px 0;box-sizing:border-box;
+}
+.site-header .wg-beta-marquee-track{
+  width:max-content;display:flex;align-items:center;
+  animation:wg-beta-ticker 32s linear infinite;will-change:transform;
+}
+.site-header .wg-beta-marquee-message{
+  flex:0 0 auto;min-width:100vw;display:inline-flex;align-items:center;
+  justify-content:center;gap:14px;white-space:nowrap;
+  padding:0 24px;box-sizing:border-box;
+}
+@keyframes wg-beta-ticker{to{transform:translateX(-50%)}}
+.site-header .wg-beta-marquee:hover .wg-beta-marquee-track{animation-play-state:paused}
+@media(max-width:640px){
+  .site-header .wg-beta-marquee{font-size:10px;padding:7px 0}
+  .site-header .wg-beta-marquee-message{gap:8px;padding:0 18px}
+}
+@media(prefers-reduced-motion:reduce){
+  .site-header .wg-beta-marquee-track{animation:none!important;width:100%;will-change:auto}
+  .site-header .wg-beta-marquee-message{min-width:0;width:100%;white-space:normal;text-align:center}
+  .site-header .wg-beta-marquee-message[aria-hidden=true]{display:none!important}
+}

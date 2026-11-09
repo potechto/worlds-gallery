@@ -1,5 +1,172 @@
 # WORLDS GALLERY — FULL PROJECT HANDOVER
 
+## CURRENT LOCAL PRE-PUSH UPDATE - NOVEMBER 9, 2026 - V2.23.4 BETA SHELL
+
+**Supersedes current-state text in older sections.** User confirmed V2.23.3 COMBINED installed locally; 61 offline checks passed. Latest request: smaller complete avatar choices, remove fictional/demo gallery stories and empty demo placeholders, add an animated right-to-left beta status strip above navigation, then commit/push after verifying the installed patch and audit the live site.
+
+**V2.23.4 implementation:** Six compact square avatar options per desktop row, five on midsize, four on small tablets, three on mobile (two on narrow mobile). The avatar scroller uses an exact number of complete tile rows on open/resize; untouched crop editor and profile persistence. Added an accessible, reduced-motion-safe nav ticker: beta testing ongoing, site under construction. Removed seven bundled fictional story objects and their generated illustration helper from data.js; removed them and legacy IndexedDB browser demos from the visible gallery (no deletion of browser data). Gallery counters, empty-state, location copy, and labels now reflect only actual authenticated owner Cloud uploads. World/country atlas data is retained.
+
+**Privacy/launch boundary:** Existing Supabase private photo bucket, owner RLS, auth, V2.23.3 link/content-consent checks and three-dot post actions are preserved. No live DB deletes, no migrations, no public media, no public publishing. Guest-facing beta site shell may be shared, but real public discovery remains unavailable until server-enforced moderation and publishing. Client-side URL blocking is NOT tamper-proof.
+
+**Git policy:** Installer does not push. A separate guarded Push script only stages allowlisted site and checkpoint files, after local install and review, and refuses unexpected staging or divergence. Do not add unrelated untracked experiments by default. Confirm remote commit after push, then perform read-only feature/security audit and incorporate the user's assessment.
+
+**QA:** Focused static checks, browser layout checks, installer simulation, rerun/repeat/tamper checks. No live authenticated cross-account QA or full browser audit has been done.
+
+## CURRENT PREPARED PATCH - NOVEMBER 9, 2026 - V2.23.3 COMBINED AVATAR + POSTING SAFETY
+
+**This section supersedes the earlier avatar-only V2.23.3 package. Do NOT install the earlier `WorldsGallery_V2233_AvatarCropGridFix.zip`.** User confirms V2.23.2 is installed, but V2.23.3 was not installed. This new single combined package expects V2.23.2 source hashes. It incorporates the original V2.23.3 avatar fixes unchanged and new posting safeguards.
+
+**Avatar:** Cartoon and Illustrated tiles keep full aspect ratio and scroll; device uploads can be cropped, repositioned with mouse/touch/keyboard, zoomed, reset, then confirmed as a 512x512 WebP in the existing owner-private storage. Close/Cancel saves nothing.
+
+**Posting:** New `wg_post_policy.js` performs conservative browser-side detection of ordinary, bare, shortened, obscured and scheme URLs, email/contact destinations, markdown/HTML destinations, IPv4 and bracketed IPv6 addresses. It normalizes common Unicode fullwidth dots, encoded dots, zero-width characters and [dot] style obfuscations. Both NEW post and EDIT post handlers refuse unsafe titles/descriptions/pen names/location fields BEFORE Supabase mutations; `saveCloudDraft()` rechecks requirements to fail closed. Upload and edit forms display an inline link warning. The posting form requires four explicit author checkboxes (photo rights, consent including minors, privacy review, community safety), and the edit form requires a fresh policy acknowledgement. A readable posting/privacy rules modal describes prohibited links, permission, personal data, minors, harassment, scams and other unsafe material. Checkboxes reset and author statements are NOT verified consent or actual automated moderation. Existing draft status and Only me RLS remain the privacy boundary; Public stays disabled.
+
+**Security limits:** Browser text scanners cannot detect all imaginable obfuscations and can be bypassed by non-browser API clients. SQL-level CHECK constraints or trusted server validation MUST independently enforce content rules before enabling public posting. No backend change or new DB field was deployed. Images were not scanned for unsafe content. No claim of comprehensive content-safety or legal compliance. Public moderation, media broker, reporting and child-safety operations remain blocked. No Git push, Supabase schema changes, Edge Function deployments, full live browser QA or backup folders. The canonical handover is updated in place only.
+
+**Next:** Install the combined V2.23.3 package from V2.23.2; verify a sample safe story, blocked URL samples, edit validation and avatar crop in a targeted local browser check. Before any public release, deploy server-enforced policy and moderation with separate authorization and isolated testing.
+
+
+## CURRENT LOCAL DEVELOPMENT UPDATE — NOVEMBER 9, 2026 — V2.23.3 AVATAR CROP & GALLERY FIX
+
+**User-tested baseline:** V2.23.2 was successfully installed on Windows; login with Enter, avatar persistence, private device upload, and Settings passed real user checks. The Cartoon and Illustrated selection galleries exhibited cut-off avatar artwork because the constrained scrollable CSS grid compressed row heights. User additionally requested custom positioning/cropping before uploaded profile-picture confirmation.
+
+**V2.23.3 changes (local frontend only):** `wg_v28_ui.css` keeps portrait squares in four desktop columns (three on smaller screens, two on narrow screens), with intrinsic max-content grid rows and independent scrolling so artworks retain their full frames rather than overlapping or being cropped across rows. `wg_v28_ui.js` adds a canvas-backed image editor to Upload from device: select JPG/PNG/WebP up to 5 MB, display square crop with circular profile frame indicator, drag via mouse/touch, use arrow keys for keyboard repositioning, zoom 100–300%, and Recenter & reset zoom. Confirm converts the current 512 x 512 crop to a compressed WebP and uploads *only the cropped result* to the same owner-scoped `${uid}/avatars/` directory in the pre-existing private `wg-private-photos` bucket. Cancel/X/Escape do not save. Selection revisions prevent late image loads from overwriting newer selections. No original uncropped device image is uploaded. Existing database fields, private signed URLs, author-bylines and login remain unchanged.
+
+**Security/QA:** The installer verifies the user's exact V2.23.2 source hashes before updating `wg_v28_ui.js`, `wg_v28_ui.css`, `index.html` (asset cache-busters) and this ONE canonical master handover. Offline syntax, crop math, image-format and focus checks plus isolated browser behavior/layout tests are not substitutes for live authenticated browser verification. User must test crop selection, positioning, refresh persistence and gallery visibility after installation. No live Supabase migration, new bucket, Git staging/commit/push, automatic publishing, full QA or project backup folders.
+
+**Next:** Verify a portrait photo and a landscape photo with a real owner account. Then tackle public posting only through a future approved and tested moderation/privacy backend, keeping existing `Only me` content private.
+
+## CURRENT LIVE-DEVELOPMENT CHECKPOINT — NOVEMBER 9, 2026 — V2.23.2 (PROFILE AVATAR + ENTER KEY UX)
+
+**This newest section takes precedence over older handover status.** V2.23.1 login-network / Post (Only me) frontend hotfix and the V2.20–V2.23 offline moderation foundation are confirmed locally installed by the user's November 9 PowerShell logs. GitHub `main` still points to `5a72f17`; these newer changes remain local. Do not push without fresh user approval.
+
+**V2.23.2 scope (prepared installer, not yet locally installed):** Desktop Enter inside either sign-in credential input triggers the existing HTML5-validated form submission, with its busy guard intact; no password sent anywhere beyond the existing Supabase Auth path. The avatar UI in `wg_v28_ui.js` is replaced with three choices only: Cartoon, Illustrated, Upload from device (camera icon). Cartoon and Illustrated show an accessible modal with 24 initial avatar options and a "Show more designs" control (up to 120 deterministic presets per style); choose one and press Confirm. Upload opens a modal with image selection and preview, then Confirm. X, Cancel and Escape close without persisting changes. The old Special avatar, Shuffle avatar, separate upload field and Save avatar controls are removed. Existing legacy Multiavatar selections remain readable until changed, but not selectable as a new style.
+
+**Persistence and scope:** `wg_profiles.avatar_source`, `avatar_seed`, `avatar_path` already exist in live Supabase; no new migration. Own uploaded avatars are resized to WebP, stored under the authenticated owner's `${userId}/avatars/` namespace in the EXISTING private `wg-private-photos` bucket, and viewed with owner-authenticated temporary signed links. Account menu and Settings header show the selected avatar aligned at the far right; owned private story cards and story reader show the same selected avatar next to author/pen-name. Different account's private avatar is never substituted for another author's content. Public gallery display of another user's avatar will require an explicitly moderated public-media delivery design; do not expose private URLs to unauthenticated viewers.
+
+**Settings:** Privacy preferences and accessibility settings are visually regrouped into responsive columns with consistent icons. Field names and persistence through existing `wg_privacy_settings` and `wg_content_preferences` remain unchanged. The PUBLIC options are preferences for future publishing only, NOT published today.
+
+**Testing:** Offline syntax/source assertions, isolated Chromium tests for Cartoon Confirm, Illustrated Cancel/X, private upload simulation, account identity isolation, logout cleanup, Settings UI and both Enter keys are performed with mocked Supabase responses. These do NOT establish live login, upload/download, public access, mobile layout or production security. No full browser QA, Git push, Supabase backend changes, storage policy changes, Edge Function deployment or backup folders are authorized by this update.
+
+**Next:** Install guarded `APPLY_V2232.ps1` after V2.23.1, test locally with a real account and one harmless photo, verify private access and cross-account isolation; user will explicitly request full QA and Git push when ready.
+
+
+
+## NOVEMBER 9, 2026 - V2.23 OFFLINE POSTGRES TRANSACTION ADAPTER (PREPARED)
+
+The user has confirmed that the corrected V2.22 installer completed on Windows. Its 34 offline server-boundary checks passed. Frontend remains the previously installed V2.19. V2.20-V2.22 backend files are LOCAL/OFFLINE ONLY and are NOT deployed to Supabase or pushed to GitHub. The verified Git commit baseline in these installers remains `5a72f17`; check any new Git history before a future push.
+
+V2.23 introduces `tools/WG_V223_PostgresRepository.mjs` and `tools/WG_V223_PgRepositoryQA.mjs`. They implement and offline-test a PostgreSQL query/transaction repository compatible with the V2.22 trusted server boundary. The module requires a trusted server-supplied `pg`-compatible pool, uses one acquired connection per operation, BEGIN/COMMIT/ROLLBACK, short statement/lock timeouts, row-level locking, parameterized SQL, conditional reviewer transitions (CAS), database-backed checks for active submissions, and atomic author submission, photo references, moderator decisions and audit writes.
+
+IMPORTANT AUTH MODEL: Request identity is still authenticated by the existing V2.22 `auth.getUser(token)` boundary; V2.23 never accepts a client-submitted role/owner ID. Reviewer permission is re-read from the server-controlled `auth.users.raw_app_meta_data.wg_moderator` flag during the transaction. This is an OFFLINE PROPOSED trust configuration, not an invitation to manually edit authorization metadata. It may require deployment-time review of role management and database access. It must NOT be read from `raw_user_meta_data` or client JSON.
+
+APPROVAL IS INTENTIONALLY BLOCKED: There is no server-sealed, immutable and privacy-sanitized review-media/evidence persistence layer yet. V2.23 `loadSealedReviewEvidenceForUpdate()` fails closed, so even a moderator cannot approve from the new adapter. Submission, claim and well-formed rejection have offline simulated paths; stage/release/public media endpoints are NOT available. The existing private photo bucket and its access rules are unchanged. No public publishing is activated.
+
+TEST LIMITS: 30 focused V2.23 tests simulate SQL driver calls and transaction rollback, including wrong owner, unauthorized reviewer, self-review, duplicate insertion, CAS conflicts, audit failure, parameterized values, error-handling and no publishing. These tests use a fake pool, NOT a PostgreSQL server. The V2.20 and V2.22 suites remain independent safeguards. PostgreSQL SQL syntax, RLS behavior, real auth, mobile, Storage and production concurrency are NOT certified by the offline suite. No full browser QA until the user's explicit command.
+
+LOCAL INSTALLATION POLICY: The guarded V2.23 installer expects exactly the confirmed V2.22 local state and protects the V2.19 website, existing V2.20-V2.22 files and untracked history. It only adds the two V2.23 tools files and updates this existing single master Markdown handover. No Git commit/push, no schema deployment or Supabase writes, no credentials, no new project backup folders. If a guard fails, stop and inspect without overwriting.
+
+NEXT: secure a staging database and explicitly approve backend testing before migrating the six-table ROLLBACK-only V2.20 preview. Add durable sealed review evidence and sanitized immutable media snapshots, a trusted Edge Function, server-only moderator administration, rate limits, abuse reports, privacy checks, secure public media brokerage and takedown behavior. Only after separate staging tests and authorization should publishing be enabled.
+
+
+
+## NOVEMBER 9, 2026 - V2.22 OFFLINE SERVER BOUNDARY (PREPARED)
+
+The user confirmed via VS Code PowerShell that V2.21 is now INSTALLED locally. V2.19 remains the installed website frontend. V2.20-V2.21 are local, offline backend foundations; none has been deployed to Supabase or pushed to GitHub. The verified historical GitHub baseline was `5a72f17`; verify any newer Git history separately.
+
+V2.22 introduces `tools/WG_V222_ServerBoundary.mjs` and `tools/WG_V222_ServerBoundaryQA.mjs` (34 offline behavioral/security tests). The server-boundary dispatcher composes V2.21 domain rules with an explicitly injected **server-only** dependency interface: `auth.getUser(token)`, rate limiting, trusted server clock, and `repository.transaction(...)`. It accepts only authenticated `submit`, `claim`, `decide` envelopes with narrowly whitelisted fields. It NEVER accepts request-provided principal identities, moderator roles, review evidence, status changes, media paths, or signed URLs.
+
+- Identity is derived only from a Bearer token verified through a future trusted `auth.getUser(token)` integration. These tests use a mock auth service, NOT live Supabase Auth.
+- Reviewer access comes only from `tx.moderatorAuthorizedForUpdate(userId)` in a trusted transaction, never from `user_metadata`, client claims, or arbitrary front-end switches.
+- The contract requires row locking and compare-and-set status changes, the partial unique submission index, and transactionally atomic submission/photo-reference/audit or reviewer-decision/audit writes. Offline mock tests simulate transactions and rollback; they do NOT verify real SQL isolation.
+- Approvals require server-owned, sealed review evidence; a moderation approval is not a public release. `stage`, `release`, `publish`, `media`, and public-read actions are **not exposed** by the V2.22 dispatcher.
+- The adapter emits only minimal success status and internal IDs appropriate for authenticated owner/moderator APIs, and never returns Storage paths, photo source IDs, GPS, tokens, reviewer evidence or media URLs.
+- `tools/wg_v220_moderation_preview.sql` STILL contains `BEGIN; ... ROLLBACK;` and no live migrations have occurred.
+
+NOT IMPLEMENTED OR DEPLOYABLE: a real Edge Function HTTP handler, actual authenticated Supabase client, production transaction implementation, moderator role table and administration, durable rate limiting, row-locking SQL, immutable media snapshot/seal, safe media broker, abuse reporting/appeal, live API permissions, controlled origin/CORS, production SQL/RLS tests and full browser QA. Do not present mock behavior as deployed production functionality. The V2.22 installer is OFFLINE ONLY, updates this single canonical handover and the two new `tools` modules, and refuses mismatched previous files. It does not alter website source files or public visibility.
+
+NEXT PRIORITY: design and implement a separate, deployable-but-disabled database transaction/RPC and Edge Function adapter, with authenticated staging tests and moderation/media safety review, before requesting explicit approval for any live Supabase changes. When the user says to do the full check, run complete browser/mobile/Auth/RLS/Storage/accessibility QA. Preserve one master handover only and the existing untracked historical files.
+
+## NOVEMBER 9, 2026 - V2.21 TRUSTED WORKFLOW CORE (OFFLINE ONLY)
+
+The user confirmed installation of V2.17, V2.18, V2.19 and V2.20 from guarded PowerShell installers. V2.21 is prepared as a separate local update; it is NOT installed until its guarded installer completes. Last verified pushed GitHub main remains `5a72f17` unless a later push is independently verified.
+
+V2.21 adds an executable, pure JavaScript domain workflow in `tools/WG_V221_TrustedWorkflow.mjs` with offline tests in `tools/WG_V221_WorkflowQA.mjs`. The domain module plans transitions but DOES NOT connect to Supabase, implement an HTTP API, verify JWT cryptographically, deploy an Edge Function, persist data, copy media, issue URLs, or publish anything.
+
+Planned trusted workflow: owned private draft -> pending submission -> reviewer claim -> approved/rejected -> staged gallery metadata -> separately authorized published gallery -> withdrawn, with denial paths for wrong owner, untrusted reviewer, self-review, incomplete checks, stale status, unsealed media, and cross-account access. Rejection requires a reason. Author attestations are statements, NOT proven consent or successful moderation. A reviewer assignment is tracked to prevent another reviewer from deciding an unclaimed submission.
+
+V2.21 tightens the existing V2.20 **offline preview**, still located at `tools/wg_v220_moderation_preview.sql` and still ending in `ROLLBACK;`:
+- Adds reviewer_id and claimed_at to the proposed private submissions table.
+- Removes anonymous/authenticated SELECT on `wg_gallery_photos`, including its public-read policy, so even source-photo UUID references are server-only. A future media broker must authorize a published gallery item and position and issue very short-lived URLs without exposing private Storage paths.
+- Preserves status='published' gating on the publicly readable gallery metadata and leaves original `wg_stories`, `wg_story_photos`, and `wg-private-photos` untouched.
+- Updates `tools/WG_V220_ModerationQA.js` to check the tighter schema. This is a PREVIEW revision, NOT a migration or a live patch.
+
+There are 33 focused V2.21 offline domain tests and 16 static schema checks. These tests cover pure functions and schema text only. No browser/mobile UX, real authenticated account, RLS execution, immutable object copy, transaction isolation, storage permission, or public launch has been validated.
+
+SECURITY DEPLOYMENT BLOCKERS (not implemented):
+- A trusted Edge Function adapter must authenticate the actual request token with auth.getUser; obtain reviewer permissions from server-owned data (never raw_user_meta_data or client JSON); and load draft/photo rows itself.
+- Create and change statuses atomically using row locks/conditional updates. The unique-active-submission index is required to stop concurrent duplicate submissions. All transitions and audit writes must commit or fail together.
+- Current owner Storage objects can be replaced/deleted; a real immutable, sanitized media snapshot must be created and sealed for review and release. Do not use original draft paths as public media assets. Strip sensitive EXIF/GPS before public serving.
+- A rate-limited private-media broker must verify published status each request. Withdrawal must block new URLs immediately, but issued signed URLs may remain usable until their short TTL; consider cache headers and takedown operations.
+- Reporting, appeals, anti-abuse protections, and underage-user safeguards must be designed and implemented before public beta.
+- These source helpers are not sufficient to safely expose any publishing UI or a moderator portal.
+
+V2.21 guarded local installer changes only this existing master and 4 `tools/` files (the two updated V2.20 preview/QA files, and two new V2.21 module/test files). No website HTML/CSS/JS, Git push, database, Storage, Edge Function, credentials or project backup folders are changed. Existing historical/untracked local files must remain untouched.
+
+NEXT: after the user reviews progress and explicitly authorizes a backend rollout, prepare a deployable trusted Edge Function + atomic transaction layer, test it in an isolated staging environment, then perform a separate verified public-gallery integration. Full QA remains deferred until requested.
+
+## NOVEMBER 9, 2026 - V2.20 MODERATION SCHEMA FOUNDATION (OFFLINE ONLY)
+
+This section supersedes the *local prepared-development milestone* in V2.19, but DOES NOT supersede installed frontend V2.19. The user's last confirmed local installation is V2.19; last verified pushed GitHub main remains `5a72f17` until separately approved.
+
+- V2.20 provides a **review-only database schema preview**, `tools/wg_v220_moderation_preview.sql`, and repeatable offline policy checks in `tools/WG_V220_ModerationQA.js`.
+- The SQL is intentionally enclosed in `BEGIN; ... ROLLBACK;` and is **not an executable live migration**. Do not remove the rollback or apply it to Supabase without explicit authorization, up-to-date schema verification, testing on an isolated non-production database, and a safe deploy plan.
+- Proposed six new, separately RLS-protected tables: owner-private publication submissions; owner-private submission photo references; public-only-after-approval gallery snapshots; public-only-after-approval gallery photo references; reporter-private abuse reports; and server-private moderation audit events.
+- All new client role permissions are READ-ONLY: owner-scoped on submissions/reports and status=`published` on public gallery. `staged` (non-public) is the default gallery status. **No authenticated or anonymous INSERT/UPDATE/DELETE policy is introduced.** Only trusted server code using a server-side role may implement transitions after verifying JWTs and moderator authorization.
+- The gallery snapshot includes only display pen name, explicitly approved story content, country/region/city text and story theme. It never includes owner UUIDs or private Storage paths. Gallery photo records store opaque source-photo references; a separate rate-limited server media broker must authorize each published image access and issue short-lived URLs. Current `wg-private-photos` bucket stays private.
+- Submission must preserve immutable reviewer-visible content and verify owner/story/photo relationships. Future trusted code must handle editing and deleting pending submissions, consent/privacy review, moderation decisions, withdrawn content, abuse reports, immutable photo safety, account deletion, denial/appeal, and throttling. No automated content scan or admin authorization has been claimed to exist yet.
+- The V2.19 frontend and existing Supabase tables/functions are intentionally untouched in V2.20. The local installer changes only this canonical Markdown handover and adds two new source files under the existing `tools` directory; it does not publish any content or call the backend.
+- The offline QA checks inspect SQL safety properties and the existing frontend's private-only state; they are **NOT** SQL execution tests, browser QA, a real moderation system, or proof that a future migration is production-safe.
+- No Git commit/push, no Supabase writes, no database migrations, no new project backup folders. Existing untracked local experiments remain untouched.
+- NEXT: independently implement and review the trusted submission/moderation/media-broker Edge Function; then approve backend staging tests, integrate public feed, reporting and private beta. Full browser/mobile/authenticated QA remains deferred until user explicitly requests.
+
+## NOVEMBER 9, 2026 - V2.19 LOCAL DEVELOPMENT (AFTER V2.18)
+
+This section supersedes the *local app version* in the V2.18 section below. The last verified pushed GitHub main remains commit `5a72f17` unless a separately authorized push occurs.
+
+- V2.19 adds an owner-only **Publication checklist** button to the existing private cloud draft reader. It is a preparation aid, not a public publishing system.
+- Automatically checks that each private draft has a title and pen name, story length of 1,000–15,000 characters, 1–4 attached photo records, and country plus theme. Missing items are visibly listed.
+- Authors can manually acknowledge photo rights, identifiable-person/minor consent where needed, and review of sensitive location details and inappropriate content. These acknowledgements are user statements, NOT independent verification, legal permission, automated moderation, or proof of safety.
+- An author may see a local “preparation complete” message, but this never changes database status, stores approval, submits for moderator review, or publishes content. Checkboxes reset each time the modal opens.
+- The new checklist closes on sign-out/account switch; unauthorized, non-draft, and demo content cannot open it.
+- Uses current app.js and index.html, adds minimal styles.css rules, updates only this canonical master. No new backup folders or duplicate handovers.
+- Focused automated code/interaction tests only. Browser/mobile/authenticated uploads and cross-account production QA remain intentionally deferred until the user requests a full check.
+- No Supabase schema, Storage, Edge Function, secrets, Git commit, or push changes. The project remains PRIVATE-DRAFT-ONLY, not launched.
+- NEXT REQUIRED SERVER MILESTONE (separately approved): design and implement a moderation queue, approved-public content read view, server-controlled transitions, permissioned media serving, reporting, abuse prevention, and private beta. Never grant anonymous access to `wg-private-photos` or expose unreviewed drafts.
+
+## NOVEMBER 9, 2026 - V2.18 LOCAL DEVELOPMENT (AFTER PUSHED V2.16)
+
+This section supersedes the application-version status in the older V2.16 record below; the last verified GitHub commit remains `5a72f17` until a separately authorized push.
+
+- V2.17 photo-upload reliability patch was installed locally by the user. Its automated upload-selection tests passed. Changed `app.js` and `index.html`; no Git commit or backend modification.
+- V2.18 adds private signed-photo-link refresh (refresh around 45 minutes before one-hour links expire), protects cached drafts from showing for another account, and retains open reader/zoom images during link renewal without restarting narration.
+- On remote-read failures the app retains previously available draft data and reports a nonfatal error. JavaScript syntax and focused local behavior checks are the only tests performed for this update.
+- Full browser authentication, mobile, cross-account Storage, and live cloud upload/deletion QA are intentionally deferred at the user's request.
+- The V2.18 installer changes only `app.js`, `index.html`, and this canonical handover, after checking the exact expected V2.17 local source. Other experimental files remain untouched.
+- DO NOT auto-push, modify Supabase, recreate Word handovers, or create project backup folders.
+
+## NOVEMBER 9, 2026 — V2.23.1 URGENT LOGIN + POST UX HOTFIX (LOCAL FRONTEND)
+
+- V2.23.1 follows installed V2.23 without replacing or deleting any offline moderation tools.
+- Login handling: single retry only for transient login-token network exceptions; HTTP authentication failures never automatically retried. Network messaging identifies a connectivity problem rather than presenting raw `Failed to fetch`.
+- Auth form distinguishes successful sign-in from a subsequent private profile-fetch failure, retaining input until the account view successfully opens.
+- Photo composer now displays `Post` with an explicitly `Only me` audience. The public option is visible but disabled until a reviewed server publication pathway exists.
+- A post saved through this control is stored as a real private cloud draft (`wg_stories.status = draft`) and remains protected by the current owner-scoped RLS. It is **not publicly published** or discoverable by other accounts.
+- Each owned private cloud post offers a vertical three-dot menu with exactly three controls: Hide / Unhide (informative only because the post is already private), Edit (existing owner-only editor), Delete (existing owner-only permanent deletion with confirmation).
+- Publication checklist remains a separate private planning aid; no server submission, moderator approval or public media release is enabled.
+- All changes are local frontend/handover source only; no DB/storage/Edge Function writes, Git commit, push, new backup folders or full browser QA.
+- Pending: authenticated browser sign-in test on the user's network, photo upload persistence, multi-account isolation, public moderation deployment before enabling public Post or real Hide/Unhide.
+- Signed-in backend logs previously showed HTTP 200 for `/auth/v1/token` and later protected table queries; this hotfix cannot repair DNS, ISP, browser-extension or backend outages. Do not claim the underlying network is fully fixed without testing.
+
 ## SINGLE CANONICAL HANDOVER - LOCKED NOVEMBER 9, 2026
 
 **ONE HANDOVER ONLY: WORLDS_GALLERY_HANDOVER_MASTER.md.**

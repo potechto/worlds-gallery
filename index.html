@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#f8f6f0">
   <title>Worlds Gallery — Every picture has a world behind it</title>
   <meta name="description" content="Worlds Gallery is a photo-first world explorer where every picture has a story behind it.">
-  <link rel="stylesheet" href="styles.css?v=ux-20261108">
+  <link rel="stylesheet" href="styles.css?v=v2234-beta-ticker-20261109">
 <link rel="stylesheet" href="portal.css?v=f52be93964a3">
 <link rel="stylesheet" href="assets/vendor/maplibre/maplibre-gl.css?v=ab1e70d59ec4">
 <link rel="stylesheet" href="wg_global_map.css?v=ac4a25ab8663">
@@ -19,7 +19,7 @@
 <link rel="stylesheet" href="wg_auth.css?v=a646f1b23fa2">
 <link rel="stylesheet" href="wg_account.css?v=ux-20261108"><link rel="stylesheet" href="wg_locale.css?v=v25"><link rel="stylesheet" href="wg_v26_ui.css?v=v26"><link rel="stylesheet" href="wg_v27_ui.css?v=v27">
 
-<link rel="stylesheet" href="wg_v28_ui.css?v=v28">
+<link rel="stylesheet" href="wg_v28_ui.css?v=v2234-compact-avatars-20261109">
 <link rel="stylesheet" href="wg_v214_inline.css?v=v215-center-20261109">
 </head>
 <body class="portal-locked">
@@ -53,7 +53,14 @@
   <button type="button" id="portalSearchToggle" class="portal-search-trigger" aria-label="Find a country" title="Find a country"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.7" cy="10.7" r="6.3"/><path d="m15.5 15.5 4.5 4.5"/></svg></button>
 </div>
 
-<header class="site-header"><div class="shell nav-bar">
+<header class="site-header">
+  <div class="wg-beta-marquee" role="note" aria-label="Beta testing ongoing. Worlds Gallery is still under construction. Thank you for exploring with us.">
+    <div class="wg-beta-marquee-track">
+      <span class="wg-beta-marquee-message">&#x1F6A7; Beta testing ongoing <span aria-hidden="true">&#x2726;</span> Worlds Gallery is still under construction <span aria-hidden="true">&#x2726;</span> Thank you for exploring with us &#x1F30D; &#x2728;</span>
+      <span class="wg-beta-marquee-message" aria-hidden="true">&#x1F6A7; Beta testing ongoing <span aria-hidden="true">&#x2726;</span> Worlds Gallery is still under construction <span aria-hidden="true">&#x2726;</span> Thank you for exploring with us &#x1F30D; &#x2728;</span>
+    </div>
+  </div>
+  <div class="shell nav-bar">
   <a class="brand" href="#home" aria-label="Worlds Gallery home"><span class="brand-symbol">W<span class="brand-dot">✦</span></span><span>Worlds <em>Gallery.</em></span></a>
   <nav class="nav-links" aria-label="Main navigation"><a href="#map-section">The world</a><a href="#stories">Gallery</a><a href="#about">Our purpose</a></nav>
   <button type="button" class="button button-primary nav-share" data-open-upload>Share your story <span aria-hidden="true">↗</span></button>
@@ -69,7 +76,7 @@
       <p class="hero-subtitle">A thoughtful gallery for ordinary moments and extraordinary feelings. Explore memories, journeys, and dreams through the people who lived them.</p>
       <div class="hero-actions"><button type="button" class="button button-primary" data-open-upload>Tell your story <span>↗</span></button></div>
       <div class="hero-trust"><span class="hero-spark">✧</span> From anywhere in the world. Always free to explore.</div>
-      <div class="mini-stats"><div><b id="statStories">7</b><span>Demo stories</span></div><div><b id="statCountries">5</b><span>Countries represented</span></div><div><b>249</b><span>Country directory</span></div></div>
+      <div class="mini-stats"><div><b id="statStories">0</b><span>Your private posts</span></div><div><b id="statCountries">0</b><span>Places in your posts</span></div><div><b>249</b><span>Country directory</span></div></div>
     </div>
     <div class="globe-pane">
       <div class="globe-top"><div><span class="eyebrow small">YOUR WINDOW TO THE WORLD</span><div class="globe-title">Where would you like to go?</div></div><span class="live-pill"><i></i> Interactive globe</span></div>
@@ -81,7 +88,7 @@
 
   <section id="stories" class="gallery-section"><div class="shell">
     <div class="section-eyebrow"><span></span> THE OPEN STORYBOOK</div>
-    <div class="gallery-heading"><div><h2>Explore the <em>gallery.</em></h2><p>Every photograph holds a place, a person, and a piece of a life.</p></div><span class="demo-label">✦ Fictional sample stories · Browser-only demo</span></div>
+    <div class="gallery-heading"><div><h2>Explore the <em>gallery.</em></h2><p>Every photograph holds a place, a person, and a piece of a life.</p></div><span class="demo-label">✦ Beta gallery · Original stories only</span></div>
     <div class="filter-panel">
       <div class="filter-top"><label class="searchbox" for="search"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.8"/><path d="m16 16 5 5"/></svg><input id="search" type="search" placeholder="Search names, titles, memories, places..." aria-label="Search gallery"></label><label class="wg-mine-toggle" for="mineOnly"><input id="mineOnly" type="checkbox"><span>View mine only</span></label><button class="button select-themes" id="themeChoose" type="button"><span>✦ Select themes</span><span class="countbubble" id="themeCount">0</span><span aria-hidden="true">▾</span></button></div>
       <div class="filter-bottom">
@@ -94,10 +101,10 @@
     </div>
     <div class="gallery-subline"><span id="resultsCount">Stories</span><span>Tap any image to read · <span class="subline-heart">♥</span> the stories that move you</span></div>
     <div class="gallery-grid" id="gallery" aria-live="polite"></div>
-    <div class="footnote">Places without submissions remain discoverable through the country directory. This prototype contains fictional stories only.</div>
+    <div class="footnote">Places without posts remain discoverable through the country directory. Public community posting is not yet available; private uploads remain visible only to their owners.</div>
   </div></section>
 
-  <section id="about" class="about-section"><div class="shell about-inner"><div><div class="eyebrow">A HUMAN ARCHIVE, BUILT WITH CARE</div><h2>Not a competition<br>for attention.<br><em>A place for meaning.</em></h2></div><div class="about-right"><p>One photo. Up to four moments in a collage. At least 1,000 characters to tell the fuller story. Discover what life feels like across countries, generations and different perspectives.</p><div class="about-steps"><span>01 <strong>Capture a moment</strong></span><span>02 <strong>Choose your collage design</strong></span><span>03 <strong>Tell the story behind it</strong></span><span>04 <strong>Explore with empathy</strong></span></div><small>Public launch will require accounts, content moderation, privacy protections, consent and reporting. These features are not implemented in the demo.</small></div></div></section>
+  <section id="about" class="about-section"><div class="shell about-inner"><div><div class="eyebrow">A HUMAN ARCHIVE, BUILT WITH CARE</div><h2>Not a competition<br>for attention.<br><em>A place for meaning.</em></h2></div><div class="about-right"><p>One photo. Up to four moments in a collage. At least 1,000 characters to tell the fuller story. Discover what life feels like across countries, generations and different perspectives.</p><div class="about-steps"><span>01 <strong>Capture a moment</strong></span><span>02 <strong>Choose your collage design</strong></span><span>03 <strong>Tell the story behind it</strong></span><span>04 <strong>Explore with empathy</strong></span></div><small>Worlds Gallery is in beta. Public publishing, moderation and reporting are still being developed. Private uploads stay protected until their owners can safely choose to share them.</small></div></div></section>
 </main>
 <footer><div class="shell footrow"><span class="brand footbrand"><span class="brand-symbol">W</span><span>Worlds <em>Gallery.</em></span></span><a href="#home">Back to the top ↑</a></div></footer>
 
@@ -105,7 +112,7 @@
 
 <dialog class="modal" id="regionDialog" aria-label="Select a region"><div class="modal-header"><div><div class="eyebrow small">A CLOSER LOOK</div><h3>Select a region</h3></div><button type="button" class="close-button" data-close="regionDialog" aria-label="Close">×</button></div><div class="modal-body"><p class="modal-hint" id="regionHelp">Select a country to browse its first-level regions and provinces.</p><input class="input modal-search" id="regionSearch" type="search" placeholder="Search a region, state or province..." aria-label="Search regions"><div id="regionChoices" class="region-choices"></div></div><div class="modal-footer"><button type="button" class="button button-light" id="regionAny">All regions</button><button type="button" class="button button-primary" data-close="regionDialog">Done</button></div></dialog>
 
-<dialog class="modal upload-modal" id="uploadDialog" aria-label="Share your story"><div class="modal-header"><div><div class="eyebrow small">A MEMORY WORTH KEEPING</div><h3>Share your moment</h3></div><button type="button" class="close-button" data-close="uploadDialog" aria-label="Close">×</button></div><div class="modal-body"><p class="modal-hint">Your story and 1–4 photos are saved as a <strong>private cloud draft</strong> for your account. Nothing is publicly published.</p>
+<dialog class="modal upload-modal" id="uploadDialog" aria-label="Share your story"><div class="modal-header"><div><div class="eyebrow small">A MEMORY WORTH KEEPING</div><h3>Share your moment</h3></div><button type="button" class="close-button" data-close="uploadDialog" aria-label="Close">×</button></div><div class="modal-body"><p class="modal-hint">Create a post with 1–4 photos. For now, posting is <strong>Only me</strong> while we build verified public publishing and moderation. Your photos remain private.</p>
  <form id="uploadForm" novalidate>
   <div class="form-row"><label class="form-field"><span>Storyteller pen name *</span><input id="author" class="input" type="text" minlength="2" maxlength="60" required placeholder="e.g. Quiet Voyager"></label><label class="form-field"><span>Country of the moment *</span><select class="input" id="uploadCountry" required><option value="">Choose country</option></select></label></div>
   <div class="form-row"><label class="form-field"><span>Region / province <small>(optional)</small></span><input id="uploadRegion" list="uploadRegions" class="input" placeholder="e.g. Central Luzon"><datalist id="uploadRegions"></datalist></label><label class="form-field"><span>City / town <small>(optional)</small></span><input id="uploadCity" class="input" placeholder="Optional location"></label></div>
@@ -113,11 +120,61 @@
   <div class="form-row"><label class="form-field"><span>Original story language *</span><select id="storyLanguage" class="input" required><option value="en">English</option><option value="ko">한국어 (Korean)</option><option value="ja">日本語 (Japanese)</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="es">Español</option><option value="fil">Filipino</option></select></label></div>
   <div class="upload-section"><div class="section-label"><strong>01 · Choose 1–4 photos</strong><span>JPG, PNG or WebP · max 12 MB each</span></div><label class="upload-zone" for="imageInput"><span class="upload-icon">↥</span><strong>Choose your photographs</strong><small>Up to four images · automatically resized in your browser</small><input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp" multiple></label><div class="image-tools" id="imageTools" hidden><div class="image-picked" id="imagePicked"></div><p class="micro-hint">Use arrows to change the order of pictures. Tap a preview image to view it on its own.</p></div></div>
   <div class="upload-section"><div class="section-label"><strong>02 · Choose a collage design</strong><span>Layouts adapt to your photo count</span></div><div class="templates" id="templates"></div><div class="preview-frame"><div class="preview-top"><span>LIVE COLLAGE PREVIEW</span><span id="previewLayoutName">Classic layout</span></div><div class="collage-preview" id="collagePreview"><div class="preview-empty">Your chosen collage will appear here <span>✧</span></div></div></div><p class="micro-hint">Every image remains viewable separately when someone opens your story. The collage is just the cover design.</p></div>
-  <div class="upload-section"><div class="section-label"><strong>03 · Tell us what happened</strong><span>At least 1,000 characters</span></div><textarea id="uploadBody" maxlength="15000" class="input story-textarea" placeholder="Take us back to that moment. Where were you? What did you feel? Why does this memory matter?" required></textarea><div class="character-meta"><div class="progress-outer"><div id="characterBar"></div></div><span id="characterCount">0 / 1,000 characters</span></div></div>
-  <div id="formMessage" class="form-message" role="status" aria-live="polite"></div><div class="upload-footer"><span>Private cloud draft · Not published</span><button class="button button-primary" type="submit" id="submitStory">Save private draft</button></div>
+  <div class="upload-section"><div class="section-label"><strong>03 · Tell us what happened</strong><span>At least 1,000 characters</span></div><textarea id="uploadBody" maxlength="15000" class="input story-textarea" placeholder="Take us back to that moment. Where were you? What did you feel? Why does this memory matter?" required></textarea><div class="character-meta"><div class="progress-outer"><div id="characterBar"></div></div><span id="characterCount">0 / 1,000 characters</span></div></div><p id="wgUploadLinkWarning" class="wg-link-warning" role="alert" hidden>Links and contact links are not allowed in story descriptions. Remove the link to post.</p>
+  <fieldset class="wg-post-audience" aria-label="Who can see this post?">
+    <legend>Who can see this post?</legend>
+    <label><input type="radio" name="wgAudience" value="private" checked><span><strong>Only me</strong><small>Save to your private My Posts. Nobody else can see it.</small></span></label>
+    <label class="wg-audience-future"><input type="radio" name="wgAudience" value="public" disabled><span><strong>Public</strong><small>Available after server moderation and privacy protections launch.</small></span></label>
+  </fieldset>
+  <section class="wg-post-policy" aria-labelledby="wgPostPolicyHeading">
+    <div class="wg-post-policy-header"><strong id="wgPostPolicyHeading">Posting privacy & community rules</strong><button class="wg-policy-link" type="button" data-open-post-rules>Read the rules</button></div>
+    <p class="wg-post-policy-note">No links of any kind in the title or story description, including disguised URLs, domains or invitations. Private posts stay visible only to your account. Your confirmations are not a substitute for future safety moderation.</p>
+    <label><input id="wgPostRights" type="checkbox"><span>I own these photographs or have permission to use them, and I will not upload stolen or infringing content.</span></label>
+    <label><input id="wgPostConsent" type="checkbox"><span>I have any necessary consent from identifiable people and appropriate parent/guardian permission for minors.</span></label>
+    <label><input id="wgPostPrivacy" type="checkbox"><span>I checked photos and text for private addresses, contact information, precise live locations, and identifying details.</span></label>
+    <label><input id="wgPostRules" type="checkbox"><span>I agree to the community rules: no scams, spam, exploitation, harassment, threats, hate or unsafe/illegal material.</span></label>
+  </section>
+  <div id="formMessage" class="form-message" role="status" aria-live="polite"></div><div class="upload-footer"><span>Only me · Not publicly shared</span><button class="button button-primary" type="submit" id="submitStory">Post</button></div>
  </form></div></dialog>
 
-<dialog class="modal" id="cloudEditDialog" aria-label="Edit private cloud draft"><div class="modal-header"><h3>Edit private draft</h3><button type="button" class="close-button" data-close="cloudEditDialog" aria-label="Close">×</button></div><div class="modal-body"><p class="modal-hint">Edit story details. Existing photos stay attached. Drafts remain private.</p><form id="cloudEditForm"><input type="hidden" name="story_id"><div class="form-row"><label class="form-field">Story title<input class="input" name="title" maxlength="120" required></label><label class="form-field">Pen name<input class="input" name="author" minlength="2" maxlength="60" required></label></div><div class="form-row"><label class="form-field">Region<input class="input" name="region" maxlength="140"></label><label class="form-field">City<input class="input" name="city" maxlength="140"></label></div><label class="form-field">Story language<select class="input" name="language_code"><option value="en">English</option><option value="ko">한국어</option><option value="ja">日本語</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="es">Español</option><option value="fil">Filipino</option></select></label><label class="form-field">Story<textarea class="input story-textarea" name="body" minlength="1000" maxlength="15000" required></textarea></label><p id="cloudEditStatus" class="form-message" role="status"></p><button type="submit" class="button button-primary">Save changes</button></form></div></dialog>
+<dialog class="modal" id="cloudEditDialog" aria-label="Edit your private post"><div class="modal-header"><h3>Edit post</h3><button type="button" class="close-button" data-close="cloudEditDialog" aria-label="Close">×</button></div><div class="modal-body"><p class="modal-hint">Update your Only me post. Its photos stay attached and remain private.</p><form id="cloudEditForm"><input type="hidden" name="story_id"><div class="form-row"><label class="form-field">Story title<input class="input" name="title" maxlength="120" required></label><label class="form-field">Pen name<input class="input" name="author" minlength="2" maxlength="60" required></label></div><div class="form-row"><label class="form-field">Region<input class="input" name="region" maxlength="140"></label><label class="form-field">City<input class="input" name="city" maxlength="140"></label></div><label class="form-field">Story language<select class="input" name="language_code"><option value="en">English</option><option value="ko">한국어</option><option value="ja">日本語</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="es">Español</option><option value="fil">Filipino</option></select></label><label class="form-field">Story<textarea class="input story-textarea" name="body" minlength="1000" maxlength="15000" required></textarea></label><p id="wgEditLinkWarning" class="wg-link-warning" role="alert" hidden>Links and contact links are not allowed in story descriptions. Remove the link to save changes.</p>
+  <div class="wg-post-policy wg-post-policy-edit"><div class="wg-post-policy-header"><strong>Posting privacy & rules</strong><button class="wg-policy-link" type="button" data-open-post-rules>Read the rules</button></div><label><input name="editPolicyConfirm" type="checkbox"><span>I have reviewed these edits for links, personal information, consent and policy compliance.</span></label></div>
+  <p id="cloudEditStatus" class="form-message" role="status"></p><button type="submit" class="button button-primary">Save changes</button></form></div></dialog>
+
+<dialog class="modal wg-review-modal" id="publicationChecklistDialog" aria-label="Publication readiness checklist">
+ <div class="modal-header"><div><div class="eyebrow small">PREPARING TO SHARE SAFELY</div><h3>Publication checklist</h3></div><button type="button" class="close-button" data-close="publicationChecklistDialog" aria-label="Close">×</button></div>
+ <div class="modal-body">
+  <p class="modal-hint">Reviewing <strong id="reviewStoryTitle"></strong>. This is a private draft preparation tool. Checking these boxes does <strong>not</strong> publish or submit your story. Actual moderator approval will require a future server-side workflow.</p>
+  <h4 class="wg-review-heading">Story and photo requirements</h4>
+  <ul id="reviewAutoChecks" class="wg-review-facts" aria-label="Automatic draft requirements"></ul>
+  <h4 class="wg-review-heading">Your confirmations</h4>
+  <p class="wg-review-disclaimer">These are your statements, not automated safety checks or verified moderation decisions. Nothing is saved when you close this checklist.</p>
+  <div class="wg-review-confirmations">
+   <label><input id="reviewRights" type="checkbox"><span>I created these photos or have the rights and permission to publish all of them.</span></label>
+   <label><input id="reviewConsent" type="checkbox"><span>I have permission from identifiable people where required, including a parent or guardian where appropriate for minors.</span></label>
+   <label><input id="reviewPrivacy" type="checkbox"><span>I have reviewed the story and photos for private addresses, precise location details, identifying information, and unsafe or inappropriate material.</span></label>
+  </div>
+  <p id="reviewReadyStatus" class="wg-review-status" role="status" aria-live="polite">This draft remains private.</p>
+  <div class="wg-review-actions"><button type="button" class="button button-light" id="reviewEditDraft">Edit story details</button><button type="button" class="button button-primary" data-close="publicationChecklistDialog">Done</button></div>
+ </div>
+</dialog>
+
+<dialog class="modal wg-policy-dialog" id="wgPostingRulesDialog" aria-label="Worlds Gallery posting rules and privacy">
+ <div class="modal-header"><div><div class="eyebrow small">SAFE SHARING</div><h3>Posting & privacy rules</h3></div><button type="button" class="close-button" data-close="wgPostingRulesDialog" aria-label="Close posting rules">&times;</button></div>
+ <div class="modal-body">
+  <p class="modal-hint">These rules apply to new posts and later edits, including private posts. All posts are <strong>Only me</strong> during this development phase; Public is not available yet.</p>
+  <ol class="wg-policy-rules">
+   <li><strong>No links or contact destinations:</strong> Do not include URLs, website domains, link shorteners, invitation codes that form URLs, e-mail addresses, QR-code instructions or disguised links in the story description or title.</li>
+   <li><strong>Only authorized media:</strong> Post photos you created or have permission to use. No copyright theft, impersonation, fraudulent endorsements or deceptive content.</li>
+   <li><strong>Respect people and children:</strong> Get consent when required from identifiable people. Do not expose minors or upload sexualized, exploitative or abusive material. Obtain parent/guardian consent when appropriate.</li>
+   <li><strong>Protect privacy and safety:</strong> Remove addresses, private contact details, school/work schedules, exact live locations, identifying documents and other sensitive information from photos and text.</li>
+   <li><strong>Respect the community:</strong> No threats, hate, bullying, graphic abuse, dangerous or illegal material, phishing, spam, or scams. Content may be restricted or removed after safety review.</li>
+   <li><strong>Visibility and control:</strong> Only me content is protected by owner access rules. You can edit/delete your own posts; future public posts will include Hide/Unhide. Published content, moderation and reporting are NOT enabled today.</li>
+  </ol>
+  <p class="wg-policy-caveat">Checkboxes are author statements, not verification. Text link detection is a browser-side safeguard, not a tamper-proof server rule. Full public posting will require enforced backend screening, moderation and reporting.</p>
+  <div class="wg-policy-dialog-footer"><button type="button" class="button button-primary" data-close="wgPostingRulesDialog">I understand</button></div>
+ </div>
+</dialog>
 <dialog class="modal read-modal" id="readDialog" aria-label="Read story"><div class="modal-header"><div><div class="eyebrow small">A STORY FROM THE WORLD</div><span id="readMeta">A human memory</span></div><button type="button" class="close-button" data-close="readDialog" aria-label="Close">×</button></div><div class="modal-body" id="readBody"></div></dialog>
 
 <dialog class="lightbox" id="lightboxDialog" aria-label="View photo at full size"><div class="lightbox-top"><span id="lightboxCounter">Photo 1 of 1</span><button type="button" class="close-button lightbox-close" data-close="lightboxDialog" aria-label="Close photo"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><div class="lightbox-middle"><button type="button" id="lightboxPrev" class="photo-arrow" aria-label="Previous image"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg></button><img id="lightboxImage" alt="Selected story image"><button type="button" id="lightboxNext" class="photo-arrow" aria-label="Next image"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg></button></div><div id="lightboxCaption" class="lightbox-caption">View original frame</div></dialog>
@@ -125,7 +182,8 @@
 
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="data.js?v=39a174caa60a"></script><script src="world_geometry.js?v=b65c5365c640"></script><script src="ph_coastline.js?v=fe3b853d6dcc"></script><script src="ph_admin_geo.js?v=56699b9621e3"></script><script src="place_highlights.js?v=092981cd69b4"></script><script src="globe.js?v=0ea3b51f80da"></script><script src="app.js?v=v26"></script><script src="timezones.js?v=1633b3a9ceba"></script><script src="portal.js?v=v26"></script>
+<script src="wg_post_policy.js?v=v2233-link-privacy-20261109"></script>
+<script src="data.js?v=v2234-original-only-20261109"></script><script src="world_geometry.js?v=b65c5365c640"></script><script src="ph_coastline.js?v=fe3b853d6dcc"></script><script src="ph_admin_geo.js?v=56699b9621e3"></script><script src="place_highlights.js?v=092981cd69b4"></script><script src="globe.js?v=0ea3b51f80da"></script><script src="app.js?v=v2234-original-only-20261109"></script><script src="timezones.js?v=1633b3a9ceba"></script><script src="portal.js?v=v2234-original-only-20261109"></script>
 <script src="assets/vendor/maplibre/maplibre-gl.js?v=45a9b07a9189"></script>
 <script src="wg_global_map.js?v=c46231b55e3a"></script>
 <script src="wg_world_knowledge.js?v=3ac5824820fe"></script>
@@ -137,15 +195,15 @@ if (!window.supabase || typeof window.supabase.createClient !== 'function') {
   document.write('<script src="https://unpkg.com/@supabase/supabase-js@2.119.0"><\/script>');
 }
 </script>
-<script src="wg_locale.js?v=v25"></script>
-<script src="wg_auth.js?v=v216-auth-recovery-20261109"></script>
+<script src="wg_locale.js?v=v2231-post-20261109"></script>
+<script src="wg_auth.js?v=v2232-enter-login-20261109"></script>
 <script type="module" src="wg_cinematic.js?v=99a7ef27dd41"></script>
-<script src="wg_account.js?v=v26"></script>
+<script src="wg_account.js?v=v2232-avatar-menu-20261109"></script>
 <script src="wg_view_state.js?v=v26"></script>
 <script src="wg_locale_country.js?v=v26"></script>
 <script src="wg_ui_icons.js?v=v26"></script>
 
-<script src="wg_v28_ui.js?v=v28"></script>
+<script src="wg_v28_ui.js?v=v2234-complete-rows-20261109"></script>
 <script src="wg_v214_inline.js?v=v215-center-20261109"></script>
 </body>
 </html>

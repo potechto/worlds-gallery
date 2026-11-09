@@ -16,7 +16,7 @@
     back: '<path d="m15 18-6-6 6-6"/>',
     home: '<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z"/><path d="M9 21v-8h6v8"/>',
     user: '<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',
-    settings: '<path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06-1.87 1.87-.06-.06A1.7 1.7 0 0 0 16 18.4a1.7 1.7 0 0 0-1 1.56V20h-2.65v-.04a1.7 1.7 0 0 0-2.58-1.46l-.07.04-1.87-1.87.05-.06A1.7 1.7 0 0 0 7.53 15a1.7 1.7 0 0 0-1.56-1H5.9v-2.65h.07a1.7 1.7 0 0 0 1.56-1 1.7 1.7 0 0 0-.35-1.86l-.05-.06L9 6.56l.06.05a1.7 1.7 0 0 0 1.86.35 1.7 1.7 0 0 0 1-1.56V5.3h2.65v.1a1.7 1.7 0 0 0 1 1.56 1.7 1.7 0 0 0 1.86-.35l.06-.05 1.87 1.87-.05.06A1.7 1.7 0 0 0 19.4 10.35a1.7 1.7 0 0 0 1.56 1h.06V14h-.06A1.7 1.7 0 0 0 19.4 15Z"/>',
+    settings: '<path d="M9.8 3.3h4.4l.6 2.2a7 7 0 0 1 1.7 1l2.2-.6 2.2 3.8-1.6 1.6a8 8 0 0 1 0 1.9l1.6 1.6-2.2 3.8-2.2-.6a7 7 0 0 1-1.7 1l-.6 2.2H9.8l-.6-2.2a7 7 0 0 1-1.7-1l-2.2.6-2.2-3.8 1.6-1.6a8 8 0 0 1 0-1.9L3.1 9.7l2.2-3.8 2.2.6a7 7 0 0 1 1.7-1l.6-2.2Z"/><circle cx="12" cy="12" r="3"/>',
     support: '<path d="M4 12v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="11" width="4" height="8" rx="2"/><rect x="17" y="11" width="4" height="8" rx="2"/><path d="M20 19c0 2-2 3-5 3h-2"/>',
     exit: '<path d="M9 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M15 16l4-4-4-4M8 12h11"/>',
     earth: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 4.5 6 4.5 9s-1.5 6-4.5 9M12 3c-3 3-4.5 6-4.5 9s1.5 6 4.5 9"/>',
@@ -94,7 +94,7 @@
     const pages=[['profile','My profile','user'],['settings','Settings & privacy','settings'],['support','Support & feedback','support']]
       .filter(([key])=>key!==activePage && key!==previousPage)
       .map(([key,label,ic])=>action(label,key,ic)).join('');
-    menu.innerHTML=`<div class="wg-ac-floating-head"><span class="wg-ac-overline">YOUR WORLD</span><strong>${esc(name)}</strong><small>@${esc(profile?.username||'member')}</small></div><div class="wg-ac-menu-items">${back}${pages}${action('My stories','my-stories','story')}${action('Share your story','share','story')}${action('Return to Earth','earth','earth')}${action('Sign out','signout','exit')}</div>`;
+    menu.innerHTML=`<div class="wg-ac-floating-head"><div class="wg-v2232-menu-identity"><span class="wg-ac-overline">YOUR WORLD</span><strong>${esc(name)}</strong><small>@${esc(profile?.username||'member')}</small></div><span class="wg-v2232-menu-avatar" data-wg-avatar-slot="menu" data-wg-avatar-fallback="${esc(String(name).charAt(0).toUpperCase())}" aria-label="Your profile picture"></span></div><div class="wg-ac-menu-items">${back}${pages}${action('My stories','my-stories','story')}${action('Share your story','share','story')}${action('Return to Earth','earth','earth')}${action('Sign out','signout','exit')}</div>`;
     menu.querySelectorAll('[data-ac]').forEach(button=>button.addEventListener('click',()=>{
       const choice=button.dataset.ac;
       setMenuOpen(false);
@@ -302,19 +302,24 @@
   function renderSettings(){
     if(!user)return renderSupport();
     content.innerHTML=title('Settings & privacy','Control how your information may appear, and choose how the world moves.')+`
-      <form class="wg-ac-form" id="wgAcSettingsForm"><div class="wg-ac-section-label">PRIVACY PREFERENCES</div>
-        <label>Profile visibility preference<select name="profile_visibility"><option value="private">Private</option><option value="public">Public — future publishing</option></select></label>
-        <label>Default photo visibility preference<select name="default_photo_visibility"><option value="private">Private</option><option value="public">Public — future publishing</option></select></label>
-        <label class="wg-ac-switch"><input name="discoverable" type="checkbox"> <span>Allow discovery of my profile (when published)</span></label>
-        <label class="wg-ac-switch"><input name="show_country" type="checkbox"> <span>Display my country (when published)</span></label>
-        <label class="wg-ac-switch"><input name="show_detailed_location" type="checkbox"> <span>Display my detailed locality (when published)</span></label>
-        <label class="wg-ac-switch"><input name="allow_comments" type="checkbox"> <span>Allow comments (future feature)</span></label>
-        <div class="wg-ac-section-label">CONTENT & ACCESSIBILITY</div>
-        <label>Website language<select name="wg_interface_language" id="wgSettingsLanguage"><option value="en">English</option><option value="ko">한국어 (Korean)</option><option value="ja">日本語 (Japanese)</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="es">Español</option></select></label>
-        <p class="wg-ac-muted">Language selection is saved for this browser and account. Story text remains in the author's original language.</p>
-        <label>Sensitive content filter<select name="sensitive_content_filter"><option value="strict">Strict — recommended</option><option value="standard">Standard</option></select></label>
-        <label class="wg-ac-switch"><input name="reduce_motion" type="checkbox"> <span>Reduce animations and motion</span></label>
-        <p class="wg-ac-muted">Saving a public preference does not publish photos or profile data yet. All protected records remain restricted by Supabase security rules until the moderated gallery is built.</p>
+      <div class="wg-v2232-settings-summary"><div><span class="wg-ac-overline">YOUR SPACE, YOUR CHOICES</span><p>Review how your posts, location and profile may be shared when public publishing becomes available.</p></div><div class="wg-v2232-settings-avatar"><span data-wg-avatar-slot="settings" data-wg-avatar-fallback="${esc(String(profile?.display_name||'?').charAt(0).toUpperCase())}"></span><small>My picture</small></div></div>
+      <form class="wg-ac-form wg-v2232-settings-form" id="wgAcSettingsForm">
+        <section class="wg-v2232-settings-section"><div class="wg-ac-section-label">${icon('user',19)} <span>PRIVACY PREFERENCES</span></div>
+          <p class="wg-v2232-settings-description">Choose who may discover your profile and future posts. Private content stays restricted until publication is enabled.</p>
+          <div class="wg-v2232-settings-grid"><label>Profile visibility preference<select name="profile_visibility"><option value="private">Private</option><option value="public">Public — future publishing</option></select></label>
+          <label>Default photo visibility preference<select name="default_photo_visibility"><option value="private">Private</option><option value="public">Public — future publishing</option></select></label></div>
+          <div class="wg-v2232-settings-switches"><label class="wg-ac-switch"><input name="discoverable" type="checkbox"> <span>Allow discovery of my profile (when published)</span></label>
+          <label class="wg-ac-switch"><input name="show_country" type="checkbox"> <span>Display my country (when published)</span></label>
+          <label class="wg-ac-switch"><input name="show_detailed_location" type="checkbox"> <span>Display my detailed locality (when published)</span></label>
+          <label class="wg-ac-switch"><input name="allow_comments" type="checkbox"> <span>Allow comments (future feature)</span></label></div>
+        </section>
+        <section class="wg-v2232-settings-section"><div class="wg-ac-section-label">${icon('settings',19)} <span>CONTENT & ACCESSIBILITY</span></div>
+          <div class="wg-v2232-settings-grid"><label>Website language<select name="wg_interface_language" id="wgSettingsLanguage"><option value="en">English</option><option value="ko">한국어 (Korean)</option><option value="ja">日本語 (Japanese)</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="es">Español</option></select></label>
+          <label>Sensitive content filter<select name="sensitive_content_filter"><option value="strict">Strict — recommended</option><option value="standard">Standard</option></select></label></div>
+          <p class="wg-ac-muted">Website language is saved for this browser and account; story text remains in the author's original language.</p>
+          <div class="wg-v2232-settings-switches"><label class="wg-ac-switch"><input name="reduce_motion" type="checkbox"> <span>Reduce animations and motion</span></label></div>
+        </section>
+        <p class="wg-v2232-privacy-note">${icon('settings',17)} Saving a public preference never publishes content automatically. Your uploaded photos are private until the future moderated publishing service is enabled.</p>
         <button class="wg-ac-save" type="submit">Save settings</button>
       </form>`;
     const form=byId('wgAcSettingsForm');

@@ -353,7 +353,28 @@
     document.dispatchEvent(new Event('wg:guest-ready'));
     return;
   }
-  const db = window.supabase.createClient(URL, KEY, {auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}});
+  // WG_V2231_AUTH_NETWORK_GUARD_BEGIN - retry one transient transport failure on the login endpoint only.
+  // The SDK still validates credentials and RLS. HTTP errors (including 400/401/429) are never retried.
+  const authNetworkError = error => /failed to fetch|networkerror|network request failed|load failed/i.test(String(error?.message || ''));
+  const authErrorText = error => authNetworkError(error)
+    ? 'Could not reach the login service. Check your internet connection, browser shields or blockers, then try again. Your account has not been changed.'
+    : String(error?.message || 'Could not sign in.');
+  async function wgResilientFetch(input, options) {
+    const nativeFetch = window.fetch.bind(window);
+    const address = String(typeof input === 'string' ? input : input?.url || input || '');
+    const method = String(options?.method || input?.method || 'GET').toUpperCase();
+    const loginRequest = method === 'POST' && address.startsWith(URL + '/auth/v1/token');
+    try {
+      return await nativeFetch(input, options);
+    } catch (error) {
+      if (!loginRequest || !authNetworkError(error) || navigator.onLine === false) throw error;
+      // A single bounded retry for intermittent transport problems, not for authentication failures.
+      await new Promise(resolve => setTimeout(resolve, 650));
+      return nativeFetch(input, options);
+    }
+  }
+  // WG_V2231_AUTH_NETWORK_GUARD_END
+  const db = window.supabase.createClient(URL, KEY, {global:{fetch:wgResilientFetch},auth:{autoRefreshToken:true,persistSession:true,detectSessionInUrl:true}});
   window.WorldsGalleryAuth = {getUser: () => db.auth.getUser(), getClient: () => db, getCurrentUserId: () => currentUser?.id || null};
   const profileData = form => {
     const data = new FormData(form);
@@ -426,9 +447,19 @@
     if(!resumed&&window.WorldsGalleryPortal?.faceHomeCountry)window.WorldsGalleryPortal.faceHomeCountry(profile.home_country_code);
     document.documentElement.classList.remove('wg-refresh-restore');
   }
+  // V2.23.2: Enter from either sign-in credential field submits once,
+  // via native validation and the existing guarded submit handler.
+  byId('wgSignInForm').addEventListener('keydown', event => {
+    if(event.key!=='Enter'||event.isComposing||event.repeat||busy)return;
+    if(!event.target.matches('input[name="email"],input[name="password"]'))return;
+    event.preventDefault();
+    if(typeof event.currentTarget.requestSubmit==='function')event.currentTarget.requestSubmit();
+    else event.currentTarget.querySelector('button[type="submit"]')?.click();
+  });
   byId('wgSignInForm').addEventListener('submit', async event => {
     event.preventDefault(); if (busy) return;
     lockBusy(true); status('Signing in...');
+    let signedIn = false;
     try {
       const data = new FormData(event.target);
       const result = await db.auth.signInWithPassword({email:String(data.get('email') || '').trim(), password:String(data.get('password') || '')});
@@ -438,10 +469,15 @@
         await db.auth.signOut();
         throw new Error('Your email is not confirmed yet. Check your inbox and spam folder first.');
       }
-      event.target.reset();
-      resetPasswordEyes();
+      signedIn = true;
       await enter(result.data.user);
-    } catch (err) {status(err.message || 'Could not sign in.');}
+      if (document.documentElement.classList.contains('wg-auth-ok')) {
+        event.target.reset();
+        resetPasswordEyes();
+      }
+    } catch (err) {
+      status(signedIn ? 'Signed in, but your profile could not load. ' + authErrorText(err) : authErrorText(err), 'error');
+    }
     finally {lockBusy(false);}
   });
   byId('wgSignUpForm').addEventListener('submit', async event => {
@@ -512,6 +548,6 @@
       const {data,error} = await db.auth.getUser();
       if (data?.user) await enter(data.user);
       else {status(error && error.name !== 'AuthSessionMissingError' ? 'Could not verify session: ' + error.message : 'Create an account to begin, or sign in if you already have one.');document.dispatchEvent(new Event('wg:guest-ready'));document.documentElement.classList.remove('wg-refresh-restore');}
-    } catch (err) {status('Could not verify your session: ' + (err.message || 'Network error'));document.documentElement.classList.remove('wg-refresh-restore');}
+    } catch (err) {status('Could not verify your session: ' + authErrorText(err), 'error');document.documentElement.classList.remove('wg-refresh-restore');}
   })();
 })();

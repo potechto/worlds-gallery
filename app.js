@@ -1,5 +1,5 @@
-/* Worlds Gallery V3 — standalone interactive browser concept.
-   No server/API keys, no public uploads. Demo stories go to IndexedDB only.
+/* Worlds Gallery private original-upload gallery. Public publishing is NOT deployed.
+   Legacy offline demos and bundled seeds are excluded from discovery, not erased.
 */
 'use strict';
 const $ = id => document.getElementById(id);
@@ -18,23 +18,44 @@ const layoutChoices={
 };
 const DB_NAME='worlds_gallery_v3_demo',DB_STORE='posts';
 const HEARTS_KEY='worldsGalleryPrototypeHeartsV1';
-let db=null, demoStories=[], uploadImages=[], chosenLayout='single', currentStoryId=null, lightboxIndex=0, lightboxImages=[];
+let db=null, demoStories=[], uploadImages=[], imageSelectionRevision=0, chosenLayout='single', currentStoryId=null, lightboxIndex=0, lightboxImages=[];
 let hearts=[];try{hearts=JSON.parse(localStorage.getItem(HEARTS_KEY)||'[]');if(!Array.isArray(hearts))hearts=[]}catch{hearts=[]}
 const state={themes:new Set(),draftThemes:new Set(),selectedRegion:null,selectedCountry:'',selectedContinent:'',search:'',sort:'new',mineOnly:false};
 let globe=null,speechRunning=false,speechToken=0,speechParts=[],speechIndex=0;
 // The current IndexedDB gallery is a local preview, not a publishable database.
 // Exclude ownerless legacy uploads and other users' browser entries.
 const currentOwner=()=>window.WorldsGalleryAuth?.getCurrentUserId?.()||null;
-const stories=()=>[...cloudStories,...demoStories.filter(s=>currentOwner() && s.owner_id===currentOwner()),...seeds];
-let cloudStories=[],cloudUser=null,cloudRevision=0;
+// Keep another account's cached private drafts out of the gallery while sessions change.
+const stories=()=>cloudStories.filter(s=>currentOwner() && s.owner_id===currentOwner() && s.cloud && s.paths?.length>0 && s.images?.length>0 && String(s.title||'').trim() && String(s.story||'').trim());
+let cloudStories=[],cloudUser=null,cloudRevision=0,cloudSignedAt=0,cloudRefreshBusy=false;
+const CLOUD_URL_REFRESH_AFTER_MS=45*60*1000; // signed links last 60 minutes
 const cloudClient=()=>window.WorldsGalleryAuth?.getClient?.();
 const CLOUD_BUCKET='wg-private-photos';
 const cloudReady=()=>Boolean(currentOwner() && cloudClient());
 function cloudError(error){return error?.message || 'Cloud request failed';}
+// WG_V2231_POST_ACTIONS_BEGIN - owner-only controls. Hiding is already enforced by private RLS.
+function ownerPostMenu(story){
+ if(!story?.cloud || story.status!=='draft' || !currentOwner() || story.owner_id!==currentOwner())return '';
+ const id=html(story.id);
+ return `<details class="wg-post-menu"><summary aria-label="Manage your post" title="Manage post">⋮</summary><div class="wg-post-menu-options" role="group" aria-label="Owner post actions"><button type="button" data-post-visibility="${id}" title="This post is already private">Hide / Unhide</button><button type="button" data-post-edit="${id}">Edit</button><button type="button" data-post-delete="${id}">Delete</button></div></details>`;
+}
+function ownedPostById(id){return cloudStories.find(s=>s.id===id && s.cloud && s.status==='draft' && s.owner_id===currentOwner())||null;}
+function postVisibilityNotice(story){if(!ownedPostById(story?.id))return;notify('This post is already Only me. Public Hide / Unhide will activate after moderated posting launches.');}
+function runOwnerPostAction(e){
+ const visibility=e.target.closest('[data-post-visibility]');
+ if(visibility){const story=ownedPostById(visibility.dataset.postVisibility);if(story)postVisibilityNotice(story);return true;}
+ const edit=e.target.closest('[data-post-edit]');
+ if(edit){const story=ownedPostById(edit.dataset.postEdit);if(story)openCloudEditor(story);return true;}
+ const deletion=e.target.closest('[data-post-delete]');
+ if(deletion){const story=ownedPostById(deletion.dataset.postDelete);if(story)removeCloudStory(story);return true;}
+ return false;
+}
+// WG_V2231_POST_ACTIONS_END
 async function fetchCloudStories(){
  const uid=currentOwner(),revision=++cloudRevision;
- if(!uid){cloudUser=null;cloudStories=[];renderGallery();return;}
+ if(!uid){cloudUser=null;cloudStories=[];cloudSignedAt=0;renderGallery();return;}
  const client=cloudClient();if(!client)return;
+ try{
  const [storyResult,photoResult]=await Promise.all([
   client.from('wg_stories').select('*').eq('user_id',uid).order('created_at',{ascending:false}),
   client.from('wg_story_photos').select('story_id,storage_path,position').eq('user_id',uid).order('position')
@@ -56,19 +77,55 @@ async function fetchCloudStories(){
   next.push({id:row.id,owner_id:row.user_id,author:row.author,country:row.country_name,region:row.region,city:row.city,theme:row.theme,title:row.title,story:row.body,layout:row.layout,language_code:row.language_code,images:images.filter(Boolean),paths,created:Date.parse(row.created_at),sample:false,cloud:true,status:row.status});
  }
  if(revision!==cloudRevision||uid!==currentOwner())return;
- cloudUser=uid;cloudStories=next;renderGallery();
+ cloudUser=uid;cloudStories=next;cloudSignedAt=Date.now();renderGallery();
+ }catch(err){
+  if(revision===cloudRevision&&uid===currentOwner())notify('Cloud drafts unavailable: '+cloudError(err));
+ }
+}
+// Refresh expiring private photo links while leaving story text, filters, and narration intact.
+async function refreshPrivatePhotoLinks(){
+ const uid=currentOwner();
+ if(document.visibilityState==='hidden'||!uid||cloudUser!==uid||!cloudStories.length||cloudRefreshBusy)return;
+ if(Date.now()-cloudSignedAt<CLOUD_URL_REFRESH_AFTER_MS)return;
+ const revision=cloudRevision,client=cloudClient();if(!client)return;
+ cloudRefreshBusy=true;
+ try{
+  const updates=await Promise.all(cloudStories.filter(s=>s.owner_id===uid).map(async story=>{
+   const images=await Promise.all((story.paths||[]).map(async path=>{
+    const response=await client.storage.from(CLOUD_BUCKET).createSignedUrl(path,3600);
+    if(response.error||!response.data?.signedUrl)throw response.error||new Error('Private photo link unavailable.');
+    return response.data.signedUrl;
+   }));
+   return [story.id,images];
+  }));
+  if(revision!==cloudRevision||uid!==currentOwner())return;
+  const updated=new Map(updates),openStory=cloudStories.find(s=>s.id===currentStoryId);
+  const updateLightbox=Boolean(openStory&&$('lightboxDialog')?.open&&lightboxImages===openStory.images);
+  for(const story of cloudStories){if(updated.has(story.id))story.images=updated.get(story.id);}
+  cloudSignedAt=Date.now();
+  renderGallery();
+  // Do not re-render the reader: that would restart text-to-speech and move its scroll position.
+  if(openStory&&$('readDialog')?.open){
+   $('readBody').querySelectorAll('.read-gallery img').forEach((img,i)=>{if(openStory.images[i])img.src=openStory.images[i];});
+   if(updateLightbox){lightboxImages=openStory.images;renderLightbox();}
+  }
+ }catch(err){
+  if(revision===cloudRevision&&uid===currentOwner())notify('Could not refresh private photos: '+cloudError(err));
+ }finally{cloudRefreshBusy=false;}
 }
 async function saveCloudDraft(){
+ const postingSafetyError=validateUpload();if(postingSafetyError)throw new Error(postingSafetyError);
  if(!cloudReady())throw new Error('Sign in before creating a cloud draft.');
- const uid=currentOwner(),client=cloudClient();
+ const uid=currentOwner(),client=cloudClient(),photos=uploadImages.slice();
+ if(photos.length<1||photos.length>4)throw new Error('Choose between one and four photos.');
  const payload={user_id:uid,author:$('author').value.trim(),country_code:$('uploadCountry').value,country_name:countryName($('uploadCountry').value),region:$('uploadRegion').value.trim(),city:$('uploadCity').value.trim(),theme:$('uploadTheme').value,title:$('uploadTitle').value.trim(),body:$('uploadBody').value.trim(),layout:chosenLayout,language_code:$('storyLanguage').value,status:'draft'};
  const inserted=await client.from('wg_stories').insert(payload).select('id').single();
  if(inserted.error)throw inserted.error;
  const storyId=inserted.data.id,uploaded=[];
  try{
-  for(let i=0;i<uploadImages.length;i++){
+  for(let i=0;i<photos.length;i++){
    if(currentOwner()!==uid)throw new Error('Session changed during upload.');
-   const dataUrl=uploadImages[i];const mime=dataUrl.startsWith('data:image/webp')?'image/webp':'image/jpeg';
+   const dataUrl=photos[i];const mime=dataUrl.startsWith('data:image/webp')?'image/webp':'image/jpeg';
    const response=await fetch(dataUrl);const blob=await response.blob();
    if(blob.size>10*1024*1024)throw new Error('A compressed photo exceeds 10 MB.');
    const path=uid+'/'+storyId+'/'+i+'-'+crypto.randomUUID()+'.'+(mime==='image/webp'?'webp':'jpg');
@@ -87,13 +144,13 @@ async function saveCloudDraft(){
 }
 async function removeCloudStory(s){
  const uid=currentOwner();if(!uid||s.owner_id!==uid)return;
- if(!confirm('Delete this private cloud draft and its photos permanently?'))return;
+ if(!confirm('Permanently delete this private post and its photos?'))return;
  const client=cloudClient();const deleted=await client.from('wg_stories').delete().eq('id',s.id).eq('user_id',uid).select('id');
  if(deleted.error){notify('Delete failed: '+cloudError(deleted.error));return;}
  const paths=s.paths||[];let removeIssue=false;
  if(paths.length){const result=await client.storage.from(CLOUD_BUCKET).remove(paths);removeIssue=!!result.error;}
- stopSpeech();$('readDialog').close();await fetchCloudStories();
- notify(removeIssue?'Draft deleted, but photo cleanup requires review.':'Cloud draft deleted');
+ stopSpeech();if($('readDialog').open)$('readDialog').close();await fetchCloudStories();
+ notify(removeIssue?'Post deleted, but photo cleanup needs review.':'Private post deleted');
 }
 function openCloudEditor(s){
  if(!s.cloud||s.owner_id!==currentOwner()||s.status!=='draft')return;
@@ -105,8 +162,63 @@ function openCloudEditor(s){
  form.elements.namedItem('region').value=s.region||'';
  form.elements.namedItem('city').value=s.city||'';
  form.elements.namedItem('language_code').value=s.language_code||'en';
+ form.elements.namedItem('editPolicyConfirm').checked=false;
+ $('wgEditLinkWarning').hidden=true;
  $('cloudEditStatus').textContent='';$('readDialog').close();dialog.showModal();
 }
+
+
+// WG_V219_REVIEW_BEGIN - local-only readiness aid, not a publication or moderation system.
+let publicationReviewId=null;
+const REVIEW_ATTESTATIONS=['reviewRights','reviewConsent','reviewPrivacy'];
+function isOwnedReviewDraft(s){
+ const uid=currentOwner();
+ return Boolean(uid&&s&&s.cloud&&s.status==='draft'&&s.owner_id===uid);
+}
+function publicationDraftChecks(s){
+ const photoCount=(s.paths||[]).length;
+ const body=String(s.story||'').trim(),bodyCount=countGraphemes(body);
+ return [
+  {ok:!!String(s.author||'').trim()&&String(s.author).trim().length>=2&&!!String(s.title||'').trim()&&String(s.title).trim().length<=120,label:'Title and pen name added'},
+  {ok:bodyCount>=1000&&body.length<=15000,label:'Story length is 1,000–15,000 characters'},
+  {ok:photoCount>=1&&photoCount<=4,label:'One to four photographs attached'},
+  {ok:!!countryCode(s.country)&&!!s.theme,label:'Country and story theme selected'}
+ ];
+}
+function closePublicationChecklist(){
+ publicationReviewId=null;
+ const dialog=$('publicationChecklistDialog');
+ if(dialog?.open)dialog.close();
+}
+function openPublicationChecklist(s){
+ if(!isOwnedReviewDraft(s))return;
+ publicationReviewId=s.id;
+ $('reviewStoryTitle').textContent=s.title;
+ for(const id of REVIEW_ATTESTATIONS){$(id).checked=false;}
+ if($('readDialog').open)$('readDialog').close();
+ $('publicationChecklistDialog').showModal();
+ renderPublicationChecklist();
+}
+function renderPublicationChecklist(){
+ const s=cloudStories.find(x=>x.id===publicationReviewId);
+ if(!isOwnedReviewDraft(s)){closePublicationChecklist();return;}
+ const checks=publicationDraftChecks(s);
+ $('reviewAutoChecks').innerHTML=checks.map(c=>`<li class="${c.ok?'wg-review-ok':'wg-review-missing'}"><span aria-hidden="true">${c.ok?'✓':'○'}</span> ${html(c.label)}</li>`).join('');
+ const metadataReady=checks.every(c=>c.ok);
+ const confirmationsReady=REVIEW_ATTESTATIONS.every(id=>$(id).checked);
+ const result=$('reviewReadyStatus');
+ result.classList.toggle('wg-review-ready',metadataReady&&confirmationsReady);
+ result.textContent=metadataReady&&confirmationsReady
+  ? 'Preparation complete. This draft is still private. Submission and moderator approval are not enabled yet.'
+  : 'Not ready for future submission: complete the missing requirements and confirmations. No content has been published.';
+}
+function editFromPublicationChecklist(){
+ const s=cloudStories.find(x=>x.id===publicationReviewId);
+ if(!isOwnedReviewDraft(s)){closePublicationChecklist();return;}
+ closePublicationChecklist();
+ openCloudEditor(s);
+}
+// WG_V219_REVIEW_END
 
 function notify(message){const t=$('toast');t.textContent=message;t.classList.add('show');clearTimeout(notify.t);notify.t=setTimeout(()=>t.classList.remove('show'),3300)}
 function openDb(){return new Promise((resolve,reject)=>{if(!('indexedDB' in window))return reject(new Error('Browser storage not available'));const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(DB_STORE))r.result.createObjectStore(DB_STORE,{keyPath:'id'})};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error||new Error('Could not open browser storage'))})}
@@ -150,12 +262,16 @@ function collageMarkup(images,layout='single',options={}){
  const n=Math.max(1,images.length||1),allowed=layoutChoices[n]||layoutChoices[1],style=allowed.some(x=>x[0]===layout)?layout:allowed[0][0];
  return `<div class="collage-layout count-${n} layout-${html(style)}">${images.map((src,i)=>`<div class="tile" ${options.lightbox?'data-photo-index="'+i+'" tabindex="0" role="button" aria-label="View photo '+(i+1)+' at full size"':''}><img src="${html(src)}" alt="Photo ${i+1} of ${n}" loading="lazy"></div>`).join('')}</div>`
 }
+function storyOwnerAvatar(s){
+ const first=String(s.author||'?').slice(0,1).toUpperCase();
+ return `<span class="avatar wg-v2232-story-avatar" data-wg-avatar-owner="${html(s.owner_id||'none')}" data-wg-avatar-fallback="${html(first)}">${html(first)}</span>`;
+}
 function renderStats(){const all=stories();$('statStories').textContent=all.length.toLocaleString();$('statCountries').textContent=new Set(all.map(s=>s.country)).size}
 function renderGallery(){const items=getFiltered();$('resultsCount').textContent=`Showing ${items.length} of ${stories().length} stories`;
  $('gallery').innerHTML=items.length?items.map(s=>{
   const t=themeFor(s.theme),liked=hearts.includes(s.id);
-  return `<article class="story-card" data-id="${html(s.id)}"><button class="card-image-button" type="button" data-open-story="${html(s.id)}" aria-label="Read ${html(s.title)}">${collageMarkup(s.images,s.layout||(s.images.length===1?'single':(s.images.length===2?'duo-vertical':(s.images.length===3?'trio-hero':'quad-grid'))))}${s.images.length>1?`<span class="image-count">▧ ${s.images.length} photos</span>`:''}</button><div class="card-text"><div class="card-meta"><span>${html(s.country)}</span><span class="sample-label">${s.sample?'Demo story':s.cloud?'Private draft':'Local demo'}</span></div><div class="category">${t.icon} ${html(t.name)}</div><h3 class="card-title">${html(s.title)}</h3><p class="card-excerpt" data-open-story="${html(s.id)}" role="button" tabindex="0">${html(s.story.slice(0,300))}</p><div class="card-footer"><span class="byline"><span class="avatar">${html(s.author.slice(0,1).toUpperCase())}</span><span>${html(s.author)}</span></span><button type="button" class="heart ${liked?'active':''}" data-heart="${html(s.id)}" aria-label="Heart ${html(s.title)}" aria-pressed="${liked}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.9a5.5 5.5 0 0 0-7.8 0L12 6l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.3a5.5 5.5 0 0 0 0-7.8Z"/></svg><span>${heartCount(s)}</span></button></div></div></article>`
- }).join(''):`<div class="empty-state"><div style="font-size:39px">✧</div><h3>No stories in this corner yet.</h3><p>Try a different place, theme or search. Your chosen country can be the first to share.</p><button class="button button-light" type="button" data-reset>Clear all filters</button></div>`;
+  return `<article class="story-card" data-id="${html(s.id)}"><button class="card-image-button" type="button" data-open-story="${html(s.id)}" aria-label="Read ${html(s.title)}">${collageMarkup(s.images,s.layout||(s.images.length===1?'single':(s.images.length===2?'duo-vertical':(s.images.length===3?'trio-hero':'quad-grid'))))}${s.images.length>1?`<span class="image-count">▧ ${s.images.length} photos</span>`:''}</button><div class="card-text"><div class="card-meta"><span>${html(s.country)}</span><span class="sample-label">Only me</span></div><div class="category">${t.icon} ${html(t.name)}</div><h3 class="card-title">${html(s.title)}</h3><p class="card-excerpt" data-open-story="${html(s.id)}" role="button" tabindex="0">${html(s.story.slice(0,300))}</p><div class="card-footer"><span class="byline">${storyOwnerAvatar(s)}<span>${html(s.author)}</span></span><button type="button" class="heart ${liked?'active':''}" data-heart="${html(s.id)}" aria-label="Heart ${html(s.title)}" aria-pressed="${liked}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.9a5.5 5.5 0 0 0-7.8 0L12 6l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.3a5.5 5.5 0 0 0 0-7.8Z"/></svg><span>${heartCount(s)}</span></button>${ownerPostMenu(s)}</div></div></article>`
+ }).join(''):`<div class="empty-state"><div style="font-size:39px" aria-hidden="true">&#10024;</div><h3>No original stories here yet.</h3><p>Private posts appear only for their owners. Public community stories will appear once secure review and sharing are ready.</p>${(state.selectedCountry||state.selectedContinent||state.selectedRegion||state.search||state.themes.size)?'<button class="button button-light" type="button" data-reset>Clear all filters</button>':''}</div>`;
  renderStats();renderChips();
 }
 function renderCountryOptions(keep=true){const current=keep?state.selectedCountry:'';
@@ -177,7 +293,7 @@ function setCountry(iso,source){state.selectedCountry=iso;state.selectedRegion=n
  renderCountryOptions();$('countryFilter').value=state.selectedCountry;renderGallery();renderGlobeLabel();if(globe){if(iso)globe.select(iso);else if(source!=='globe')globe.reset()}
 }
 function renderGlobeLabel(){const iso=state.selectedCountry,n=iso?countryName(iso):'The whole world';$('globeLocation').textContent=n;
- if(iso){const total=stories().filter(s=>countryCode(s.country)===iso).length;$('globeSelection').innerHTML=`<b>${html(n)}</b> · ${total} demo ${total===1?'story':'stories'} in this country. <button type="button" id="scrollGallery">View gallery ↓</button> <button type="button" id="globeRegionChoose">Choose region ↗</button>`}else{$('globeSelection').textContent='Drag to rotate, select a country, or filter 249 countries and territories below.'}
+ if(iso){const total=stories().filter(s=>countryCode(s.country)===iso).length;$('globeSelection').innerHTML=`<b>${html(n)}</b> · ${total} private ${total===1?'story':'stories'} in this country. <button type="button" id="scrollGallery">View gallery ↓</button> <button type="button" id="globeRegionChoose">Choose region ↗</button>`}else{$('globeSelection').textContent='Drag to rotate, select a country, or filter 249 countries and territories below.'}
 }
 function openThemeModal(){state.draftThemes=new Set(state.themes);renderThemeOptions();$('themesDialog').showModal()}
 function renderThemeOptions(){const currentCountry=state.selectedCountry;
@@ -193,7 +309,7 @@ function renderRegionChoices(){const code=state.selectedCountry;const options=re
 }
 function resetFilters(){state.themes.clear();state.selectedCountry='';state.selectedContinent='';state.selectedRegion=null;state.sort='new';state.search='';state.mineOnly=false;$('mineOnly').checked=false;$('search').value='';$('sortFilter').value='new';$('continentFilter').value='';renderCountryOptions(false);renderGallery();if(globe)globe.reset();renderGlobeLabel()}
 function selectRegion(code){const reg=regionOptions(state.selectedCountry).find(x=>x.code===code);if(!reg)return;state.selectedRegion={code:reg.code,name:reg.name,parent:reg.parent};$('regionDialog').close();renderGallery();notify('Region filter applied');if(globe)globe.zoomBy(.08)}
-function prepareUpload(){uploadImages=[];chosenLayout='single';$('uploadForm').reset();$('storyLanguage').value=window.WorldsGalleryLocale?.get?.()||'en';$('imageTools').hidden=true;$('formMessage').textContent='';renderTemplateChoices();renderCollagePreview();renderUploadRegionSuggestions();updateCharacterProgress();$('uploadDialog').showModal()}
+function prepareUpload(){imageSelectionRevision++;uploadImages=[];chosenLayout='single';$('uploadForm').reset();$('submitStory').disabled=false;const audience=$('uploadForm').querySelector('input[name=wgAudience][value=private]');if(audience)audience.checked=true;$('storyLanguage').value=window.WorldsGalleryLocale?.get?.()||'en';$('imageTools').hidden=true;$('formMessage').classList.remove('ok');$('formMessage').textContent='';renderTemplateChoices();renderCollagePreview();renderUploadRegionSuggestions();updateCharacterProgress();$('uploadDialog').showModal()}
 function renderUploadRegionSuggestions(){$('uploadRegions').innerHTML=regionOptions($('uploadCountry').value).map(x=>`<option value="${html(x.name)}"></option>`).join('')}
 function compressImage(file){return new Promise((resolve,reject)=>{
   if(!['image/jpeg','image/png','image/webp'].includes(file.type))return reject(new Error('Only JPG, PNG or WebP photos are supported.'));
@@ -216,21 +332,40 @@ function renderCollagePreview(){$('previewLayoutName').textContent=(layoutChoice
  $('collagePreview').innerHTML=uploadImages.length?collageMarkup(uploadImages,chosenLayout,{lightbox:true}):'<div class="preview-empty">Your chosen collage will appear here <span>✧</span></div>';
 }
 function updateCharacterProgress(){const n=countGraphemes($('uploadBody').value);$('characterCount').textContent=`${n.toLocaleString()} / 1,000 characters ${n>=1000?'✓':'required'}`;$('characterBar').style.width=Math.min(100,n/1000*100)+'%'}
+const POST_SAFETY_CHECKS=['wgPostRights','wgPostConsent','wgPostPrivacy','wgPostRules'];
+function postingPolicyIssue(fields){
+ const checker=window.WorldsGalleryPostPolicy?.findPolicyIssue;
+ if(typeof checker!=='function')return 'Posting safety checker did not load. Refresh this page and try again.';
+ return checker(fields)?.message || '';
+}
+function updatePostLinkWarning(input,notice){
+ const element=$(notice),checker=window.WorldsGalleryPostPolicy?.containsProhibitedLink;
+ const inputs=notice==='wgUploadLinkWarning'
+  ? ['uploadBody','uploadTitle','author','uploadRegion','uploadCity'].map(id=>$(id))
+  : ['body','title','author','region','city'].map(name=>$('cloudEditForm')?.elements.namedItem(name));
+ const blocked=typeof checker!=='function'||inputs.some(field=>field&&checker(field.value));
+ element.hidden=!blocked;
+ if(blocked)element.textContent=typeof checker!=='function'?'Posting safety checker unavailable. Refresh to continue.':'Links and contact links are not allowed here. Remove them before continuing.';
+}
 function validateUpload(){const author=$('author').value.trim(),country=$('uploadCountry').value,theme=$('uploadTheme').value,title=$('uploadTitle').value.trim(),story=$('uploadBody').value.trim();
  if(author.length<2)return 'Add a pen name with at least two characters.';
  if(!country)return 'Choose the country where the memory happened.';
  if(!theme)return 'Choose a story theme.';
  if(!title)return 'Give your story a title.';
+ if($('uploadForm').querySelector('input[name=wgAudience]:checked')?.value!=='private')return 'Public posting is not active yet. Select Only me.';
  if(uploadImages.length<1||uploadImages.length>4)return 'Choose between one and four photos.';
+ const issue=postingPolicyIssue({description:story,title,author,region:$('uploadRegion').value,city:$('uploadCity').value});
+ if(issue)return issue;
  if(countGraphemes(story)<1000)return `Write at least 1,000 characters (currently ${countGraphemes(story)}).`;
+ if(!POST_SAFETY_CHECKS.every(id=>$(id)?.checked))return 'Confirm all four photo rights, consent, privacy and posting-rule checkboxes before posting.';
  return '';
 }
 async function submitUpload(e){e.preventDefault();const invalid=validateUpload();const msg=$('formMessage');if(invalid){msg.classList.remove('ok');msg.textContent=invalid;return}
- const submit=$('submitStory');submit.disabled=true;submit.textContent='Saving private cloud draft…';msg.textContent='';
- const ownerId=currentOwner();if(!ownerId){msg.textContent='Please sign in again before saving a story.';submit.disabled=false;return;}
- try{await saveCloudDraft();$('uploadDialog').close();resetFilters();await fetchCloudStories();notify('Private cloud draft saved. Only you can see it.');$('stories').scrollIntoView({behavior:'smooth',block:'start'})}
- catch(err){msg.classList.remove('ok');msg.textContent='Could not save cloud draft: '+cloudError(err)}
- finally{submit.disabled=false;submit.textContent='Save private draft'}
+ const submit=$('submitStory');submit.disabled=true;submit.textContent='Posting privately…';msg.classList.remove('ok');msg.textContent='';
+ const ownerId=currentOwner();if(!ownerId){msg.textContent='Please sign in again before posting.';submit.disabled=false;submit.textContent='Post';return;}
+ try{await saveCloudDraft();$('uploadDialog').close();resetFilters();await fetchCloudStories();state.mineOnly=true;$('mineOnly').checked=true;renderGallery();notify('Posted privately under My Posts. Only you can see it.');$('stories').scrollIntoView({behavior:'smooth',block:'start'})}
+ catch(err){msg.classList.remove('ok');msg.textContent='Could not post privately: '+cloudError(err)}
+ finally{submit.disabled=false;submit.textContent='Post'}
 }
 function stopSpeech(){speechToken++;speechRunning=false;speechParts=[];speechIndex=0;if('speechSynthesis' in window){window.speechSynthesis.cancel()}updateSpeechUi()}
 function updateSpeechUi(){const btn=$('ttsButton'),status=$('ttsStatus');if(!btn)return;btn.classList.toggle('active',speechRunning);btn.setAttribute('aria-pressed',String(speechRunning));btn.innerHTML=speechRunning?'■ <span>Stop</span>':'♫ <span>Listen</span>';if(status)status.textContent=speechRunning?'Reading aloud…':'Starts from the title every time.'}
@@ -261,7 +396,7 @@ function playSpeech(){if(!('speechSynthesis' in window)||!('SpeechSynthesisUtter
  next()
 }
 function readerContent(s){const t=themeFor(s.theme);
- return `<div class="read-gallery">${collageMarkup(s.images,s.layout||(s.images.length===1?'single':(s.images.length===2?'duo-vertical':(s.images.length===3?'trio-hero':'quad-grid'))),{lightbox:true})}</div><p class="tap-photo">⌕ Tap a collage photo to see its full frame (${s.images.length} ${s.images.length===1?'photo':'photos'})</p><div class="read-theme">${t.icon} ${html(t.name)} · ${html([s.country,s.region,s.city].filter(Boolean).join(' · '))}</div><div class="read-heading"><h2>${html(s.title)}</h2><div class="tts-block"><button type="button" id="ttsButton" class="tts-toggle" aria-pressed="false" title="Read title, author and story aloud">♫ <span>Listen</span></button></div></div><p class="read-byline">Shared by <b>${html(s.author)}</b> · ${s.sample?'Fictional demonstration':s.cloud?'Private cloud draft':'Local browser demo'}</p><div class="tts-settings"><span>♪ Built-in narration · depends on installed voices</span><label for="voiceSelect">Voice:</label><select id="voiceSelect" aria-label="Narration voice"><option value="female">Soft female</option><option value="male">Soft male</option></select><label for="narrationSpeed">Pace:</label><select id="narrationSpeed" aria-label="Narration pace"><option value="0.82">Relaxed</option><option value="0.9" selected>Gentle</option><option value="1.0">Normal</option></select><span class="tts-status" id="ttsStatus">Starts from the title every time.</span></div><div class="reading-body" dir="auto">${html(s.story)}</div><div class="reader-bottom"><button class="heart ${hearts.includes(s.id)?'active':''}" type="button" data-heart="${html(s.id)}" aria-pressed="${hearts.includes(s.id)}" aria-label="Heart story"><svg viewBox="0 0 24 24"><path d="M20.8 4.9a5.5 5.5 0 0 0-7.8 0L12 6l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.3a5.5 5.5 0 0 0 0-7.8Z"/></svg><span>${heartCount(s)} hearts</span></button>${s.sample?'<span class="micro-hint">Original fictional sample</span>':s.cloud?`<div class="wg-draft-actions"><button type="button" class="link-button" id="editCloudStory">Edit draft</button><button type="button" class="link-button" id="removeCloudStory">Delete draft</button></div>`:`<button type="button" class="link-button" id="removeLocalStory">Delete local demo story</button>`}</div>`
+ return `<div class="read-gallery">${collageMarkup(s.images,s.layout||(s.images.length===1?'single':(s.images.length===2?'duo-vertical':(s.images.length===3?'trio-hero':'quad-grid'))),{lightbox:true})}</div><p class="tap-photo">⌕ Tap a collage photo to see its full frame (${s.images.length} ${s.images.length===1?'photo':'photos'})</p><div class="read-theme">${t.icon} ${html(t.name)} · ${html([s.country,s.region,s.city].filter(Boolean).join(' · '))}</div><div class="read-heading"><h2>${html(s.title)}</h2><div class="tts-block"><button type="button" id="ttsButton" class="tts-toggle" aria-pressed="false" title="Read title, author and story aloud">♫ <span>Listen</span></button></div></div><p class="read-byline"><span class="wg-v2232-reader-author">${storyOwnerAvatar(s)} <span>Shared by <b>${html(s.author)}</b></span></span> · Only me post</p><div class="tts-settings"><span>♪ Built-in narration · depends on installed voices</span><label for="voiceSelect">Voice:</label><select id="voiceSelect" aria-label="Narration voice"><option value="female">Soft female</option><option value="male">Soft male</option></select><label for="narrationSpeed">Pace:</label><select id="narrationSpeed" aria-label="Narration pace"><option value="0.82">Relaxed</option><option value="0.9" selected>Gentle</option><option value="1.0">Normal</option></select><span class="tts-status" id="ttsStatus">Starts from the title every time.</span></div><div class="reading-body" dir="auto">${html(s.story)}</div><div class="reader-bottom"><button class="heart ${hearts.includes(s.id)?'active':''}" type="button" data-heart="${html(s.id)}" aria-pressed="${hearts.includes(s.id)}" aria-label="Heart story"><svg viewBox="0 0 24 24"><path d="M20.8 4.9a5.5 5.5 0 0 0-7.8 0L12 6l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.3a5.5 5.5 0 0 0 0-7.8Z"/></svg><span>${heartCount(s)} hearts</span></button>${`<div class="wg-draft-actions">${ownerPostMenu(s)}<button type="button" class="link-button" id="reviewCloudStory">Publication checklist</button></div>`}</div>`
 }
 function openReader(id){const s=stories().find(st=>st.id===id);if(!s)return;stopSpeech();currentStoryId=id;$('readMeta').textContent='From '+[s.country,s.region].filter(Boolean).join(' · ');$('readBody').innerHTML=readerContent(s);$('readDialog').showModal();loadVoices()}
 async function removeStory(){const s=demoStories.find(st=>st.id===currentStoryId);if(!s)return;if(!confirm('Delete this story from your browser demo?'))return;try{await dbDelete(s.id);demoStories=demoStories.filter(x=>x.id!==s.id);stopSpeech();$('readDialog').close();renderGallery();notify('Local demo story deleted')}catch{notify('Could not delete story in this browser')}}
@@ -274,7 +409,26 @@ $('continentFilter').addEventListener('change',e=>{state.selectedContinent=e.tar
 $('countryFilter').addEventListener('change',e=>setCountry(e.target.value,'filter'));
 $('sortFilter').addEventListener('change',e=>{state.sort=e.target.value;renderGallery()});
 $('mineOnly').addEventListener('change',e=>{state.mineOnly=e.target.checked;renderGallery()});
-document.addEventListener('wg:authenticated',()=>{fetchCloudStories();renderGallery()});document.addEventListener('wg:signedout',()=>{cloudRevision++;cloudStories=[];cloudUser=null;renderGallery()});
+document.addEventListener('wg:authenticated',()=>{
+ if(cloudUser&&cloudUser!==currentOwner()){
+  const privateReader=cloudStories.some(s=>s.id===currentStoryId);
+  if(privateReader){stopSpeech();if($('lightboxDialog').open)$('lightboxDialog').close();if($('readDialog').open)$('readDialog').close();}
+  if($('cloudEditDialog').open)$('cloudEditDialog').close();
+  closePublicationChecklist();
+  cloudRevision++;cloudStories=[];cloudUser=null;cloudSignedAt=0;
+ }
+ fetchCloudStories();renderGallery();
+});
+document.addEventListener('wg:signedout',()=>{
+ const privateReader=cloudStories.some(s=>s.id===currentStoryId);
+ if(privateReader){stopSpeech();if($('lightboxDialog').open)$('lightboxDialog').close();if($('readDialog').open)$('readDialog').close();}
+ if($('cloudEditDialog').open)$('cloudEditDialog').close();
+ closePublicationChecklist();
+ cloudRevision++;cloudStories=[];cloudUser=null;cloudSignedAt=0;renderGallery();
+});
+document.addEventListener('visibilitychange',refreshPrivatePhotoLinks);
+window.addEventListener('focus',refreshPrivatePhotoLinks);
+setInterval(refreshPrivatePhotoLinks,5*60*1000);
 $('themeChoose').addEventListener('click',openThemeModal);
 $('themeOptions').addEventListener('change',e=>{if(e.target.matches('input[type="checkbox"]')){e.target.checked?state.draftThemes.add(e.target.value):state.draftThemes.delete(e.target.value);renderThemeOptions()}});
 $('themesClear').addEventListener('click',()=>{state.draftThemes.clear();renderThemeOptions()});
@@ -285,35 +439,75 @@ $('regionChoices').addEventListener('click',e=>{const btn=e.target.closest('[dat
 $('regionAny').addEventListener('click',()=>{state.selectedRegion=null;$('regionDialog').close();renderGallery()});
 $('themeChips').addEventListener('click',e=>{const t=e.target.closest('[data-remove-theme]');if(t){state.themes.delete(t.dataset.removeTheme);renderGallery()}if(e.target.closest('[data-remove-region]')){state.selectedRegion=null;renderGallery()}if(e.target.closest('[data-remove-country]'))setCountry('','filter');if(e.target.closest('[data-remove-continent]')){state.selectedContinent='';$('continentFilter').value='';renderCountryOptions();renderGallery()}});
 $('clearFilters').addEventListener('click',resetFilters);
-$('gallery').addEventListener('click',e=>{const h=e.target.closest('[data-heart]');if(h){toggleHeart(h.dataset.heart);return}const open=e.target.closest('[data-open-story]');if(open){openReader(open.dataset.openStory);return}if(e.target.closest('[data-reset]'))resetFilters()});
+$('gallery').addEventListener('click',e=>{if(runOwnerPostAction(e))return;const h=e.target.closest('[data-heart]');if(h){toggleHeart(h.dataset.heart);return}const open=e.target.closest('[data-open-story]');if(open){openReader(open.dataset.openStory);return}if(e.target.closest('[data-reset]'))resetFilters()});
+document.addEventListener('click',e=>{document.querySelectorAll('details.wg-post-menu[open]').forEach(menu=>{if(!menu.contains(e.target))menu.open=false;});});
 $('gallery').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('.card-excerpt')){e.preventDefault();openReader(e.target.dataset.openStory)}});
 $('globeSelection').addEventListener('click',e=>{if(e.target.id==='scrollGallery')$('stories').scrollIntoView({behavior:'smooth'});if(e.target.id==='globeRegionChoose')openRegionModal()});
 $('globeReset').addEventListener('click',()=>{globe.reset();setCountry('','globe')});$('globeZoomIn').addEventListener('click',()=>globe.zoomBy(.16));$('globeZoomOut').addEventListener('click',()=>globe.zoomBy(-.16));
 document.querySelectorAll('[data-open-upload]').forEach(b=>b.addEventListener('click',prepareUpload));
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>$((b.dataset.close)).close()));
-$('imageInput').addEventListener('change',async e=>{const files=Array.from(e.target.files||[]);$('formMessage').textContent='';if(!files.length)return;if(files.length>4){$('formMessage').textContent='Choose at most four photos.';e.target.value='';return}
- const button=$('submitStory');button.disabled=true;$('formMessage').textContent='Preparing and compressing your photos…';
- try{const result=[];for(const f of files){result.push(await compressImage(f))}uploadImages=result;renderImageTools();renderTemplateChoices();renderCollagePreview();$('formMessage').textContent=`${files.length} ${files.length===1?'photo':'photos'} optimized. Choose a collage design below.`;$('formMessage').classList.add('ok')}
- catch(err){$('formMessage').classList.remove('ok');$('formMessage').textContent=err.message}
- finally{button.disabled=false}
+$('imageInput').addEventListener('change',async e=>{
+ const revision=++imageSelectionRevision;
+ const files=Array.from(e.target.files||[]);
+ const button=$('submitStory'),message=$('formMessage');
+ // Never keep old photos when the user begins a new selection or one fails.
+ uploadImages=[];
+ message.classList.remove('ok');message.textContent='';
+ renderImageTools();renderTemplateChoices();renderCollagePreview();
+ button.disabled=files.length>0;
+ if(!files.length)return;
+ if(files.length>4){message.textContent='Choose at most four photos.';e.target.value='';button.disabled=false;return}
+ message.textContent='Preparing and compressing your photos…';
+ try{
+  const result=[];
+  for(const file of files){
+   const image=await compressImage(file);
+   if(revision!==imageSelectionRevision)return;
+   result.push(image);
+  }
+  if(revision!==imageSelectionRevision)return;
+  uploadImages=result;
+  renderImageTools();renderTemplateChoices();renderCollagePreview();
+  message.textContent=`${files.length} ${files.length===1?'photo':'photos'} optimized. Choose a collage design below.`;
+  message.classList.add('ok');
+ }catch(err){
+  if(revision!==imageSelectionRevision)return;
+  uploadImages=[];renderImageTools();renderTemplateChoices();renderCollagePreview();
+  message.classList.remove('ok');message.textContent=err?.message||'Could not prepare the selected photos.';
+ }finally{
+  if(revision===imageSelectionRevision)button.disabled=false;
+ }
 });
 $('imagePicked').addEventListener('click',e=>{const preview=e.target.closest('[data-preview-upload]');if(preview){openLightbox(uploadImages,Number(preview.dataset.previewUpload));return}const rm=e.target.closest('[data-remove-image]');if(rm){uploadImages.splice(Number(rm.dataset.removeImage),1);renderImageTools();renderTemplateChoices();renderCollagePreview();return}const mv=e.target.closest('[data-move-image]');if(mv){const i=Number(mv.dataset.imageIndex),j=i+Number(mv.dataset.moveImage);if(j>=0&&j<uploadImages.length){[uploadImages[i],uploadImages[j]]=[uploadImages[j],uploadImages[i]];renderImageTools();renderCollagePreview()}}});
 $('templates').addEventListener('click',e=>{const b=e.target.closest('[data-layout]');if(!b)return;chosenLayout=b.dataset.layout;renderTemplateChoices();renderCollagePreview()});
 $('collagePreview').addEventListener('click',e=>{const tile=e.target.closest('[data-photo-index]');if(tile)openLightbox(uploadImages,Number(tile.dataset.photoIndex))});
 $('uploadCountry').addEventListener('change',()=>{$('uploadRegion').value='';renderUploadRegionSuggestions()});
-$('uploadBody').addEventListener('input',updateCharacterProgress);
+$('uploadBody').addEventListener('input',()=>{updateCharacterProgress();updatePostLinkWarning('uploadBody','wgUploadLinkWarning')});
+['uploadTitle','author','uploadRegion','uploadCity'].forEach(id=>$(id).addEventListener('input',()=>updatePostLinkWarning(id,'wgUploadLinkWarning')));
+['body','title','author','region','city'].forEach(name=>$('cloudEditForm').elements.namedItem(name).addEventListener('input',()=>updatePostLinkWarning(name,'wgEditLinkWarning')));
+document.addEventListener('click',event=>{
+ if(event.target.closest('[data-open-post-rules]'))$('wgPostingRulesDialog').showModal();
+});
 $('uploadForm').addEventListener('submit',submitUpload);
-$('readBody').addEventListener('click',e=>{const tile=e.target.closest('[data-photo-index]');if(tile){const s=stories().find(st=>st.id===currentStoryId);if(s)openLightbox(s.images,Number(tile.dataset.photoIndex));return}const h=e.target.closest('[data-heart]');if(h){toggleHeart(h.dataset.heart);return}if(e.target.closest('#ttsButton')){playSpeech();return}if(e.target.closest('#removeLocalStory'))removeStory();if(e.target.closest('#editCloudStory')){const s=cloudStories.find(x=>x.id===currentStoryId);if(s)openCloudEditor(s)}if(e.target.closest('#removeCloudStory')){const s=cloudStories.find(x=>x.id===currentStoryId);if(s)removeCloudStory(s)}});
+$('readBody').addEventListener('click',e=>{if(runOwnerPostAction(e))return;const tile=e.target.closest('[data-photo-index]');if(tile){const s=stories().find(st=>st.id===currentStoryId);if(s)openLightbox(s.images,Number(tile.dataset.photoIndex));return}const h=e.target.closest('[data-heart]');if(h){toggleHeart(h.dataset.heart);return}if(e.target.closest('#ttsButton')){playSpeech();return}if(e.target.closest('#removeLocalStory'))removeStory();if(e.target.closest('#reviewCloudStory')){const s=cloudStories.find(x=>x.id===currentStoryId);if(s)openPublicationChecklist(s)}});
 $('readBody').addEventListener('keydown',e=>{const tile=e.target.closest('[data-photo-index]');if(tile&&(e.key==='Enter'||e.key===' ')){e.preventDefault();const s=stories().find(st=>st.id===currentStoryId);if(s)openLightbox(s.images,Number(tile.dataset.photoIndex))}});
 $('readDialog').addEventListener('close',stopSpeech);$('readBody').addEventListener('change',e=>{if(e.target.id==='voiceSelect')localStorage.setItem('wg_voice_style',e.target.value)});
-$('cloudEditForm').addEventListener('submit',async e=>{e.preventDefault();const form=e.currentTarget, d=new FormData(form),uid=currentOwner(),id=String(d.get('story_id'));const s=cloudStories.find(x=>x.id===id&&x.owner_id===uid);const status=$('cloudEditStatus');if(!s||s.status!=='draft'){status.textContent='Draft unavailable.';return}const body=String(d.get('body')).trim();if(countGraphemes(body)<1000||body.length>15000){status.textContent='Story must contain 1,000–15,000 characters.';return}const submit=form.querySelector('[type=submit]');submit.disabled=true;try{const res=await cloudClient().from('wg_stories').update({author:String(d.get('author')).trim(),title:String(d.get('title')).trim(),body,region:String(d.get('region')).trim(),city:String(d.get('city')).trim(),language_code:String(d.get('language_code'))}).eq('id',id).eq('user_id',uid).select('id');if(res.error)throw res.error;$('cloudEditDialog').close();await fetchCloudStories();notify('Draft updated')}catch(err){status.textContent=cloudError(err)}finally{submit.disabled=false}});
+$('publicationChecklistDialog').addEventListener('change',e=>{if(e.target.matches('input[type=checkbox]'))renderPublicationChecklist()});
+$('publicationChecklistDialog').addEventListener('close',()=>{publicationReviewId=null});
+$('reviewEditDraft').addEventListener('click',editFromPublicationChecklist);
+$('cloudEditForm').addEventListener('submit',async e=>{e.preventDefault();const form=e.currentTarget, d=new FormData(form),uid=currentOwner(),id=String(d.get('story_id'));const s=cloudStories.find(x=>x.id===id&&x.owner_id===uid);const status=$('cloudEditStatus');if(!s||s.status!=='draft'){status.textContent='Draft unavailable.';return}const body=String(d.get('body')).trim();if(countGraphemes(body)<1000||body.length>15000){status.textContent='Story must contain 1,000–15,000 characters.';return}
+const editIssue=postingPolicyIssue({description:body,title:d.get('title'),author:d.get('author'),region:d.get('region'),city:d.get('city')});
+if(editIssue){status.textContent=editIssue;return}
+if(!form.elements.namedItem('editPolicyConfirm')?.checked){status.textContent='Confirm that your edits follow posting privacy and community rules.';return}
+const submit=form.querySelector('[type=submit]');submit.disabled=true;try{const res=await cloudClient().from('wg_stories').update({author:String(d.get('author')).trim(),title:String(d.get('title')).trim(),body,region:String(d.get('region')).trim(),city:String(d.get('city')).trim(),language_code:String(d.get('language_code'))}).eq('id',id).eq('user_id',uid).select('id');if(res.error)throw res.error;$('cloudEditDialog').close();await fetchCloudStories();notify('Private post updated')}catch(err){status.textContent=cloudError(err)}finally{submit.disabled=false}});
 $('lightboxPrev').addEventListener('click',()=>lightboxMove(-1));$('lightboxNext').addEventListener('click',()=>lightboxMove(1));
 $('lightboxDialog').addEventListener('close',()=>{lightboxImages=[];$('lightboxImage').removeAttribute('src')});
 document.addEventListener('keydown',e=>{if(!$('lightboxDialog').open)return;if(e.key==='ArrowLeft')lightboxMove(-1);if(e.key==='ArrowRight')lightboxMove(1)});
 if('speechSynthesis' in window)window.speechSynthesis.addEventListener?.('voiceschanged',()=>{if($('readDialog').open)loadVoices()});
 async function init(){renderCountryOptions(false);renderUploadCountries();renderRegionLabel();renderTemplateChoices();renderCollagePreview();renderGallery();renderGlobeLabel();
  globe=createWorldGlobe($('globeCanvas'),code=>{if(!COUNTRIES.some(c=>c[0]===code)){notify('Map selection unavailable for this territory. Use the country filter below.');return}setCountry(code,'globe')});
- try{db=await openDb();demoStories=await dbAll();renderGallery()}catch{demoStories=readFallbackStories();renderGallery();notify('Browser storage fallback enabled. Demo posts may be session-only on this device.')};if(currentOwner())fetchCloudStories();
+ // Do not preload or display legacy browser-only demonstrations. Do not delete local data.
+ demoStories=[];renderGallery();if(currentOwner())fetchCloudStories();
 }
 
 /* WG PORTAL PHOTO ZOOM + SEARCH V5 */

@@ -92,3 +92,189 @@ html.wg-auth-ok body:not(.portal-locked) > .wg-locale-control {
   100%{opacity:1;transform:translateY(0) scale(1)}
 }
 @media(prefers-reduced-motion:reduce){.wg-mail-playing .wg-mail-paper,.wg-mail-playing .wg-mail-send-envelope,.wg-mail-playing .wg-mail-box{animation:none!important}}
+
+/* V2.23.2 — curated avatar picker, owner identity preview and settings polish. */
+#wgAccountDrawer .wg-v2232-avatar-card{
+  padding:clamp(20px,3.6vw,32px)!important;
+  background:linear-gradient(130deg,#eef7f2,#fffdfa)!important;
+  border:1px solid #cddfd5!important;box-shadow:0 14px 38px rgba(24,65,48,.06);
+}
+.wg-v2232-eyebrow{display:block;color:#4b8d76;font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+.wg-v2232-avatar-head{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.wg-v2232-avatar-copy{flex:1;min-width:0;max-width:520px}
+.wg-v2232-avatar-copy h3{font-size:clamp(21px,3vw,30px);line-height:1.17;color:#123f32;margin:10px 0 6px;letter-spacing:-.035em}
+.wg-v2232-avatar-copy p{color:#5c7a6e!important;font-size:14px!important;max-width:470px}
+.wg-v2232-preview-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;flex:0 0 132px;margin-left:auto;text-align:center}
+.wg-v2232-preview-wrap>span:last-child{color:#5a7c70;font-size:11px;font-weight:700}
+.wg-v2232-preview-frame{display:grid;place-items:center;width:112px;height:112px;background:#e0ece3;color:#285742;overflow:hidden;border:5px solid #fff;border-radius:50%;font-size:42px;font-weight:800;box-shadow:0 10px 26px rgba(13,73,51,.17)}
+.wg-v2232-preview-frame img,.wg-v2232-menu-avatar img,.wg-v2232-settings-avatar [data-wg-avatar-slot] img,.wg-v2232-story-avatar img{display:block;width:100%;height:100%;object-fit:cover}
+.wg-v2232-avatar-buttons{display:flex;gap:11px;flex-wrap:wrap;margin-top:23px}
+.wg-v2232-avatar-buttons button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:10px 16px;border:1px solid #aac8b8;border-radius:12px;color:#1e513e;background:#fff;font:700 14px system-ui;cursor:pointer;transition:background .16s,border-color .16s,transform .16s}
+.wg-v2232-avatar-buttons button:hover{background:#dff0e7;border-color:#6eac93;transform:translateY(-1px)}
+.wg-v2232-avatar-buttons button:focus-visible,.wg-v2232-avatar-dialog button:focus-visible{outline:3px solid #76b89c;outline-offset:3px}
+.wg-v2232-avatar-hint{color:#658377!important;font-size:12px!important;margin:18px 0 5px!important}
+#wg-v28-avatar-msg:not(:empty){display:block;margin:8px 0 0;color:#225c45;font-size:12px}
+/* Account menu identity, with avatar aligned to the far right. */
+#wgAccountMenu .wg-ac-floating-head{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:12px;min-height:97px}
+#wgAccountMenu .wg-v2232-menu-identity{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+#wgAccountMenu .wg-v2232-menu-avatar{display:grid;place-items:center;flex:0 0 69px;width:69px;height:69px;overflow:hidden;border-radius:50%;border:3px solid #fff;background:#dcece1;color:#1d5643;font:800 27px system-ui;box-shadow:0 7px 17px rgba(23,77,50,.16)}
+/* Settings content grouped into clear privacy and accessibility zones. */
+#wgAccountDrawer .wg-v2232-settings-summary{display:flex;align-items:center;justify-content:space-between;gap:16px;border-radius:17px;padding:17px 20px;background:linear-gradient(118deg,#eaf4ec,#f8fbf7);border:1px solid #d7e6db}
+#wgAccountDrawer .wg-v2232-settings-summary>div:first-child{max-width:590px}
+#wgAccountDrawer .wg-v2232-settings-summary p{font-size:13px;line-height:1.65;margin:6px 0;color:#5b7c6d}
+#wgAccountDrawer .wg-v2232-settings-avatar{display:flex;flex-direction:column;align-items:center;gap:6px;flex:0 0 84px}
+#wgAccountDrawer .wg-v2232-settings-avatar>span{display:grid;place-items:center;width:75px;height:75px;overflow:hidden;border:3px solid white;border-radius:50%;background:#dceade;color:#23523e;font:800 25px system-ui;box-shadow:0 4px 15px #183e3421}
+#wgAccountDrawer .wg-v2232-settings-avatar small{font-size:11px;color:#4c7966}
+#wgAccountDrawer #wgAcSettingsForm.wg-v2232-settings-form{max-width:100%;padding-top:7px;gap:18px}
+#wgAccountDrawer .wg-v2232-settings-section{padding:0 0 6px;min-width:0}
+#wgAccountDrawer .wg-v2232-settings-section .wg-ac-section-label{display:flex;align-items:center;gap:9px;margin:18px 0 12px;padding:12px 0;border-top:0;border-bottom:1px solid #dbe9df;color:#316e55;font-size:12px;font-weight:800;letter-spacing:.105em}
+#wgAccountDrawer .wg-v2232-settings-description{font-size:12px;margin:0 0 15px;color:#658475;line-height:1.6}
+#wgAccountDrawer .wg-v2232-settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 20px}
+#wgAccountDrawer .wg-v2232-settings-grid>label{min-width:0}
+#wgAccountDrawer .wg-v2232-settings-switches{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
+#wgAccountDrawer .wg-v2232-settings-switches .wg-ac-switch{display:flex;align-items:center!important;gap:11px!important;padding:12px 14px!important;min-height:59px;background:#f1f7f2;border:1px solid #e1ece3;border-radius:12px;font-weight:550!important;font-size:12px!important}
+#wgAccountDrawer .wg-v2232-settings-switches .wg-ac-switch:hover{background:#eaf3ec}
+#wgAccountDrawer .wg-v2232-settings-switches .wg-ac-switch input{width:18px!important;height:18px!important;flex-shrink:0}
+#wgAccountDrawer .wg-v2232-privacy-note{display:flex;align-items:flex-start;gap:9px;padding:13px 15px;background:#f5f8f4;border:1px solid #dce8df;border-radius:12px;color:#557667;font-size:12px;line-height:1.55}
+#wgAccountDrawer .wg-v2232-privacy-note svg{flex-shrink:0;color:#477d63}
+/* An accessible native dialog avoids extra nesting in the profile form. */
+dialog.wg-v2232-avatar-dialog{box-sizing:border-box;position:fixed;z-index:39000!important;width:min(90vw,870px);max-width:870px;max-height:min(90dvh,900px);margin:auto;padding:clamp(18px,3vw,29px);border:1px solid #cddfd4;border-radius:24px;background:#fffefa;color:#153c31;box-shadow:0 25px 100px rgba(0,18,12,.37)}
+dialog.wg-v2232-avatar-dialog::backdrop{background:rgba(5,27,20,.73);backdrop-filter:blur(6px)}
+dialog.wg-v2232-avatar-dialog[open]{display:flex;flex-direction:column;gap:15px}
+.wg-v2232-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.wg-v2232-modal-head h3{font-size:clamp(22px,3vw,31px);line-height:1.18;letter-spacing:-.03em;margin:7px 0;color:#133f31}
+.wg-v2232-modal-head p{margin:0;font-size:13px;color:#668373;line-height:1.55}
+.wg-v2232-modal-x{display:grid;place-items:center;flex:0 0 39px;width:39px;height:39px;border:1px solid #d1e2d5;border-radius:12px;background:#f7fbf8;color:#275e4a;cursor:pointer}
+.wg-v2232-modal-x:hover{background:#e2f1e7}
+.wg-v2232-avatar-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;overflow-y:auto;min-height:100px;max-height:min(47vh,390px);padding:7px;scrollbar-width:thin}
+.wg-v2232-avatar-option{position:relative;display:block;width:100%;aspect-ratio:1;border:3px solid transparent;border-radius:16px;background:#ebf4ed;overflow:hidden;cursor:pointer;transition:border-color .15s,transform .15s}
+.wg-v2232-avatar-option img{display:block;width:100%;height:100%;object-fit:contain}
+.wg-v2232-avatar-option:hover{border-color:#a5ccb7;transform:translateY(-1px)}
+.wg-v2232-avatar-option[aria-pressed="true"]{border-color:#236b51;background:#d9f0e0;box-shadow:0 0 0 2px #d3e6d9}
+.wg-v2232-avatar-option[aria-pressed="true"]::after{content:'✓';position:absolute;top:5px;right:5px;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:#186044;color:#fff;font:800 13px system-ui}
+.wg-v2232-more{align-self:center;padding:8px 14px;border:1px solid #bbd7c5;border-radius:10px;background:#f0f8f3;color:#285a43;font:700 13px system-ui;cursor:pointer}
+.wg-v2232-more[hidden]{display:none}
+.wg-v2232-upload-panel{display:flex;align-items:center;flex-direction:column;gap:15px;padding:25px;border:1px dashed #9dbca8;border-radius:18px;background:#f5faf5}
+.wg-v2232-upload-panel label{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:12px 18px;border-radius:12px;background:#184b38;color:#fff;font:700 14px system-ui;cursor:pointer}
+.wg-v2232-upload-panel label:hover{background:#226349}
+.wg-v2232-upload-panel input[type=file]{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.wg-v2232-upload-preview{display:grid;place-items:center;width:min(230px,100%);min-height:185px;border-radius:14px;background:#e2efe6;color:#618674;font:500 13px system-ui;overflow:hidden;text-align:center}
+.wg-v2232-upload-preview img{display:block;width:100%;max-height:290px;object-fit:contain}
+.wg-v2232-modal-message{margin:0;color:#315c47;font:600 13px/1.45 system-ui;min-height:18px}
+.wg-v2232-modal-actions{display:flex;justify-content:flex-end;gap:10px;padding-top:13px;border-top:1px solid #e0ece2}
+.wg-v2232-modal-actions button{min-height:42px;padding:10px 18px;border-radius:12px;cursor:pointer;font:700 14px system-ui}
+.wg-v2232-cancel{background:#fff;border:1px solid #bfd5c6;color:#31594a}
+.wg-v2232-confirm{display:flex;align-items:center;gap:8px;background:#16593f;border:1px solid #16593f;color:white}
+.wg-v2232-confirm:disabled{opacity:.47;cursor:not-allowed}
+.wg-v2232-story-avatar{display:inline-grid;place-items:center;vertical-align:middle;width:34px;height:34px;flex:none;border-radius:50%;overflow:hidden;background:#dbe9df;color:#205844;font-size:14px;font-weight:800}
+.wg-v2232-reader-author{display:inline-flex;align-items:center;gap:9px}
+.wg-v2232-reader-author .wg-v2232-story-avatar{width:39px;height:39px}
+@media(max-width:640px){
+  .wg-v2232-avatar-head{gap:12px}.wg-v2232-preview-wrap{flex-basis:90px}.wg-v2232-preview-frame{width:78px;height:78px;font-size:27px}
+  .wg-v2232-avatar-copy p{font-size:12px!important}.wg-v2232-avatar-buttons button{flex:1 1 45%;padding:10px}
+  #wgAccountDrawer .wg-v2232-settings-grid,#wgAccountDrawer .wg-v2232-settings-switches{grid-template-columns:1fr}
+  #wgAccountDrawer .wg-v2232-settings-summary{padding:12px}
+  #wgAccountDrawer .wg-v2232-settings-avatar{flex-basis:65px}
+  #wgAccountDrawer .wg-v2232-settings-avatar>span{width:57px;height:57px;font-size:20px}
+  dialog.wg-v2232-avatar-dialog{width:95vw;padding:17px;max-height:94dvh}
+  .wg-v2232-avatar-grid{grid-template-columns:repeat(3,minmax(0,1fr));max-height:52vh}
+  .wg-v2232-modal-actions button{flex:1}
+}
+@media(prefers-reduced-motion:reduce){.wg-v2232-avatar-option,.wg-v2232-avatar-buttons button{transition:none!important;transform:none!important}}
+
+
+/* V2.23.3 — protect square avatar tiles from flex/grid row compression. */
+dialog.wg-v2232-avatar-dialog .wg-v2232-avatar-grid{
+  flex:1 1 auto;min-height:0;
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-auto-flow:row;grid-auto-rows:max-content;
+  align-content:start;align-items:start;
+  overflow-y:auto;overscroll-behavior:contain;
+  max-height:min(54dvh,490px);gap:13px;padding:10px;
+}
+dialog.wg-v2232-avatar-dialog .wg-v2232-avatar-option{
+  display:block;width:100%;height:auto;min-height:0;
+  aspect-ratio:1/1;padding:0;align-self:start;
+  border-radius:16px;overflow:hidden;
+}
+dialog.wg-v2232-avatar-dialog .wg-v2232-avatar-option img{
+  display:block;width:100%;height:100%;aspect-ratio:1/1;object-fit:contain;
+  margin:0;padding:0;max-width:none;max-height:none;
+}
+/* Crop controls — preview precisely reflects the saved 512 x 512 WebP. */
+dialog.wg-v2232-avatar-dialog .wg-v2233-upload-panel{padding:14px 17px;gap:13px;overflow-y:auto;min-height:0}
+dialog.wg-v2232-avatar-dialog .wg-v2233-upload-preview{
+  display:block;width:100%;min-height:52px;max-height:none;
+  padding:0;overflow:visible;background:transparent;
+}
+dialog.wg-v2232-avatar-dialog .wg-v2233-no-photo{
+  margin:0;text-align:center;border-radius:13px;padding:16px;color:#567564;background:#e7f2e8
+}
+dialog.wg-v2232-avatar-dialog .wg-v2233-crop-editor[hidden]{display:none!important}
+dialog.wg-v2232-avatar-dialog .wg-v2233-crop-editor{
+  display:grid;grid-template-columns:minmax(180px,280px) minmax(185px,1fr);
+  align-items:center;justify-content:center;gap:22px;max-width:670px;margin:0 auto;
+}
+.wg-v2233-crop-stage{
+  width:100%;max-width:280px;aspect-ratio:1/1;position:relative;
+  overflow:hidden;border-radius:14px;background:#dae9df;cursor:grab;
+  touch-action:none;user-select:none;outline-offset:4px;
+}
+.wg-v2233-crop-stage:active{cursor:grabbing}
+.wg-v2233-crop-stage canvas{display:block;width:100%;height:100%;pointer-events:none}
+.wg-v2233-crop-stage::after{
+  content:'';position:absolute;inset:0;border:3px solid rgba(255,255,255,.95);
+  border-radius:50%;box-sizing:border-box;pointer-events:none;
+  box-shadow:0 0 0 150px rgba(17,42,31,.42),inset 0 0 0 1px rgba(23,89,59,.44);
+}
+.wg-v2233-crop-controls{display:flex;flex-direction:column;gap:12px;text-align:left;min-width:0}
+.wg-v2233-crop-controls label{display:flex;justify-content:space-between;align-items:center;
+  padding:0!important;background:none!important;color:#284d3b!important;font:700 14px system-ui!important;cursor:default!important}
+.wg-v2233-crop-controls output{font-variant-numeric:tabular-nums;color:#477e62}
+.wg-v2233-crop-controls input[type=range]{width:100%;accent-color:#24664b;cursor:pointer}
+.wg-v2233-crop-controls button{display:inline-flex;gap:8px;justify-content:center;align-items:center;
+  border:1px solid #b9d5c5;background:#fff;color:#285a44;border-radius:11px;
+  font:700 12px system-ui;min-height:42px;padding:8px 10px;cursor:pointer}
+.wg-v2233-crop-controls button:hover{background:#e8f4eb}
+.wg-v2233-crop-controls p{margin:0!important;color:#5a7869;font:400 12px/1.6 system-ui;text-align:left}
+@media(max-width:640px){
+  dialog.wg-v2232-avatar-dialog .wg-v2232-avatar-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-height:48dvh;padding:5px}
+  dialog.wg-v2232-avatar-dialog .wg-v2233-crop-editor{grid-template-columns:1fr;justify-items:center;gap:12px}
+  dialog.wg-v2232-avatar-dialog .wg-v2233-upload-panel{max-height:60dvh}
+  .wg-v2233-crop-stage{max-width:min(62vw,260px)}
+  .wg-v2233-crop-controls{width:100%;max-width:320px}
+}
+@media(max-width:390px){
+  dialog.wg-v2232-avatar-dialog .wg-v2232-avatar-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+
+/* V2.23.4: smaller complete avatar previews, with no partial rows at scroll boundaries. */
+dialog.wg-v2232-avatar-dialog .wg-v2232-avatar-grid{
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));
+  grid-auto-flow:row;grid-auto-rows:max-content;
+  align-content:start;align-items:start;gap:10px;padding:8px;
+  flex:0 1 auto;overflow-y:auto;overscroll-behavior:contain;
+  scroll-snap-type:y proximity;
+}
+dialog.wg-v2232-avatar-dialog .wg-v2232-avatar-option{
+  box-sizing:border-box;width:100%;aspect-ratio:1/1;height:auto;
+  min-width:0;min-height:0;overflow:hidden;border-radius:13px;
+  scroll-snap-align:start;
+}
+dialog.wg-v2232-avatar-dialog .wg-v2232-avatar-option img{
+  box-sizing:border-box;width:100%;height:100%;aspect-ratio:1/1;
+  object-fit:contain;object-position:center;padding:5px;
+}
+@media(max-width:850px){
+  dialog.wg-v2232-avatar-dialog .wg-v2232-avatar-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+}
+@media(max-width:640px){
+  dialog.wg-v2232-avatar-dialog .wg-v2232-avatar-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;padding:6px}
+}
+@media(max-width:480px){
+  dialog.wg-v2232-avatar-dialog .wg-v2232-avatar-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:390px){
+  dialog.wg-v2232-avatar-dialog .wg-v2232-avatar-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+}
