@@ -1,5 +1,15 @@
 # WORLDS GALLERY — FULL PROJECT HANDOVER
 
+## SINGLE CANONICAL HANDOVER - LOCKED NOVEMBER 9, 2026
+
+**ONE HANDOVER ONLY: WORLDS_GALLERY_HANDOVER_MASTER.md.**
+Update this file in place. Never recreate the former Word export.
+Historical DOCX instructions below are superseded.
+
+Locked: VS Code PowerShell full commands; no Codex; no project backup folders;
+no unapproved Git push or backend changes; MVP-first development.
+
+
 <!-- WG_MIGRATION_20261109_BEGIN -->
 
 ## 0. LIVE CURRENT STATE - NOVEMBER 9, 2026 - V2.16
@@ -292,8 +302,8 @@ Historic verified V2.4.3 GitHub commit: f5a04e0 (November 7).
 Another local checkpoint recorded in terminal history: b3f439f (V2.5 preparation).
 The current local branch and remote HEAD must be verified before the next commit.
 Never declare older hashes to be the latest without checking.
-The new handover uses the existing canonical Markdown plus regenerated DOCX.
-The historical Python handover generator has a strict clean-tree guard that conflicts with legitimate uncommitted ongoing source work.
+The single canonical handover is the existing Markdown master. The Word duplicate is retired.
+The retired Word generator has been replaced with a handover-only Git checkpoint tool.
 For this requested checkpoint, generate its DOCX through the generator's create_docx function, then selectively stage current active website files and handover files.
 Push only after validation, with explicit user authorization.
 Verify remote main matches local HEAD before generating the ZIP.
@@ -326,12 +336,12 @@ Do not push without an explicit user instruction.
 Avoid redundant questions already answered in the handover.
 
 NEW CHAT STARTER:
-Continue the EXISTING Worlds Gallery project from the latest verified source checkpoint. This is a full migration, not a restart. Read WORLDS_GALLERY_HANDOVER_MASTER.md and WORLDS_GALLERY_FULL_PROJECT_HANDOVER.docx completely. Preserve previous UI, geography and support animations, Supabase integration and all development locks. The latest local milestone is V2.16 login recovery, V2.15 centered Support & Feedback, V2.14 postal rider and Resend notifier V6. Our active goal is an MVP: stable Auth, secure real uploads and storage, location-based public gallery, ownership, moderation and privacy. Use complete VS Code PowerShell commands, no Codex and no new backup folders. Verify GitHub, source files and backend before changes. Report completed, partially implemented and pending features, then continue from the highest-priority MVP task.
+Continue the EXISTING Worlds Gallery project from the latest verified source checkpoint. This is a full migration, not a restart. Read WORLDS_GALLERY_HANDOVER_MASTER.md completely. Preserve previous UI, geography and support animations, Supabase integration and all development locks. The latest local milestone is V2.16 login recovery, V2.15 centered Support & Feedback, V2.14 postal rider and Resend notifier V6. Our active goal is an MVP: stable Auth, secure real uploads and storage, location-based public gallery, ownership, moderation and privacy. Use complete VS Code PowerShell commands, no Codex and no new backup folders. Verify GitHub, source files and backend before changes. Report completed, partially implemented and pending features, then continue from the highest-priority MVP task.
 
 <!-- WG_MIGRATION_20261109_END -->
 
 
-Edition: V2.4.3 foundation / November 7, 2026
+Edition: Single master V2.16 / November 9, 2026 / MVP-first
 Purpose: Preserve project context across ChatGPT conversations.
 Official baseline: GitHub commit f5a04e0.
 Status: Existing frontend and account foundation checkpointed; actual photo gallery development is next.
@@ -393,37 +403,25 @@ Use Ctrl+Shift+R after changing styles or scripts.
 - Do not fabricate educational facts or geographic boundary data.
 - Protect minors and personal/private location data.
 
-## 4. LOCKED HANDOVER WORKFLOW
+## 4. LOCKED HANDOVER WORKFLOW - ONE FILE
 
-The handover is maintained from the VS Code PowerShell terminal.
+Only `WORLDS_GALLERY_HANDOVER_MASTER.md` is the handover.
+Every milestone updates this SAME file. Never generate a parallel Word,
+PDF, or second Markdown handover by default.
 
-The canonical editable source is:
-WORLDS_GALLERY_HANDOVER_MASTER.md
+The former Word handover was a generated reading copy.
+Any unique text was merged before retirement.
 
-The official reader-friendly document is:
-WORLDS_GALLERY_FULL_PROJECT_HANDOVER.docx
+`wg_handover.py` is the checkpoint utility, not another handover document.
 
-The reusable generator is:
-wg_handover.py
+When an authorized handover checkpoint is requested:
+1. Update the existing Markdown master.
+2. Run `py -3 .\wg_handover.py`.
+3. Verify the GitHub main push.
+4. Generate `ME FILES/WorldsGallery_LATEST_CHECKPOINT.zip` from the pushed commit.
 
-All three live in the Worlds Gallery main project folder, with no special handover or backup subfolder.
-
-When the master content is updated:
-1. Regenerate the DOCX.
-2. Validate the DOCX structure and handover content.
-3. Stage only the handover source, generator, and DOCX by default.
-4. Commit and push to the verified GitHub main branch.
-5. Verify the remote commit matches local HEAD.
-6. Generate the latest ZIP from the pushed Git commit.
-7. Place the ZIP in the parent ME FILES folder.
-8. Replace the prior LATEST ZIP rather than accumulating many duplicate ZIPs.
-
-The command to repeat this pipeline after editing the master is:
-py -3 .\wg_handover.py
-
-The generator does not retrieve or automatically transcribe ChatGPT conversations. New decisions and milestones must first be added to the master handover. It also does not silently stage unrelated code changes.
-
-The ZIP is a Git source snapshot, not an extra source tree or database backup.
+The ZIP is a source snapshot, not another handover or Supabase backup.
+No extra backup folders, duplicate summaries, or automatic source staging.
 
 ## 5. ORIGINAL PRODUCT VISION
 
@@ -737,7 +735,7 @@ GitHub checkpoint:
 Commit f5a04e0 was created locally and pushed successfully to origin/main on November 7, 2026. The final terminal showed HEAD, main, and origin/main at the same commit.
 
 Handover automation:
-The user now requires terminal-maintained comprehensive handover source, generated DOCX in project root, GitHub push, and an automatically generated latest ZIP in parent ME FILES.
+The user now requires terminal-maintained comprehensive handover source, ONE Markdown handover in project root, GitHub push, and an automatically generated latest ZIP in parent ME FILES.
 
 ## 19. VERIFIED CURRENT BASELINE
 
@@ -869,32 +867,26 @@ GitHub contains only committed code/documentation/assets.
 The generated checkpoint ZIP is a Git source archive.
 Supabase live data, authentication users, object storage, deployed Edge Functions, and database configurations are separate cloud resources.
 Google Apps Script projects are separate cloud resources.
-A handover DOCX is not a backup of those remote systems.
+The single Markdown handover is not a backup of remote systems.
 
 Avoid copying credentials, private user uploads, production databases, OAuth tokens, .env files, or hidden auth configuration into public archives.
 
 Before production launch, establish an appropriate private data recovery process separate from the source ZIP.
 
-## 26. HANDOVER UPDATE POLICY
+## 26. HANDOVER UPDATE POLICY - ONE FILE
 
-After any major milestone, update this master source with:
-- Date and project version.
-- What changed.
-- Exact files/modules changed.
-- User-approved design decisions and locks.
-- Tests actually performed and results.
-- Git commit hash after successful push.
-- Supabase migrations or Edge Function versions if applicable.
-- New external integration links if verified.
-- Open bugs and limitations.
-- Immediate next actions.
+Update ONLY `WORLDS_GALLERY_HANDOVER_MASTER.md` in place after milestones.
 
-The master must not be overwritten with an empty or generic summary. Preserve earlier important decisions unless explicitly superseded.
+Include current version, achievements, actual tests, changed modules,
+locked rules, Supabase state, pending issues, MVP priorities, and future plans.
 
-Regenerate the DOCX and latest ZIP via:
-py -3 .\wg_handover.py
+Preserve all earlier history. Mark superseded decisions clearly.
+No DOCX regeneration or independent handover copies.
 
-The Word document is for reading/transferring. The Markdown master remains the editable project context.
+When explicitly authorized, run `py -3 .\wg_handover.py`
+to verify GitHub and renew the latest ZIP in parent ME FILES.
+
+No unnecessary backups, destructive cleanup, or unapproved code pushes.
 
 ## 27. STARTING IN A NEW CHAT
 
@@ -910,4 +902,4 @@ Begin by inspecting the existing gallery-related HTML, JavaScript, CSS, and Supa
 
 Then work toward the FIRST functional user-facing photo gallery browsing milestone. Avoid unnecessary redesign of the approved globe or account features.
 
-Keep the terminal-driven master handover -> DOCX -> verified GitHub push -> parent ME FILES ZIP process locked for future handovers.
+Keep the single Markdown master -> verified GitHub push -> parent ME FILES ZIP workflow locked for future handovers.
