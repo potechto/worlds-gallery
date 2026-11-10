@@ -1,5 +1,0 @@
-Worlds Gallery V4 — Earth-first cosmic globe
-2026-11-05
-Standalone interactive demo. Public launch not ready. No live Supabase/GitHub changes.
-Desktop browser checks: country click, Philippines island group → Central Luzon → Bataan → Hermosa, homepage filters, return-to-globe, Japan search and clock mood.
-Mobile check (390 px): no horizontal overflow, navigation steps present. Chromium in the test environment does not support WebGL, so the textured 2D fallback was visually checked; WebGL mode requires real-device validation.

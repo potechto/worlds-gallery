@@ -8,13 +8,21 @@ Thumbs.db
 node_modules/
 .wg_v*_backups/
 
-# Local-only project docs and generated handovers; previously tracked files still
-# require an approved git rm --cached before Git stops publishing them.
+# Local-only project records and handovers
 WORLDS_GALLERY_HANDOVER_MASTER.md
 WG_V25_BACKEND_STATUS.md
 WG_V26_EMAIL_SETUP.md
+*PRIVATE_HANDOVER*
+*_PRIVATE_NOTES.md
 *.log
 *.zip
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.backup
+
+# Never publish secrets and local credentials
 *.pem
 *.p12
 *.pfx
@@ -22,5 +30,20 @@ WG_V26_EMAIL_SETUP.md
 credentials*.json
 *service-account*.json
 *secret*.json
-.env.local
-.env.production
+.npmrc
+.pypirc
+.git-credentials
+
+# Historical V5 demo and local-only build/handover utilities
+Worlds_Gallery_V5_Preview.html
+START_HERE.txt
+BUILD_INFO.txt
+build_standalone.py
+wg_handover.py
+
+# OFFLINE moderation designs/QA (not deployed in the public beta)
+tools/WG_V220_*
+tools/WG_V221_*
+tools/WG_V222_*
+tools/WG_V223_*
+tools/wg_v220_moderation_preview.sql
