@@ -73,7 +73,7 @@
         </form>
         <div class="wg-guest-explore-actions">
           <button id="wgGuestExplore" type="button">Explore the world as a guest <span aria-hidden="true">↗</span></button>
-          <p>No account needed to explore. Photo posting and private profiles require sign-in.</p>
+          <p>No account needed to explore. My Album, photo posting, and private profiles require sign-in.</p>
         </div>
         <p id="wgAuthStatus" class="wg-auth-status" role="status" aria-live="polite"></p>
         <div class="wg-auth-panel-footer"><span><span class="wg-auth-lock" aria-hidden="true">◈</span> SECURED WITH SUPABASE AUTH</span><span>PRIVATE BY DEFAULT</span></div>

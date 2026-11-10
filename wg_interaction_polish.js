@@ -52,7 +52,7 @@
       <button type="button" class="wg-guest-prompt-secondary" data-wg-auth-intent="signup">Create account</button>
       <button type="button" class="wg-guest-prompt-plain" data-wg-guest-close>Continue as guest</button>
     </div>
-    <small>No account is required for globe exploration or your browser-local World Mosaic.</small>
+    <small>No account is required for globe exploration or your browser-local World Mosaic. My Album requires sign-in.</small>
   </div>`;
   document.body.append(dialog);
   const description=dialog.querySelector('#wgGuestPromptDesc');
@@ -60,7 +60,8 @@
     ['share your story','To share a story, you need an account. You can still discover places and build a private, browser-local World Mosaic as a guest.'],
     ['view your private stories','Your private stories belong to your account. Please sign in to see them. Guest exploration is still available.'],
     ['open your account settings','Sign in to access your profile and settings. Guest discovery does not require an account.'],
-    ['access your personal space','Sign in to continue to your personal space, or keep exploring as a guest.']
+    ['access your personal space','Sign in to continue to your personal space, or keep exploring as a guest.'],
+    ['open your personal album','My Album is for signed-in members. Sign in or create a free account to open your scrapbook; you can still explore the world as a guest.']
   ]);
   const close=()=>{if(dialog.open)dialog.close();};
   dialog.querySelectorAll('[data-wg-guest-close]').forEach(button=>button.addEventListener('click',close));

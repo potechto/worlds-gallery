@@ -109,7 +109,12 @@
     menu.innerHTML=`<div class="wg-ac-floating-head"><div class="wg-v2232-menu-identity"><span class="wg-ac-overline">YOUR WORLD</span><strong>${esc(name)}</strong><small>${identifier}</small></div>${avatar}</div><div class="wg-ac-menu-items">${items}</div>`;
     menu.querySelectorAll('[data-ac]').forEach(button=>button.addEventListener('click',()=>{
       const choice=button.dataset.ac;
-      if(choice==='album'){setMenuOpen(false);closePage();window.WorldsGalleryAlbum?.open?.();return;}
+      if(choice==='album'){
+        setMenuOpen(false);
+        const verified=!!window.WorldsGalleryAuth?.getCurrentUserId?.() && document.documentElement.classList.contains('wg-auth-ok');
+        if(!verified){requireAccount('open your personal album');return;}
+        closePage();window.WorldsGalleryAlbum?.open?.();return;
+      }
       setMenuOpen(false);
       if(choice==='signin'){requireAccount('access your personal space');return;}
       if(choice==='signout'){closePage();byId('wgLogout')?.click();return;}

@@ -3,7 +3,7 @@
 (() => {
   'use strict';
   const uid = () => window.WorldsGalleryAuth?.getCurrentUserId?.() || null;
-  const scope = () => uid() || 'guest';
+  const scope = () => uid(); // Account-owned albums only; never open or write the legacy guest scope.
   const KEY = account => `wg_my_album_v2:${account}`;
   const OLD_KEY = account => `wg_my_album_intro_v1:${account}`;
   const MAX_SPREADS = 12;
@@ -209,6 +209,16 @@
   let filePickerPending=false, filePickerDismissedAt=-Infinity;
   let coverDraft=null,coverReturnFocus=null,stickerReturnFocus=null,stickerTarget='page',flipBusy=false,flipTimer=null;
   const notice=text=>{$('wgAlbumMessage').textContent=text||'';};
+  // Guard the public Album API as well as the hamburger entry point.
+  // wg-auth-ok is set only after the existing verified session + profile flow completes.
+  const isAccountReady=()=>!!uid() && document.documentElement.classList.contains('wg-auth-ok') &&
+    !document.documentElement.classList.contains('wg-guest-explore');
+  function requireAlbumAccount(){
+    if(isAccountReady())return true;
+    if(dialog.open)hardClose();
+    document.dispatchEvent(new CustomEvent('wg:require-account',{detail:{action:'open your personal album'}}));
+    return false;
+  }
   function load(){
     currentScope=scope();let raw=null;
     try{raw=JSON.parse(localStorage.getItem(KEY(currentScope))||'null');}catch{}
@@ -225,6 +235,7 @@
     data=checkedState(raw);active=0;selectedSticker=null;
   }
   function persist(){
+    if(!isAccountReady()){notice('Sign in to save changes to My Album.');return false;}
     if(currentScope!==scope()) {notice('Your account changed. Reopen the album to use the correct private scrapbook.');return false;}
     try{localStorage.setItem(KEY(currentScope),JSON.stringify(data));return true;}
     catch(e){notice('Browser storage is full or blocked. The change is not saved. Remove an image or free browser storage.');return false;}
@@ -327,6 +338,7 @@
     animateClose(true);
   }
   function open(){
+    if(!requireAlbumAccount())return;
     if(dialog.open)return;
     load();activeScene=sceneForOpen(data.scene);displayScene();renderCover();notice('');
     previousFocus=document.activeElement;
@@ -345,6 +357,7 @@
     }
   }
   function animateOpen(){
+    if(!requireAlbumAccount())return;
     if(editing || processing || flipBusy)return;
     editing=true;const token=++animationToken;notice('');
     if(reduceMotion()){
