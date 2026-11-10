@@ -16,11 +16,13 @@
     back: '<path d="m15 18-6-6 6-6"/>',
     home: '<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z"/><path d="M9 21v-8h6v8"/>',
     user: '<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',
-    settings: '<path d="M9.8 3.3h4.4l.6 2.2a7 7 0 0 1 1.7 1l2.2-.6 2.2 3.8-1.6 1.6a8 8 0 0 1 0 1.9l1.6 1.6-2.2 3.8-2.2-.6a7 7 0 0 1-1.7 1l-.6 2.2H9.8l-.6-2.2a7 7 0 0 1-1.7-1l-2.2.6-2.2-3.8 1.6-1.6a8 8 0 0 1 0-1.9L3.1 9.7l2.2-3.8 2.2.6a7 7 0 0 1 1.7-1l.6-2.2Z"/><circle cx="12" cy="12" r="3"/>',
-    support: '<path d="M4 12v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="11" width="4" height="8" rx="2"/><rect x="17" y="11" width="4" height="8" rx="2"/><path d="M20 19c0 2-2 3-5 3h-2"/>',
+    settings: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/>',
+    support: '<path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 21l1.9-5.5A8.5 8.5 0 1 1 21 11.5Z"/><path d="M8 11.5h8"/>',
     exit: '<path d="M9 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M15 16l4-4-4-4M8 12h11"/>',
     earth: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 4.5 6 4.5 9s-1.5 6-4.5 9M12 3c-3 3-4.5 6-4.5 9s1.5 6 4.5 9"/>',
-    story: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="m7 16 4-5 3 3 2-2 2 4"/><circle cx="9" cy="9" r="1"/>'
+    story: '<path d="M4 4.5h6.4A3.6 3.6 0 0 1 12 5a3.6 3.6 0 0 1 1.6-.5H20v15h-6.4A3.6 3.6 0 0 0 12 20a3.6 3.6 0 0 0-1.6-.5H4Z"/><path d="M12 5v15"/>',
+    album: '<path d="M5 3.5h11a3 3 0 0 1 3 3V21H6a3 3 0 0 1-3-3V6a2.5 2.5 0 0 1 2-2.5Z"/><path d="M6 3.5V21M10 8h6M10 12h6"/>',
+    share: '<rect x="3" y="4" width="14" height="16" rx="2"/><path d="m6 16 3-4 2 2 2-2 2 3"/><circle cx="8" cy="9" r="1"/><path d="M20 8v7m-3.5-3.5H23"/>'
   };
   const icon = (n,size=21) => `<svg class=\"wg-v26-icon\" viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${styles[n]}</svg>`;
   const trigger = document.createElement('button');
@@ -50,9 +52,10 @@
   const drawerHeader = drawer.querySelector('.wg-ac-header');
   const pageClose = byId('wgAcPageClose');
   const content = byId('wgAcContent');
-  const isGallery = () => !!user &&
-    document.documentElement.classList.contains('wg-auth-ok') &&
-    !document.body.classList.contains('portal-locked');
+  const isGallery = () => (
+    (!!user && document.documentElement.classList.contains('wg-auth-ok')) ||
+    (!user && document.documentElement.classList.contains('wg-guest-explore'))
+  ) && !document.body.classList.contains('portal-locked');
   function syncTrigger() {
     if(activePage!=='home')return;
     trigger.hidden = !isGallery() || flightBusy;
@@ -67,7 +70,8 @@
 
   const black = document.createElement('div');black.id='wgGalleryBlackout';black.hidden=true;
   black.setAttribute('aria-hidden','true');document.body.appendChild(black);
-  const action = (label,key,ic) => `<button class="wg-ac-menu-row" type="button" data-ac="${key}">${icon(ic)}<span>${label}</span>${icon('arrow',17)}</button>`;
+  const action = (label,key,ic) => `<button class="wg-ac-menu-row ${ic?'':'wg-ac-text-only'} ${key==='signout'?'wg-ac-menu-exit':''}" type="button" data-ac="${key}">${ic?icon(ic):''}<span>${label}</span>${key==='signout'?'':icon('arrow',16)}</button>`;
+  const requireAccount=actionName=>document.dispatchEvent(new CustomEvent('wg:require-account',{detail:{action:actionName}}));
   const labels={home:'Home',profile:'My profile',settings:'Settings & privacy',support:'Support & feedback'};
   const pageIcons={home:'home',profile:'user',settings:'settings',support:'support'};
   function flash(msg,good=true) {
@@ -89,25 +93,36 @@
     menu.style.top=Math.min(window.innerHeight-80,rect.bottom+9)+'px';
   }
   function renderMenu() {
-    const name=profile?.display_name || user?.email?.split('@')[0] || 'Your account';
-    const back=activePage==='home'?'':action(labels[previousPage]||'Home',previousPage,pageIcons[previousPage]||'home');
-    const pages=[['profile','My profile','user'],['settings','Settings & privacy','settings'],['support','Support & feedback','support']]
+    const guestMode=!user;
+    const name=guestMode?'Guest explorer':profile?.display_name || user?.email?.split('@')[0] || 'Your account';
+    const identifier=guestMode?'Browse the world freely':`@${esc(profile?.username||'member')}`;
+    const avatar=guestMode?`<span class="wg-ac-guest-avatar" aria-hidden="true">${icon('earth',27)}</span>`
+      :`<span class="wg-v2232-menu-avatar" data-wg-avatar-slot="menu" data-wg-avatar-fallback="${esc(String(name).charAt(0).toUpperCase())}" aria-label="Your profile picture"></span>`;
+    const back=activePage==='home'||guestMode?'':action(labels[previousPage]||'Home',previousPage,pageIcons[previousPage]||'home');
+    const pages=guestMode?'':[['profile','My profile','user'],['settings','Settings & privacy','settings'],['support','Support & feedback','support']]
       .filter(([key])=>key!==activePage && key!==previousPage)
       .map(([key,label,ic])=>action(label,key,ic)).join('');
-    menu.innerHTML=`<div class="wg-ac-floating-head"><div class="wg-v2232-menu-identity"><span class="wg-ac-overline">YOUR WORLD</span><strong>${esc(name)}</strong><small>@${esc(profile?.username||'member')}</small></div><span class="wg-v2232-menu-avatar" data-wg-avatar-slot="menu" data-wg-avatar-fallback="${esc(String(name).charAt(0).toUpperCase())}" aria-label="Your profile picture"></span></div><div class="wg-ac-menu-items">${back}${pages}${action('My stories','my-stories','story')}${action('Share your story','share','story')}${action('Return to Earth','earth','earth')}${action('Sign out','signout','exit')}</div>`;
+    const album=action('My Album','album','album');
+    const items=guestMode
+      ? `${album}${action('Share your story','share','share')}${action('Support & feedback','support','support')}${action('Return to Earth','earth','earth')}${action('Sign in','signin','')}`
+      : `${back}${pages}${album}${action('Share your story','share','share')}${action('Return to Earth','earth','earth')}${action('Sign out','signout','')}`;
+    menu.innerHTML=`<div class="wg-ac-floating-head"><div class="wg-v2232-menu-identity"><span class="wg-ac-overline">YOUR WORLD</span><strong>${esc(name)}</strong><small>${identifier}</small></div>${avatar}</div><div class="wg-ac-menu-items">${items}</div>`;
     menu.querySelectorAll('[data-ac]').forEach(button=>button.addEventListener('click',()=>{
       const choice=button.dataset.ac;
+      if(choice==='album'){setMenuOpen(false);closePage();window.WorldsGalleryAlbum?.open?.();return;}
       setMenuOpen(false);
+      if(choice==='signin'){requireAccount('access your personal space');return;}
       if(choice==='signout'){closePage();byId('wgLogout')?.click();return;}
-      if(choice==='my-stories'){closePage();const mine=byId('mineOnly');if(mine){mine.checked=true;mine.dispatchEvent(new Event('change',{bubbles:true}));byId('stories')?.scrollIntoView({behavior:'smooth'});}return;}
       if(choice==='share'){closePage();originalShare.click();return;}
       if(choice==='earth'){closePage();byId('arrivalBackEarth')?.click();syncTrigger();return;}
+      if(guestMode&&choice!=='support'){requireAccount('open your account settings');return;}
       renderPage(choice);
     }));
     document.dispatchEvent(new Event('wg:menu-rendered'));
   }
+
   function setMenuOpen(show) {
-    if(!user || (activePage==='home' && !isGallery()))show=false;
+    if(activePage==='home' && !isGallery())show=false;
     open=show;menu.hidden=!show;
     trigger.setAttribute('aria-expanded',String(show));
     trigger.setAttribute('aria-label',show?'Close account menu':'Open account menu');
@@ -440,6 +455,8 @@
       if(until>Date.now())showCooldown(until,false);else supportForm(isGuest);
     }catch(err){if(epoch!==supportEpoch||activePage!=='support')return;content.innerHTML=title('Support & feedback','')+'<p role="alert">Unable to check your support cooldown. Please check your connection and reopen Support.</p>';}
   }
+  document.addEventListener('wg:guest-explore',syncTrigger);
+  document.addEventListener('wg:guest-auth-request',()=>{setMenuOpen(false);syncTrigger();});
   document.addEventListener('wg:authenticated',e=>{
     user=e.detail?.user||null;profile=e.detail?.profile||null;
     syncTrigger();

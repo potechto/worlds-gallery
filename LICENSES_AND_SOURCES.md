@@ -36,3 +36,36 @@ Mount Samat image (Bataan highlight):
 CC BY-SA 4.0.
 https://commons.wikimedia.org/wiki/File:Shrine_of_Valor_Mt._Samat.jpg
 https://creativecommons.org/licenses/by-sa/4.0/
+
+## November 10, 2026 — beta discovery photo sources (local patch, not yet deployed)
+
+`wg_discovery_data.js` lists curated, public photographic material from Wikimedia Commons. Unlike user uploads, these are licensed third-party illustrations of real places. The beta interface hotlinks images from their source and displays the photographer/source, license, and Commons file-page link. **No Wikimedia image files are bundled with the app or copied into the exported Mosaic PNG.** The exported PNG uses original vector-style decorative placeholders and place names. For all images, source links/credits must remain with the view, especially if a photo is cropped on screen. The World Before Us intentionally presents differently framed views side-by-side; no image is presented as AI-generated reconstruction or perfectly registered historical overlay.
+
+| Used for | File / original source | Attribution | License and date |
+| --- | --- | --- | --- |
+| Mood · Norway | [Reine - Lofoten.jpg](https://commons.wikimedia.org/wiki/File:Reine_-_Lofoten.jpg) | Jakub Fryš | CC BY-SA 4.0, Commons upload 2019 |
+| Mood · Iceland | [Iceland skogafoss waterfall.jpg](https://commons.wikimedia.org/wiki/File:Iceland_skogafoss_waterfall.jpg) | Delahanty | CC BY 4.0, 2019 |
+| Mood · Kyoto | [JAP Kyoto Kiyomizu-dera.jpg](https://commons.wikimedia.org/wiki/File:JAP_Kyoto_Kiyomizu-dera.jpg) | Grueslayer | CC BY-SA 4.0 |
+| Mood · Banaue | [Banaue RiceTerraces.jpg](https://commons.wikimedia.org/wiki/File:Banaue_RiceTerraces.jpg) | Jose B. Cabajar | CC BY-SA 3.0 |
+| Mood · Mt. Pinatubo | [The Crater Lake of Mt. Pinatubo.jpg](https://commons.wikimedia.org/wiki/File:The_Crater_Lake_of_Mt._Pinatubo.jpg) | Lemuel Salibio | CC BY-SA 4.0 |
+| THEN · Escolta | [EscoltaManila1899.jpg](https://commons.wikimedia.org/wiki/File:EscoltaManila1899.jpg) | Underwood & Underwood; scanned by Infrogmation | Public domain in US; copyright 1899 / publication 1899 |
+| NOW · Escolta | [Escolta Street (Binondo, Manila; 11-10-2019).jpg](https://commons.wikimedia.org/wiki/File:Escolta_Street_(Binondo,_Manila;_11-10-2019).jpg) | Patrickroque01 | CC BY-SA 4.0; 10 November 2019 |
+| THEN · Ginza | [Ginza Owaricho.jpg](https://commons.wikimedia.org/wiki/File:Ginza_Owaricho.jpg) | 大東京写真帖 (*Dai-Tokyo Shashincho*) | Public domain (Japan and US); 1930 |
+| NOW · Ginza | [Ginza 4-Chome Crossing 2020-04-19.jpg](https://commons.wikimedia.org/wiki/File:Ginza_4-Chome_Crossing_2020-04-19.jpg) | Asanagi | CC0 1.0; 19 April 2020 (COVID-19 emergency period) |
+| THEN · Tower Bridge | [London-TowerBridge-1900-Open.jpg](https://commons.wikimedia.org/wiki/File:London-TowerBridge-1900-Open.jpg) | Unknown photographer / Library of Congress photochrome collection | Public domain (US); approximately 1890–1905 |
+| NOW · Tower Bridge | [Tower Bridge in London.jpg](https://commons.wikimedia.org/wiki/File:Tower_Bridge_in_London.jpg) | Boaventuravinicius | CC BY-SA 3.0; 4 January 2018 |
+
+License terms: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), [CC0](https://creativecommons.org/publicdomain/zero/1.0/). The site must respect Commons file changes/removal and should not redistribute images as unrestricted assets. The archive image is only labeled public-domain where the source's rights evidence supports that status; copyright can differ by jurisdiction. Before expanding the collection, independently verify each image date, location, viewpoint, permissions, and attribution.
+
+### Worlds Gallery brand assets
+
+The provided `assets/photos/worldsgallerylogo.png` (favicon and compact app logo) and `assets/photos/worldsgalleryfull.png` (header wordmark) are project-provided artwork. Asset ownership/licensing terms for redistribution outside this project are not independently verified.
+
+## My Album static art (V2.23.6 local-only)
+
+The default illustrated book and four scenic background crops use the **user-provided visual reference** from the November 10, 2026 project chat. `assets/photos/wg_album_reference.webp` and `wg_album_scene_*.webp` are optimized local copies and crops of that reference for the beta experience. The creator, originating source, and permission for publication have **not** been verified. **Do not publish these images on the public website until the user confirms rights/permission or replaces them with appropriately licensed original artwork.** No external scenic photographs or stock images are bundled in this update.
+
+Custom book-cover and three introductory photos are selected from a visitor's own device, resized to WebP on-device, and stored locally in the browser only. They are not uploaded, submitted for publication, or made shareable by this feature.
+
+
+- Local flag atlas `assets/photos/wg_album_flag_sheet.webp`: rasterized (rendered, not font-redistributed) Noto Color Emoji flag symbols. Source: Google Noto Emoji, https://github.com/googlefonts/noto-emoji . Emoji font under SIL OFL 1.1; flag designs drawn from public-domain / otherwise exempt region-flag sources as documented by Noto Emoji. No font files are bundled.

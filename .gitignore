@@ -7,3 +7,20 @@ Thumbs.db
 .env.*
 node_modules/
 .wg_v*_backups/
+
+# Local-only project docs and generated handovers; previously tracked files still
+# require an approved git rm --cached before Git stops publishing them.
+WORLDS_GALLERY_HANDOVER_MASTER.md
+WG_V25_BACKEND_STATUS.md
+WG_V26_EMAIL_SETUP.md
+*.log
+*.zip
+*.pem
+*.p12
+*.pfx
+*.key
+credentials*.json
+*service-account*.json
+*secret*.json
+.env.local
+.env.production

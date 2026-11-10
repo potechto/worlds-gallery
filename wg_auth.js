@@ -71,6 +71,10 @@
           <label>Home country <select name="country_code" required>${countryOptions}</select></label>
           <button class="wg-auth-primary" type="submit">Continue to my country <span aria-hidden="true">↗</span></button>
         </form>
+        <div class="wg-guest-explore-actions">
+          <button id="wgGuestExplore" type="button">Explore the world as a guest <span aria-hidden="true">↗</span></button>
+          <p>No account needed to explore. Photo posting and private profiles require sign-in.</p>
+        </div>
         <p id="wgAuthStatus" class="wg-auth-status" role="status" aria-live="polite"></p>
         <div class="wg-auth-panel-footer"><span><span class="wg-auth-lock" aria-hidden="true">◈</span> SECURED WITH SUPABASE AUTH</span><span>PRIVATE BY DEFAULT</span></div>
       </section>
@@ -114,6 +118,36 @@
   byId('wgTabSignIn').addEventListener('click', () => setMode('signin'));
   byId('wgTabSignUp').addEventListener('click', () => setMode('signup'));
   byId('wgGoToSignup')?.addEventListener('click', () => setMode('signup'));
+  /* Browse-only access: never create a Supabase session or mark the visitor authenticated. */
+  function enterGuestExplore() {
+    if(currentUser)return;
+    setProtectedAccess(true);
+    document.documentElement.classList.add('wg-guest-explore');
+    document.documentElement.classList.remove('wg-refresh-restore');
+    gate.hidden=true;
+    logout.hidden=true;
+    document.body.classList.add('portal-locked');
+    document.dispatchEvent(new Event('wg:guest-explore'));
+  }
+  byId('wgGuestExplore').addEventListener('click',enterGuestExplore);
+  // A guest can discover and save curated places, but cannot open the upload composer.
+  document.addEventListener('click',event=>{
+    if(!document.documentElement.classList.contains('wg-guest-explore'))return;
+    if(!event.target.closest('[data-open-upload]'))return;
+    event.preventDefault();event.stopImmediatePropagation();
+    document.dispatchEvent(new CustomEvent('wg:require-account',{detail:{action:'share your story'}}));
+  },true);
+  // A guest intentionally choosing Sign in or Create account from the prompt
+  // returns through the real Supabase gate; no fabricated user/session.
+  document.addEventListener('wg:guest-auth-request',event=>{
+    if(currentUser)return;
+    const next=event.detail?.mode==='signup'?'signup':'signin';
+    document.documentElement.classList.remove('wg-guest-explore');
+    setProtectedAccess(false);
+    gate.hidden=false;
+    setMode(next);
+    status('Sign in to continue, or choose guest exploration again.','notice');
+  });
 
   /* WG AUTH V2.2 — one eye controls BOTH signup password fields. */
   function installPasswordVisibility() {
@@ -438,6 +472,7 @@
       if (!pref.error) document.documentElement.classList.toggle('wg-reduce-motion', !!pref.data?.reduce_motion);
     } catch {}
     setProtectedAccess(true);
+    document.documentElement.classList.remove('wg-guest-explore');
     document.documentElement.classList.add('wg-auth-ok');
     gate.hidden = true;
     logout.hidden = false;

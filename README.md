@@ -1,3 +1,5 @@
+> **Historical V5 preview instructions.** The currently published main branch also includes a newer beta frontend. The public scripts are inspectable; never add private keys, user records, internal reports or credentials to this repository. Public posting remains disabled until trusted moderation.
+
 # Worlds Gallery V5 — Geo Explorer / VS Code project
 
 **Local interactive prototype. Not deployed. Not connected to Supabase or GitHub.**
@@ -12,7 +14,7 @@ The ZIP contains all local code and visual assets necessary for this offline exp
 
 Extract the contents of the ZIP **directly** to:
 
-`C:\Users\Ralph John\OneDrive\Desktop\ME FILES\worlds gallery`
+`<your-local-project-folder>`
 
 Then **VS Code → File → Open Folder → select that path**. The project should contain `index.html`, `styles.css`, `portal.css`, `app.js`, `portal.js`, `earth_bluemarble.jpg`, `ph_coastline.js` and other files directly in the selected folder — no additional nested project folder.
 

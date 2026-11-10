@@ -7,6 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#f8f6f0">
+  <link rel="icon" type="image/png" href="assets/photos/worldsgallerylogo.png">
   <title>Worlds Gallery — Every picture has a world behind it</title>
   <meta name="description" content="Worlds Gallery is a photo-first world explorer where every picture has a story behind it.">
   <link rel="stylesheet" href="styles.css?v=v2234-beta-ticker-20261109">
@@ -21,6 +22,9 @@
 
 <link rel="stylesheet" href="wg_v28_ui.css?v=v2234-compact-avatars-20261109">
 <link rel="stylesheet" href="wg_v214_inline.css?v=v215-center-20261109">
+<link rel="stylesheet" href="wg_discovery.css?v=20261110-beta1">
+<link rel="stylesheet" href="wg_interaction_polish.css?v=20261110-v2235">
+<link rel="stylesheet" href="wg_album.css?v=20261110-v2244">
 </head>
 <body class="portal-locked">
 <!-- Worlds Gallery V5: immersive country entry. Globe is the ONLY initial screen. -->
@@ -61,7 +65,7 @@
     </div>
   </div>
   <div class="shell nav-bar">
-  <a class="brand" href="#home" aria-label="Worlds Gallery home"><span class="brand-symbol">W<span class="brand-dot">✦</span></span><span>Worlds <em>Gallery.</em></span></a>
+  <a class="brand wg-logo-brand" href="#home" aria-label="Worlds Gallery home"><img class="wg-logo-wordmark" src="assets/photos/worldsgalleryfull.png" alt="Worlds Gallery" width="174" height="58"><img class="wg-logo-icon" src="assets/photos/worldsgallerylogo.png" alt="" width="40" height="40"></a>
   <nav class="nav-links" aria-label="Main navigation"><a href="#map-section">The world</a><a href="#stories">Gallery</a><a href="#about">Our purpose</a></nav>
   <button type="button" class="button button-primary nav-share" data-open-upload>Share your story <span aria-hidden="true">↗</span></button>
 </div></header>
@@ -86,16 +90,29 @@
     </div>
   </section>
 
+  <!-- Curated discovery is separate from private user stories and uses no private media. -->
+  <section id="wg-discovery" aria-labelledby="wg-discovery-title">
+    <div class="shell">
+      <div class="wg-dsc-heading">
+        <div><div class="wg-dsc-eyebrow">EXPLORE BEYOND THE ORDINARY</div><h2 id="wg-discovery-title">Find a place that matches your mood.</h2><p>Explore the world through feelings and meaningful places. Every picture has a world behind it.</p></div>
+        <span class="wg-dsc-heading-stamp">✦ New in beta</span>
+      </div>
+      <div class="wg-dsc-tabs"></div>
+      <div id="wg-dsc-panel" class="wg-dsc-panel"><p>Loading Worlds Gallery discovery…</p></div>
+      <p id="wg-dsc-status" class="wg-dsc-status" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
   <section id="stories" class="gallery-section"><div class="shell">
     <div class="section-eyebrow"><span></span> THE OPEN STORYBOOK</div>
     <div class="gallery-heading"><div><h2>Explore the <em>gallery.</em></h2><p>Every photograph holds a place, a person, and a piece of a life.</p></div><span class="demo-label">✦ Beta gallery · Original stories only</span></div>
     <div class="filter-panel">
-      <div class="filter-top"><label class="searchbox" for="search"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.8"/><path d="m16 16 5 5"/></svg><input id="search" type="search" placeholder="Search names, titles, memories, places..." aria-label="Search gallery"></label><label class="wg-mine-toggle" for="mineOnly"><input id="mineOnly" type="checkbox"><span>View mine only</span></label><button class="button select-themes" id="themeChoose" type="button"><span>✦ Select themes</span><span class="countbubble" id="themeCount">0</span><span aria-hidden="true">▾</span></button></div>
+      <div class="filter-top"><label class="searchbox" for="search"><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.8"/><path d="m16 16 5 5"/></svg><input id="search" type="search" placeholder="Search names, titles, memories, places..." aria-label="Search gallery"></label><input id="mineOnly" type="checkbox" hidden aria-hidden="true" tabindex="-1"><button class="button select-themes" id="themeChoose" type="button"><span>✦ Select themes</span><span class="countbubble" id="themeCount">0</span><span aria-hidden="true">▾</span></button></div>
       <div class="filter-bottom">
         <label class="filter-field"><span>World region</span><select id="continentFilter" aria-label="Filter by world region"><option value="">All world regions</option><option>Africa</option><option>Americas</option><option>Asia</option><option>Europe</option><option>Oceania</option><option>Antarctic</option></select></label>
         <label class="filter-field"><span>Country or territory</span><select id="countryFilter" aria-label="Filter by country"><option value="">All countries</option></select></label>
         <div class="filter-field"><span>State / province / region</span><button id="openRegion" type="button" class="filter-select-btn"><span id="regionLabel">All regions</span><span aria-hidden="true">▾</span></button></div>
-        <label class="filter-field sort"><span>Sort stories</span><select id="sortFilter" aria-label="Sort stories"><option value="new">Newest first</option><option value="hearts">Most loved</option><option value="author">Storyteller A–Z</option><option value="title">Title A–Z</option><option value="country">Country A–Z</option></select></label>
+        <label class="filter-field sort"><span>Sort stories</span><select id="sortFilter" aria-label="Sort stories"><option value="new">Newest first</option><option value="hearts">Most loved</option><option value="title">Title A–Z</option></select></label>
       </div>
       <div class="active-filters" id="activeFilters" hidden><div class="active-chips" id="themeChips"></div><button id="clearFilters" type="button" class="link-button">Clear all filters</button></div>
     </div>
@@ -106,7 +123,7 @@
 
   <section id="about" class="about-section"><div class="shell about-inner"><div><div class="eyebrow">A HUMAN ARCHIVE, BUILT WITH CARE</div><h2>Not a competition<br>for attention.<br><em>A place for meaning.</em></h2></div><div class="about-right"><p>One photo. Up to four moments in a collage. At least 1,000 characters to tell the fuller story. Discover what life feels like across countries, generations and different perspectives.</p><div class="about-steps"><span>01 <strong>Capture a moment</strong></span><span>02 <strong>Choose your collage design</strong></span><span>03 <strong>Tell the story behind it</strong></span><span>04 <strong>Explore with empathy</strong></span></div><small>Worlds Gallery is in beta. Public publishing, moderation and reporting are still being developed. Private uploads stay protected until their owners can safely choose to share them.</small></div></div></section>
 </main>
-<footer><div class="shell footrow"><span class="brand footbrand"><span class="brand-symbol">W</span><span>Worlds <em>Gallery.</em></span></span><a href="#home">Back to the top ↑</a></div></footer>
+<footer><div class="shell footrow"><span class="brand footbrand"><img class="wg-footer-icon" src="assets/photos/worldsgallerylogo.png" width="42" height="42" alt=""><span>Worlds <em>Gallery.</em></span></span><a href="#home">Back to the top ↑</a></div></footer>
 
 <dialog class="modal" id="themesDialog" aria-label="Choose story themes"><div class="modal-header"><div><div class="eyebrow small">EXPLORE YOUR INTERESTS</div><h3>Choose your themes</h3></div><button type="button" class="close-button" data-close="themesDialog" aria-label="Close">×</button></div><div class="modal-body"><p class="modal-hint">Choose one, several, or none. Selected themes will appear under your filters; matching stories can belong to <b>any</b> selected theme.</p><div class="theme-modal-grid" id="themeOptions"></div></div><div class="modal-footer"><button type="button" class="button button-light" id="themesClear">Clear selection</button><button type="button" class="button button-primary" id="themesApply">Apply themes <span>✓</span></button></div></dialog>
 
@@ -181,6 +198,13 @@
 
 
 
+<dialog id="wg-mosaic-export" aria-labelledby="wg-dsc-export-heading">
+  <h3 id="wg-dsc-export-heading">Share your World Mosaic</h3>
+  <p>Select exactly which saved destinations appear in a downloadable image. Private account details, notes, and precise coordinates will never be included.</p>
+  <div id="wg-dsc-export-items" class="wg-dsc-export-items"></div>
+  <p id="wg-dsc-export-message" role="status" aria-live="polite"></p>
+  <div class="wg-dsc-export-buttons"><button type="button" class="wg-dsc-button wg-dsc-primary" data-wg-dsc-export-confirm>Generate image</button><button type="button" class="wg-dsc-button" data-wg-dsc-export-close>Close</button></div>
+</dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="wg_post_policy.js?v=v2233-link-privacy-20261109"></script>
 <script src="data.js?v=v2234-original-only-20261109"></script><script src="world_geometry.js?v=b65c5365c640"></script><script src="ph_coastline.js?v=fe3b853d6dcc"></script><script src="ph_admin_geo.js?v=56699b9621e3"></script><script src="place_highlights.js?v=092981cd69b4"></script><script src="globe.js?v=0ea3b51f80da"></script><script src="app.js?v=v2234-original-only-20261109"></script><script src="timezones.js?v=1633b3a9ceba"></script><script src="portal.js?v=v2234-original-only-20261109"></script>
@@ -196,14 +220,18 @@ if (!window.supabase || typeof window.supabase.createClient !== 'function') {
 }
 </script>
 <script src="wg_locale.js?v=v2231-post-20261109"></script>
-<script src="wg_auth.js?v=v2232-enter-login-20261109"></script>
+<script src="wg_auth.js?v=20261110-v2235"></script>
 <script type="module" src="wg_cinematic.js?v=99a7ef27dd41"></script>
-<script src="wg_account.js?v=v2232-avatar-menu-20261109"></script>
+<script src="wg_account.js?v=20261110-v2236"></script>
 <script src="wg_view_state.js?v=v26"></script>
 <script src="wg_locale_country.js?v=v26"></script>
 <script src="wg_ui_icons.js?v=v26"></script>
 
-<script src="wg_v28_ui.js?v=v2234-complete-rows-20261109"></script>
+<script src="wg_v28_ui.js?v=20261110-v2237-avatar-network"></script>
 <script src="wg_v214_inline.js?v=v215-center-20261109"></script>
+<script src="wg_discovery_data.js?v=20261110-v2236"></script>
+<script src="wg_discovery.js?v=20261110-v2240"></script>
+<script src="wg_interaction_polish.js?v=20261110-v2235"></script>
+<script src="wg_album.js?v=20261110-v2244"></script>
 </body>
 </html>

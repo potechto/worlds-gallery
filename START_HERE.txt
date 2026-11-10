@@ -1,7 +1,7 @@
 WORLDS GALLERY V5 — START HERE
 
 Extract ALL files from this ZIP directly to:
-C:\Users\Ralph John\OneDrive\Desktop\ME FILES\worlds gallery
+<your-local-project-folder>
 
 1) Open Worlds_Gallery_V5_Preview.html in Chrome/Edge to see the interactive demo.
 2) Open the same directory as a folder in Visual Studio Code to edit the original source.
@@ -11,4 +11,4 @@ C:\Users\Ralph John\OneDrive\Desktop\ME FILES\worlds gallery
 
 Please read README.md for true limitations about real administrative maps, Commons photos and TTS.
 
-NOT connected to real GitHub, Supabase or any production backend.
+Historical V5 preview note; newer beta frontend uses Supabase public/publishable credentials with RLS. Never commit secrets.

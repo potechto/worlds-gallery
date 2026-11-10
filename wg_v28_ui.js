@@ -27,49 +27,77 @@
   }
 
   function initSort() {
-    const select = $('#sortFilter');
-    const field = select?.closest('.filter-field.sort');
-    if (!select || !field || field.querySelector('.wg-v28-sort')) return;
-    const toggle = $('.wg-mine-toggle');
-    const component = document.createElement('div');
-    component.className = 'wg-v28-sort';
-    component.innerHTML = `<button type="button" class="wg-v28-sort-trigger" aria-expanded="false" aria-controls="wg-v28-sort-list">Newest first <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><div id="wg-v28-sort-list" class="wg-v28-sort-popup" role="group" hidden></div>`;
+    const select=$('#sortFilter');
+    const field=select?.closest('.filter-field.sort');
+    const mine=$('#mineOnly');
+    if(!select||!field||!mine||field.querySelector('.wg-v28-sort'))return;
+    const component=document.createElement('div');
+    component.className='wg-v28-sort wg-polish-sort';
+    component.innerHTML=`<button type="button" class="wg-v28-sort-trigger" aria-expanded="false" aria-controls="wg-v28-sort-list" aria-label="Sort and filter stories">
+      <span class="wg-polish-sort-label"><strong></strong><small></small></span>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </button><div id="wg-v28-sort-list" class="wg-v28-sort-popup" role="group" aria-label="Story order and visibility" hidden></div>`;
     field.append(component);
     select.classList.add('wg-v28-native-sort');
-    const trigger = component.querySelector('button');
-    const popup = component.querySelector('.wg-v28-sort-popup');
-    function label() {
-      trigger.firstChild.textContent = toggle?.querySelector('input')?.checked ? 'View mine only' : (select.selectedOptions[0]?.textContent || 'Sort stories');
+    select.tabIndex=-1;
+    const trigger=component.querySelector('.wg-v28-sort-trigger');
+    const popup=component.querySelector('.wg-v28-sort-popup');
+    function label(){
+      const title=select.selectedOptions[0]?.textContent||'Newest first';
+      const main=trigger.querySelector('strong'),detail=trigger.querySelector('small');
+      main.textContent=mine.checked?'View mine only':title;
+      detail.textContent=mine.checked?`Sorted: ${title}`:'';
+      detail.hidden=!mine.checked;
     }
-    function close() { popup.hidden = true; trigger.setAttribute('aria-expanded', 'false'); }
-    function paint() {
+    function close(){popup.hidden=true;trigger.setAttribute('aria-expanded','false');}
+    function render(){
       popup.replaceChildren();
-      for (const option of select.options) {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'wg-v28-sort-option';
-        button.textContent = option.textContent;
-        button.setAttribute('aria-pressed', String(option.value === select.value && !toggle?.querySelector('input')?.checked));
-        button.addEventListener('click', () => {
-          const box = toggle?.querySelector('input');
-          if (box?.checked) { box.checked = false; box.dispatchEvent(new Event('change', {bubbles:true})); }
-          select.value = option.value;
-          select.dispatchEvent(new Event('change', {bubbles:true}));
-          label(); close();
+      const heading=document.createElement('p');heading.className='wg-polish-sort-heading';heading.textContent='ORDER BY';popup.append(heading);
+      for(const option of select.options){
+        const b=document.createElement('button');b.type='button';b.className='wg-v28-sort-option';
+        b.textContent=option.textContent;
+        b.setAttribute('aria-pressed',String(option.value===select.value));
+        b.addEventListener('click',()=>{
+          select.value=option.value;select.dispatchEvent(new Event('change',{bubbles:true}));
+          // Preserve View mine only when changing the order of one's stories.
+          label();close();trigger.focus({preventScroll:true});
         });
-        popup.append(button);
+        popup.append(b);
       }
-      if (toggle) {
-        toggle.classList.add('wg-v28-mine');
-        popup.append(toggle);
-        const box = toggle.querySelector('input');
-        box?.addEventListener('change', () => {label();close();}, {once:true});
+      const separator=document.createElement('div');separator.className='wg-polish-sort-divider';popup.append(separator);
+      const choice=document.createElement('button');choice.type='button';choice.className='wg-v28-sort-option wg-polish-scope-option';
+      choice.textContent=mine.checked?'View all stories':'View mine only';
+      choice.setAttribute('aria-pressed',String(mine.checked));
+      choice.addEventListener('click',()=>{
+        if(!mine.checked&&!window.WorldsGalleryAuth?.getCurrentUserId?.()){
+          close();document.dispatchEvent(new CustomEvent('wg:require-account',{detail:{action:'view your private stories'}}));return;
+        }
+        mine.checked=!mine.checked;
+        mine.dispatchEvent(new Event('change',{bubbles:true}));
+        label();close();trigger.focus({preventScroll:true});
+      });
+      popup.append(choice);
+      if(mine.checked){
+        const hint=document.createElement('p');hint.className='wg-polish-sort-hint';
+        hint.textContent='Choose any order above; only your stories stay visible.';
+        popup.append(hint);
       }
     }
-    trigger.addEventListener('click', () => { if (popup.hidden) { paint();popup.hidden = false;trigger.setAttribute('aria-expanded','true'); } else close(); });
-    component.addEventListener('keydown', e => { if (e.key === 'Escape') { close(); trigger.focus(); } });
-    document.addEventListener('click', e => { if (!component.contains(e.target)) close(); });
-    select.addEventListener('change', label);
+    trigger.addEventListener('click',()=>{
+      if(!popup.hidden){close();return;}
+      render();popup.hidden=false;trigger.setAttribute('aria-expanded','true');
+    });
+    component.addEventListener('keydown',event=>{
+      if(event.key==='Escape'){close();trigger.focus({preventScroll:true});}
+    });
+    document.addEventListener('click',event=>{if(!component.contains(event.target))close();});
+    select.addEventListener('change',label);
+    mine.addEventListener('change',label);
+    document.querySelector('#clearFilters')?.addEventListener('click',()=>queueMicrotask(label));
+    // app.js also changes its legacy select/checkbox directly after saving or resetting;
+    // synchronize display after any gallery rerender without adding a second filter system.
+    const gallery=$('#gallery');
+    if(gallery)new MutationObserver(label).observe(gallery,{childList:true});
     label();
   }
 
@@ -116,14 +144,43 @@ async function avatarCropWebp(canvas) {
   let avatarPending=null;
   const currentAvatarUser=()=>window.WorldsGalleryAuth?.getCurrentUserId?.()||null;
   const avatarClient=()=>window.WorldsGalleryAuth?.getClient?.()||null;
+  // V2.23.7: a single retry for safe/idempotent profile reads and generated-avatar
+  // updates. Never retry uploads automatically: a partial upload needs inspection.
+  const avatarNetworkError = error => /failed to fetch|networkerror|network request failed|load failed|fetch failed|timeout/i.test(String(error?.message || error || ''));
+  const avatarFriendlyError = error => {
+    const raw=String(error?.message || error || 'Unknown error');
+    if(avatarNetworkError(error))return 'Could not reach the profile service. Your change was not confirmed. Check your internet connection, then try Confirm again.';
+    if(/constraint|check violation/i.test(raw))return 'The profile rejected these avatar settings. Please choose another design or try again.';
+    if(/401|403|jwt|unauthorized|session/i.test(raw))return 'Your session may have expired. Sign in again and retry.';
+    return raw;
+  };
+  async function avatarSafeRequest(action, expectedUid, mayRetry=true){
+    for(let attempt=0;attempt<(mayRetry?2:1);attempt++){
+      if(expectedUid!==currentAvatarUser())throw Error('Your session changed. Sign in again.');
+      try{
+        const response=await action();
+        if(response?.error)throw response.error;
+        return response;
+      }catch(err){
+        if(!mayRetry||attempt||!avatarNetworkError(err)||expectedUid!==currentAvatarUser())throw err;
+        await new Promise(resolve=>setTimeout(resolve,550));
+      }
+    }
+  }
   function resetAvatarState(){
     avatarRevision++;
     currentAvatar={uid:null,source:'dicebear',seed:'WorldsGallery',path:null,src:'',expiresAt:0};
     avatarPending=null;
     updateAvatarSlots();
   }
+  // The live profile constraint accepts only dicebear, multiavatar, or upload.
+  // Adventurer (illustrated) is a DiceBear style, identified by the preset seed.
+  // Do not add an unsupported 'adventurer' avatar_source or change production SQL.
   function avatarSourceUrl(source,seed){
-    return imageUrl(source==='upload'?'dicebear':source,cleanSeed(seed)||'WorldsGallery');
+    const safeSeed=cleanSeed(seed)||'WorldsGallery';
+    const kind=source==='adventurer' || (source==='dicebear' && safeSeed.startsWith('WorldsGallery-Illustrated-'))
+      ? 'adventurer' : (source==='upload' ? 'dicebear' : source);
+    return imageUrl(kind,safeSeed);
   }
   function updateAvatarSlots(){
     const uid=currentAvatarUser();
@@ -159,8 +216,7 @@ async function avatarCropWebp(canvas) {
     avatarPending=uid;
     const revision=++avatarRevision;
     try{
-      const result=await client.from('wg_profiles').select('avatar_source,avatar_seed,avatar_path').eq('user_id',uid).maybeSingle();
-      if(result.error)throw result.error;
+      const result=await avatarSafeRequest(()=>client.from('wg_profiles').select('avatar_source,avatar_seed,avatar_path').eq('user_id',uid).maybeSingle(),uid);
       if(revision!==avatarRevision||uid!==currentAvatarUser())return;
       const source=['dicebear','adventurer','multiavatar','upload'].includes(result.data?.avatar_source)?result.data.avatar_source:'dicebear';
       const seed=cleanSeed(result.data?.avatar_seed)||'WorldsGallery';
@@ -168,7 +224,7 @@ async function avatarCropWebp(canvas) {
       let src=avatarSourceUrl(source,seed),expiresAt=0;
       if(source==='upload'&&path){
         // Only an authenticated owner can request a signed URL to their own private avatar.
-        const signed=await client.storage.from(AVATAR_BUCKET).createSignedUrl(path,3600);
+        const signed=await avatarSafeRequest(()=>client.storage.from(AVATAR_BUCKET).createSignedUrl(path,3600),uid);
         if(revision!==avatarRevision||uid!==currentAvatarUser())return;
         if(!signed.error&&signed.data?.signedUrl){src=signed.data.signedUrl;expiresAt=Date.now()+3600000;}
       }
@@ -346,9 +402,9 @@ async function avatarCropWebp(canvas) {
       if(uid!==currentAvatarUser()){message.textContent='Session changed. Please sign in again.';return;}
       saving=true;confirm.disabled=true;message.textContent='Saving your selection...';
       if(isUpload)dialog._lockCropControls?.(true);
-      let newPath=null,committed=false;
+      let newPath=null,committed=false,updateAttempted=false,previewUnavailable=false;
       try{
-        const nextSource=isUpload?'upload':kind;
+        const nextSource=isUpload?'upload':(kind==='adventurer'?'dicebear':kind);
         if(isUpload){
           const cropCanvas=dialog.querySelector('#wg-v2233-crop-canvas');
           const draftBlob=await avatarCropWebp(cropCanvas);
@@ -359,8 +415,8 @@ async function avatarCropWebp(canvas) {
         }
         if(uid!==currentAvatarUser())throw new Error('Account changed while saving. Please sign in again.');
         const values={avatar_source:nextSource,avatar_seed:isUpload?(currentAvatar.seed||'WorldsGallery'):draftSeed,avatar_path:isUpload?newPath:null};
-        const updated=await client.from('wg_profiles').update(values).eq('user_id',uid).select('user_id').single();
-        if(updated.error)throw updated.error;
+        updateAttempted=true;
+        const updated=await avatarSafeRequest(()=>client.from('wg_profiles').update(values).eq('user_id',uid).select('user_id').single(),uid,!isUpload);
         committed=true;
         if(uid!==currentAvatarUser()){dialog.close();return;}
         const priorPath=currentAvatar.uid===uid?currentAvatar.path:null;
@@ -368,20 +424,27 @@ async function avatarCropWebp(canvas) {
         avatarRevision++;
         currentAvatar={uid,source:nextSource,seed:values.avatar_seed,path:values.avatar_path,src:avatarSourceUrl(nextSource,values.avatar_seed),expiresAt:0};
         if(isUpload){
-          const signed=await client.storage.from(AVATAR_BUCKET).createSignedUrl(newPath,3600);
-          if(uid!==currentAvatarUser()){dialog.close();return;}
-          if(!signed.error&&signed.data?.signedUrl){currentAvatar.src=signed.data.signedUrl;currentAvatar.expiresAt=Date.now()+3600000;}
+          try{
+            const signed=await avatarSafeRequest(()=>client.storage.from(AVATAR_BUCKET).createSignedUrl(newPath,3600),uid);
+            if(uid!==currentAvatarUser()){dialog.close();return;}
+            if(signed.data?.signedUrl){currentAvatar.src=signed.data.signedUrl;currentAvatar.expiresAt=Date.now()+3600000;}
+            else previewUnavailable=true;
+          }catch(previewError){
+            // Profile write succeeded; failure to generate a preview is not a save failure.
+            previewUnavailable=true;
+            console.warn('Avatar saved but private preview is temporarily unavailable:',avatarFriendlyError(previewError));
+          }
         }
         updateAvatarSlots();document.dispatchEvent(new CustomEvent('wg:avatar-updated',{detail:{userId:uid,...values}}));
-        const status=section.querySelector('#wg-v28-avatar-msg');if(status)status.textContent='Profile picture updated.';
+        const status=section.querySelector('#wg-v28-avatar-msg');if(status)status.textContent=previewUnavailable?'Profile saved. Private preview is temporarily unavailable; reconnect and reopen your profile.':'Profile picture updated.';
         dialog.close();
         // Remove only our previous avatar asset, never story photos or another user's files.
         if(priorPath&&priorPath!==newPath&&priorPath.startsWith(`${uid}/avatars/`)){
           client.storage.from(AVATAR_BUCKET).remove([priorPath]).catch(()=>{});
         }
       }catch(err){
-        if(newPath&&!committed)try{await client.storage.from(AVATAR_BUCKET).remove([newPath]);}catch{}
-        message.textContent='Could not save avatar: '+String(err.message||err);
+        if(newPath&&!committed&&(!updateAttempted||!avatarNetworkError(err)))try{await client.storage.from(AVATAR_BUCKET).remove([newPath]);}catch{}
+        message.textContent='Could not save avatar: '+avatarFriendlyError(err);
       }finally{
         saving=false;
         if(isUpload)dialog._lockCropControls?.(false);

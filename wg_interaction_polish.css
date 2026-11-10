@@ -1,0 +1,156 @@
+/* Worlds Gallery V2.23.5 — quiet interaction system, responsive density, and guest prompts. */
+:root{--wg-focus-ring:#438a71;--wg-pressed:#d4e9dc;--wg-quiet:#f6f9f5}
+:where(button:not(:disabled),a[href],[role="button"]:not([aria-disabled="true"])){
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  transition:background-color .18s ease,color .18s ease,border-color .18s ease,
+    box-shadow .18s ease,transform .14s ease,filter .14s ease;
+}
+@media(hover:hover) and (pointer:fine){
+  :where(button:not(:disabled),a.button,[role="button"]:not([aria-disabled="true"])):hover{
+    filter:brightness(.972);box-shadow:0 3px 13px rgba(19,80,58,.10)
+  }
+}
+:where(button:not(:disabled),a.button,[role="button"]:not([aria-disabled="true"])):active,
+:where(button:not(:disabled),a.button,[role="button"]:not([aria-disabled="true"])).wg-is-pressing{
+  transform:translateY(1px) scale(.982)!important;
+  filter:brightness(.92)!important;
+  box-shadow:inset 0 1px 5px rgba(13,70,48,.17)!important;
+}
+:where(button:not(:disabled),a.button,[role="button"]:not([aria-disabled="true"])).wg-was-clicked{
+  box-shadow:0 0 0 3px rgba(72,144,104,.25),inset 0 0 0 1px rgba(41,112,81,.13)!important;
+}
+:where(button,a[href],select,input,[role="button"]):focus-visible{
+  outline:2.5px solid var(--wg-focus-ring)!important;outline-offset:3px!important;
+}
+:where(button,[role="button"]){user-select:none}
+
+/* Profile menu: better grouping and one cohesive icon style (no repeated picture glyphs). */
+#wgAccountMenu{padding:10px!important;max-height:min(76dvh,590px)!important;
+  border:1px solid #dae6dc!important;border-radius:17px!important;
+  box-shadow:0 18px 45px rgba(27,58,45,.15)!important;background:#fffffd!important;}
+#wgAccountMenu .wg-ac-floating-head{min-height:82px!important;padding:10px 10px 14px!important}
+#wgAccountMenu .wg-v2232-menu-avatar{width:60px!important;height:60px!important;flex-basis:60px!important;box-shadow:0 5px 12px #164a3517!important}
+#wgAccountMenu .wg-ac-menu-items{gap:3px!important;padding-top:8px!important}
+#wgAccountMenu .wg-ac-menu-row{font:600 13px/1.45 system-ui,-apple-system,'Segoe UI',sans-serif!important;
+  min-height:42px!important;padding:10px 12px!important;gap:12px!important;
+  grid-template-columns:21px minmax(0,1fr) 15px!important;border-radius:10px!important;}
+#wgAccountMenu .wg-ac-menu-row>svg:first-child{width:19px!important;height:19px!important;
+  stroke-width:1.75!important;color:#527a68!important;}
+#wgAccountMenu .wg-ac-menu-row>svg:last-child{width:15px;height:15px;opacity:.57}
+#wgAccountMenu .wg-ac-menu-row.wg-ac-text-only{grid-template-columns:minmax(0,1fr) 15px!important;padding-left:45px!important}
+#wgAccountMenu .wg-ac-menu-row.wg-ac-menu-exit{border-top:1px solid #e9eee7!important;
+  margin-top:7px!important;border-radius:0 0 10px 10px!important;color:#6c6b63!important}
+#wgAccountMenu .wg-ac-menu-row:hover,#wgAccountMenu .wg-ac-menu-row:focus-visible,
+#wgAccountMenu .wg-ac-menu-row.wg-was-clicked{background:#e9f2ec!important;color:#214d39!important}
+#wgAccountMenu .wg-ac-album-submenu{padding:4px 0 6px 27px;margin:0 7px 3px 14px;border-left:1px solid #c4ddce}
+#wgAccountMenu .wg-ac-album-submenu[hidden]{display:none!important}
+#wgAccountMenu .wg-ac-album-link{display:flex;justify-content:space-between;align-items:center;
+  width:100%;min-height:39px;gap:10px;border:0;border-radius:9px;padding:10px 13px;
+  color:#2c6047;background:#f2f7f2;text-align:left;font:600 12px/1.4 system-ui;cursor:pointer}
+#wgAccountMenu .wg-ac-album-link:hover{background:#e3f0e5}
+#wgAccountMenu .wg-ac-guest-avatar{width:54px;height:54px;display:grid;place-items:center;flex:0 0 54px;
+  border-radius:50%;background:#e7f2e9;color:#35755a;border:1px solid #d3e5d7}
+
+/* Sort Stories: no visible checkbox, no redundant A–Z modes. */
+#mineOnly[hidden]{display:none!important}
+.filter-field.sort{min-width:0!important}
+.wg-polish-sort .wg-v28-sort-trigger{min-height:44px;padding:10px 13px;border-radius:11px;
+  background:#fff;border-color:#d4e2d6;gap:9px}
+.wg-polish-sort-label{display:flex;flex-direction:column;min-width:0;line-height:1.3;gap:2px}
+.wg-polish-sort-label strong{font-size:13px;font-weight:650;color:#214b39}
+.wg-polish-sort-label small{font-size:10px;font-weight:500;color:#718776}
+.wg-polish-sort .wg-v28-sort-popup{width:min(280px,calc(100vw - 30px));min-width:min(100%,220px);
+  max-width:calc(100vw - 30px);padding:8px;border-radius:12px;border:1px solid #d7e5d9;
+  box-shadow:0 14px 32px rgba(23,62,46,.14)}
+.wg-polish-sort .wg-v28-sort-option{min-height:39px;padding:9px 12px;border-radius:8px;
+  font:600 13px/1.35 system-ui;background:transparent}
+.wg-polish-sort .wg-v28-sort-option[aria-pressed="true"]{background:#e5f1e8;color:#1e5d41}
+.wg-polish-sort .wg-v28-sort-option:hover{background:#ecf5ee}
+.wg-polish-sort-heading{margin:4px 11px 6px;color:#778e7f;font:750 10px system-ui;letter-spacing:.1em}
+.wg-polish-sort-divider{height:1px;margin:6px 5px;background:#e3ece5}
+.wg-polish-sort .wg-polish-scope-option{background:#f2f8f3;color:#1e5941}
+.wg-polish-sort-hint{margin:5px 10px 7px;font:450 11px/1.5 system-ui;color:#6c8172}
+
+/* Discovery: two exploration destinations, a separate Album, less stacked decoration. */
+#wg-discovery{padding:44px 0 60px!important;background:#f7f9f6!important}
+#wg-discovery .wg-dsc-heading{margin-bottom:16px!important;align-items:start!important}
+#wg-discovery .wg-dsc-heading h2{font-size:clamp(26px,3vw,38px)!important;margin:8px 0 6px!important}
+#wg-discovery .wg-dsc-heading p{font-size:13px!important;line-height:1.6!important}
+#wg-discovery .wg-dsc-heading-stamp{display:none!important}
+#wg-discovery .wg-dsc-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px!important}
+#wg-discovery .wg-dsc-tab{border-radius:10px 10px 0 0!important;padding:12px 17px!important}
+#wg-discovery .wg-dsc-tab strong{font-size:14px!important}
+#wg-discovery .wg-dsc-tab span{font-size:11px!important}
+#wg-discovery .wg-dsc-panel{padding:clamp(17px,2.5vw,29px)!important;min-height:220px!important;
+  border-radius:0 0 15px 15px!important;box-shadow:0 8px 25px rgba(32,70,45,.035)!important}
+#wg-discovery .wg-dsc-panel-intro h3{font-size:clamp(23px,2.5vw,30px)!important}
+#wg-discovery .wg-dsc-panel-intro p{font-size:13px!important;margin-bottom:18px!important}
+#wg-discovery .wg-dsc-moods{gap:8px!important;margin:4px 0 20px!important}
+#wg-discovery .wg-dsc-mood{min-height:76px!important;padding:10px 7px!important;gap:5px!important;
+  background:#f5f8f5!important;border-radius:11px!important;font-size:11px!important}
+#wg-discovery .wg-dsc-mood.active{background:#e3f0e6!important}
+#wg-discovery .wg-dsc-mood-icon{display:grid;place-items:center;height:26px;color:#487e61}
+#wg-discovery .wg-dsc-mood-icon svg{width:24px;height:24px}
+#wg-discovery .wg-dsc-fact{padding:10px 13px!important;background:#f4f8f3!important;font-size:12px!important}
+#wg-discovery .wg-dsc-actions{gap:7px!important;margin-top:14px!important}
+#wg-discovery .wg-dsc-button{min-height:41px!important;padding:10px 13px!important;
+  border-radius:9px!important;font-size:12px!important}
+#wg-discovery .wg-dsc-mosaic-grid{gap:11px!important}
+#wg-discovery .wg-dsc-mosaic-card{transform:none!important;border-radius:12px!important;box-shadow:none!important}
+#wg-discovery .wg-dsc-mosaic-card-body{padding:12px!important}
+#wg-discovery .wg-dsc-mosaic-tools{padding:13px!important;background:#f8faf7!important;gap:12px!important}
+#wg-discovery .wg-dsc-mosaic-stats strong{padding:8px 11px!important;font-size:12px!important}
+#wg-discovery .wg-dsc-private-note{background:transparent!important;border:0!important;
+  padding:6px 0!important;margin:13px 0 0!important;font-size:11px!important}
+#wg-discovery .wg-dsc-album-back{margin-bottom:15px!important}
+
+/* Gallery filters: more visual rhythm, less border density. */
+.gallery-section .filter-panel{border-radius:15px!important;box-shadow:none!important}
+.gallery-section .filter-top{gap:10px!important}
+.gallery-section .filter-bottom{gap:12px!important}
+.gallery-section .filter-field>span{font-weight:650!important;font-size:11px!important}
+.gallery-section .gallery-heading{gap:16px!important}
+.gallery-section .gallery-subline{font-size:12px!important}
+
+/* Guest-only account prompt: intentionally spare and accessible. */
+#wgGuestRequiredDialog[open]{display:block}
+#wgGuestRequiredDialog{border:1px solid #d7e7dc;border-radius:18px;padding:0;
+  width:min(420px,calc(100vw - 28px));max-height:calc(100dvh - 32px);overflow:auto;
+  color:#163c2f;background:#fffffc;box-shadow:0 24px 76px rgba(6,40,30,.27)}
+#wgGuestRequiredDialog::backdrop{background:rgba(10,32,24,.55);backdrop-filter:blur(3px)}
+#wgGuestRequiredDialog .wg-guest-prompt{padding:clamp(20px,4vw,29px)}
+#wgGuestRequiredDialog .wg-guest-prompt-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#wgGuestRequiredDialog .wg-guest-prompt-kicker{font:750 10px system-ui;letter-spacing:.16em;color:#608a72}
+#wgGuestRequiredDialog .wg-guest-prompt-close{display:grid;place-items:center;width:37px;height:37px;
+ border:1px solid #d9e9dc;border-radius:10px;background:#f6faf6;color:#2c654d;cursor:pointer}
+#wgGuestRequiredDialog h2{font:750 clamp(22px,4vw,27px)/1.22 system-ui;
+  letter-spacing:-.03em;color:#194a37;margin:16px 0 9px}
+#wgGuestRequiredDialog p{color:#617c6b;font:400 13px/1.7 system-ui;margin:0 0 18px}
+#wgGuestRequiredDialog .wg-guest-prompt-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+#wgGuestRequiredDialog .wg-guest-prompt-actions button{min-height:44px;border-radius:10px;
+  font:700 13px/1.3 system-ui;cursor:pointer;padding:11px 9px}
+#wgGuestRequiredDialog .wg-guest-prompt-primary{border:1px solid #1e6144;background:#1e6144;color:#fff}
+#wgGuestRequiredDialog .wg-guest-prompt-secondary{border:1px solid #c7ddcc;background:#fff;color:#2a6145}
+#wgGuestRequiredDialog .wg-guest-prompt-plain{grid-column:1/-1;border:0;background:#f0f6f0;color:#426e55}
+#wgGuestRequiredDialog small{display:block;color:#7d9383;font:400 11px/1.6 system-ui;margin-top:14px}
+@media(max-width:660px){
+  #wg-discovery{padding:33px 0 45px!important}
+  #wg-discovery .wg-dsc-tabs{gap:5px!important}
+  #wg-discovery .wg-dsc-tab{padding:10px 12px!important}
+  #wg-discovery .wg-dsc-tab strong{font-size:12px!important}
+  #wg-discovery .wg-dsc-tab span{font-size:10px!important}
+  #wg-discovery .wg-dsc-panel{padding:15px 12px!important}
+  #wg-discovery .wg-dsc-moods{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px!important}
+  #wg-discovery .wg-dsc-mood{min-height:72px!important}
+  #wgAccountMenu .wg-ac-menu-row{min-height:44px!important}
+  .wg-polish-sort .wg-v28-sort-popup{right:0;width:min(255px,calc(100vw - 32px))}
+}
+@media(max-width:375px){#wg-discovery .wg-dsc-moods{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){
+ :where(button,a,[role="button"]){transition:none!important;animation:none!important;scroll-behavior:auto!important}
+ :where(button,a,[role="button"]).wg-is-pressing{transform:none!important;filter:brightness(.90)!important}
+}
+
+#wg-discovery .wg-dsc-tabs[hidden]{display:none!important}
+#wg-discovery.wg-dsc-album-view .wg-dsc-panel{border-radius:15px!important}

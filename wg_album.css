@@ -1,0 +1,723 @@
+/* Worlds Gallery V2.24.2 - stable page turns, center-anchored theatre, contextual sticker controls */
+#wgAlbumPage{position:fixed;inset:0;width:100vw;max-width:none;height:100dvh;max-height:none;min-height:0;border:0;padding:0;margin:0;overflow:hidden;color:#faf3df;background:#16241f;box-sizing:border-box;isolation:isolate}
+#wgAlbumPage[open]{display:block}
+#wgAlbumPage::backdrop{background:#13241fe8}
+#wgAlbumPage :where(*,*::before,*::after){box-sizing:border-box}
+#wgAlbumPage [hidden]{display:none!important}
+#wgAlbumPage .wg-album-sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+#wgAlbumPage .wg-album-ambient{position:absolute;inset:-24px;background-size:cover;background-position:center;filter:blur(17px) saturate(1.13);transform:scale(1.06);z-index:-2}
+#wgAlbumPage .wg-album-ambient-overlay{position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse 70% 43% at 50% 20%,#e0c28a23,transparent 85%),linear-gradient(180deg,#0c1c19ce,#1b3027a0 45%,#121d1bda)}
+#wgAlbumPage .wg-album-scroll{height:100%;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#b49c6c55 transparent;padding-bottom:25px}
+#wgAlbumPage .wg-album-header{height:75px;max-width:1450px;margin:0 auto;padding:16px clamp(14px,3vw,54px);display:flex;align-items:center;justify-content:space-between;gap:18px}
+#wgAlbumPage .wg-album-brand{display:grid;gap:4px;font:500 12px/1.35 system-ui,sans-serif;color:#eee9d5be}
+#wgAlbumPage .wg-album-kicker{font:750 10px/1.4 system-ui,sans-serif;letter-spacing:.17em;color:#f3daaa}
+#wgAlbumPage .wg-album-icon-button{width:42px;height:42px;display:grid;place-items:center;border:1px solid #f6ebd06b;border-radius:50%;color:#fff5df;background:#122d25b9;cursor:pointer;transition:transform .18s,background .18s,border-color .18s}
+#wgAlbumPage .wg-album-icon-button:hover{background:#41604b;border-color:#f9e8bc;transform:translateY(-2px)}
+#wgAlbumPage .wg-album-icon-button:active{transform:scale(.94)}
+#wgAlbumPage .wg-album-main{width:100%;margin:auto;padding:0 18px 30px}
+#wgAlbumPage .wg-album-closed-view{text-align:center;max-width:900px;margin:0 auto}
+#wgAlbumPage .wg-album-kicker2{margin:5px auto 8px;color:#e9d09a;font:750 10px/1.35 system-ui,sans-serif;letter-spacing:.20em}
+#wgAlbumPage .wg-album-closed-subtitle{margin:0;color:#f7edd9cf;font:italic 15px/1.5 Georgia,serif}
+#wgAlbumPage .wg-album-stage{display:flex;align-items:center;flex-direction:column;margin:14px auto 24px}
+#wgAlbumPage .wg-album-book{position:relative;display:block;width:clamp(222px,24vw,314px);aspect-ratio:1086/1448;padding:0;overflow:visible;isolation:isolate;border:0;background:transparent;color:#fff0c0;cursor:pointer;border-radius:9px;filter:drop-shadow(6px 22px 16px #000b);transition:transform .26s,filter .26s}
+#wgAlbumPage .wg-album-book:hover{transform:translateY(-7px) rotate(-.5deg);filter:drop-shadow(8px 28px 22px #000e)}
+#wgAlbumPage .wg-album-book:active{transform:translateY(0) scale(.98)}
+#wgAlbumPage .wg-album-book::after{content:'';position:absolute;pointer-events:none;inset:1%;border-radius:8px;box-shadow:inset 1px 0 2px #f7d99655}
+#wgAlbumPage .wg-album-reference{display:block;width:100%;height:100%;object-fit:contain;border-radius:8px;user-select:none;pointer-events:none}
+#wgAlbumPage .wg-album-book.wg-album-other-cover{background:#4b171e;border:4px solid #ad6b35;box-shadow:inset 3px 0 8px #f4c37285,inset 0 0 0 1px #7d291b}
+#wgAlbumPage .wg-album-other-cover .wg-album-reference{display:none}
+#wgAlbumPage .wg-album-custom-face{display:none;position:absolute;inset:0;border-radius:4px;overflow:hidden}
+#wgAlbumPage .wg-album-other-cover .wg-album-custom-face{display:block}
+#wgAlbumPage .wg-album-spine{position:absolute;inset:0 auto 0 0;width:12%;z-index:3;background:linear-gradient(90deg,#2e090d,#772724 17%,#4e1116 53%,#b27e3d 65%,#260b0c 83%,transparent);box-shadow:2px 0 7px #130608be}
+#wgAlbumPage .wg-album-front-image{position:absolute;inset:0 0 0 9%;background-size:cover;background-position:center}
+#wgAlbumPage .wg-album-front-frame{position:absolute;inset:2.6% 3.3% 2.7% 11%;border:2px solid #e7b969;outline:1px solid #68401b;outline-offset:-7px;border-radius:3px;display:flex;align-items:center;flex-direction:column;gap:5px;background:linear-gradient(180deg,#160d18b8,#1d2e2860 37%,transparent 90%);text-shadow:0 2px 10px #0b0b0bec}
+#wgAlbumPage .wg-album-corner-top,#wgAlbumPage .wg-album-corner-bottom{font-size:22px;color:#f5ca80;line-height:1}
+#wgAlbumPage .wg-album-corner-top{align-self:flex-start;margin:10px 0 0 13px}
+#wgAlbumPage .wg-album-corner-bottom{position:absolute;right:12px;bottom:10px}
+#wgAlbumPage .wg-album-front-title{font:italic 500 clamp(27px,3vw,43px)/1.2 Georgia,serif;color:#ffe7ae;letter-spacing:.012em;padding:17% 7px 0;text-align:center;white-space:nowrap}
+#wgAlbumPage .wg-album-compass{color:#fbdc9b;font-size:32px}
+#wgAlbumPage .wg-album-front-subtitle{color:#fff0bd;font:700 9px/1.4 system-ui,sans-serif;letter-spacing:.18em;text-align:center}
+#wgAlbumPage .wg-album-strap{position:absolute;right:0;top:47%;width:19%;height:9%;z-index:5;border-radius:18px 0 0 18px;border:2px solid #d5a54d;background:linear-gradient(110deg,#9d4829,#4f1111);display:grid;place-items:center;box-shadow:0 4px 9px #090809a8}
+#wgAlbumPage .wg-album-strap>span{display:grid;place-items:center;border:1px solid #eccb7a;border-radius:50%;width:74%;aspect-ratio:1;color:#ffdd92;font-size:19px}
+#wgAlbumPage .wg-album-book-caption{margin:10px 0 14px;font:italic 13px/1.4 Georgia,serif;color:#fff1d6cc}
+#wgAlbumPage .wg-album-actions{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:11px}
+#wgAlbumPage .wg-album-open-button,#wgAlbumPage .wg-album-secondary-button{display:inline-flex;gap:9px;align-items:center;justify-content:center;min-height:45px;padding:10px 18px;border:1px solid #eecb94;border-radius:30px;font:720 13px system-ui,sans-serif;cursor:pointer;transition:transform .18s,background .18s,box-shadow .18s}
+#wgAlbumPage .wg-album-open-button{background:#f4d9ad;color:#2e392f;box-shadow:0 7px 22px #0005}
+#wgAlbumPage .wg-album-secondary-button{background:#142d24c0;color:#fff2d8}
+#wgAlbumPage :where(.wg-album-open-button,.wg-album-secondary-button):hover{transform:translateY(-2px);box-shadow:0 10px 19px #0005}
+#wgAlbumPage .wg-album-open-button:hover{background:#fff0d3}
+#wgAlbumPage .wg-album-secondary-button:hover{background:#3b5547}
+#wgAlbumPage :where(.wg-album-open-button,.wg-album-secondary-button):active{transform:scale(.97)}
+#wgAlbumPage .wg-album-private{max-width:620px;margin:20px auto 0;color:#f8eaccb7;font:450 11px/1.7 system-ui,sans-serif}
+#wgAlbumPage .wg-album-message{min-height:20px;margin:8px auto 0;max-width:760px;text-align:center;font:670 12px/1.5 system-ui,sans-serif;color:#fff4cc}
+/* Open book: familiar vintage scrapbook spread, entirely editable. */
+#wgAlbumPage .wg-album-open-view{width:min(100%,1310px);margin:auto;animation:wg-album-arrive .64s cubic-bezier(.16,.7,.25,1) both}
+#wgAlbumPage .wg-album-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 3px 14px}
+#wgAlbumPage .wg-album-text-button{display:inline-flex;gap:8px;align-items:center;min-height:39px;border:1px solid #f4e5ce58;border-radius:22px;background:#152b24bc;color:#fff2dc;padding:8px 12px;font:650 12px system-ui,sans-serif;cursor:pointer;transition:transform .18s,background .18s}
+#wgAlbumPage .wg-album-text-button:hover{background:#3c5649;transform:translateY(-1px)}
+#wgAlbumPage .wg-album-spread-label{text-align:center;display:grid;gap:3px;font:600 11px system-ui,sans-serif}
+#wgAlbumPage .wg-album-spread-label span{font-size:9px;letter-spacing:.18em;color:#efd09b}
+#wgAlbumPage .wg-album-spread-label strong{font-size:14px;color:#fff4db}
+#wgAlbumPage .wg-album-spread-frame{position:relative;width:100%;overflow:auto;border-radius:9px;padding:9px;background:linear-gradient(115deg,#362318,#7d5134 50%,#312217);border:1px solid #e7c38d59;box-shadow:0 24px 65px #0009,inset 0 0 0 2px #9c7148;scrollbar-width:thin;scrollbar-color:#c6a277 #4f3826}
+#wgAlbumPage .wg-album-paper-book{position:relative;isolation:isolate;width:100%;aspect-ratio:1.84;display:grid;grid-template-columns:1fr 1fr;border:2px solid #654229;border-radius:9px;overflow:hidden;box-shadow:inset 0 0 0 3px #c5a474,0 0 0 4px #412d20;background:#e2c99a}
+#wgAlbumPage .wg-album-paper-book.wg-album-turning{animation:wg-album-page-change .46s ease-out}
+#wgAlbumPage .wg-album-leaf{position:relative;min-width:0;overflow:hidden;color:#463525;background-color:#d9bd8d;background-image:radial-gradient(circle at 23% 30%,#fff7d233,transparent 37%),radial-gradient(circle at 87% 74%,#a47c4840,transparent 50%),repeating-linear-gradient(18deg,transparent 0 5px,#75522c09 5px 6px),linear-gradient(105deg,#f2dab2,#d2b184 50%,#e6c89b);box-shadow:inset 0 0 30px #8b633b37}
+#wgAlbumPage .wg-album-leaf-left{border-right:2px solid #a58b60;box-shadow:inset -16px 0 27px #71522e36,inset 0 0 32px #8b633b37}
+#wgAlbumPage .wg-album-leaf-right{box-shadow:inset 14px 0 27px #71522e40,inset 0 0 32px #8b633b37}
+#wgAlbumPage .wg-album-paper-art{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle at 50% 50%,transparent 54%,#7e60361a 55% 56%,transparent 57%),repeating-linear-gradient(90deg,transparent 0 47px,#a680450e 48px 49px),repeating-linear-gradient(0deg,transparent 0 47px,#a680450b 48px 49px);opacity:.48}
+#wgAlbumPage .wg-album-paper-art::after{content:'';position:absolute;left:16%;top:41%;width:65%;height:30%;border:3px dashed #53625167;border-left-color:transparent;border-bottom-color:transparent;border-radius:45% 57% 38% 62%;transform:rotate(-19deg)}
+#wgAlbumPage .wg-album-leaf-right .wg-album-paper-art::after{left:24%;top:36%;transform:rotate(22deg)}
+#wgAlbumPage .wg-album-left-heading{position:absolute;z-index:1;left:9%;top:5%;width:85%;pointer-events:none}
+#wgAlbumPage .wg-album-left-heading>span{display:block;font:italic 500 clamp(10px,1.25vw,17px)/1.2 Georgia,serif;color:#65503a;letter-spacing:.06em}
+#wgAlbumPage #wgAlbumSpreadTitle{display:inline-block;margin:5px 0 0;font:650 clamp(22px,2.6vw,37px)/1.08 Georgia,serif;color:#4a3828;cursor:pointer;pointer-events:auto;border-bottom:1px dashed #806b55}
+#wgAlbumPage .wg-album-right-note{position:absolute;top:6%;right:12%;text-align:center;font:italic 500 clamp(11px,1.15vw,17px)/1.4 Georgia,serif;color:#68543e;transform:rotate(4deg)}
+#wgAlbumPage .wg-album-stamp-mark{position:absolute;left:7%;bottom:6%;width:85px;height:55px;border:2px double #9e7556b8;transform:rotate(-7deg);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#986b49;font:700 12px/1.1 Georgia,serif;letter-spacing:.11em;opacity:.68}
+#wgAlbumPage .wg-album-stamp-mark span{font-size:8px;margin-top:4px}
+#wgAlbumPage .wg-album-compass-mark{position:absolute;right:6%;bottom:4%;font:60px Georgia,serif;color:#8b724f72}
+#wgAlbumPage .wg-album-rings{position:absolute;z-index:13;pointer-events:none;inset:7% auto 7% 50%;width:30px;transform:translateX(-50%);display:flex;flex-direction:column;justify-content:space-around;align-items:center}
+#wgAlbumPage .wg-album-rings i{width:33px;height:15px;border:3px solid #735d47;border-bottom-width:4px;border-radius:50%;box-shadow:0 2px 2px #3c302666,inset 0 1px 2px #efe2c3;background:linear-gradient(#d2c09d,#8a7455)}
+#wgAlbumPage .wg-album-polaroid-layout{position:absolute;inset:0;z-index:3}
+#wgAlbumPage .wg-album-polaroid{position:absolute;width:31%;max-width:206px;min-width:0;padding:5px 5px 4px;background:#f5edda;border:1px solid #e1d3bb;box-shadow:1px 6px 9px #38271969,0 0 0 1px #75543920;transition:transform .18s;display:flex;flex-direction:column;gap:3px}
+#wgAlbumPage .wg-album-polaroid:hover{z-index:5;transform:rotate(0deg) scale(1.04)}
+#wgAlbumPage .wg-album-polaroid-1{top:26%;left:11%;transform:rotate(-7deg)}
+#wgAlbumPage .wg-album-polaroid-2{top:34%;right:8%;transform:rotate(6deg)}
+#wgAlbumPage .wg-album-polaroid-3{bottom:6%;left:26%;transform:rotate(-3deg)}
+#wgAlbumPage .wg-album-leaf-right .wg-album-polaroid-1{top:20%;left:15%;transform:rotate(6deg)}
+#wgAlbumPage .wg-album-leaf-right .wg-album-polaroid-2{top:36%;right:6%;transform:rotate(-5deg)}
+#wgAlbumPage .wg-album-leaf-right .wg-album-polaroid-3{bottom:5%;left:24%;transform:rotate(4deg)}
+#wgAlbumPage .wg-album-polaroid::before{content:'';position:absolute;top:-7px;left:calc(50% - 5px);width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 32% 30%,#ffebbd,#b78339 46%,#69411f);box-shadow:0 2px 3px #4c321ba9;z-index:5;pointer-events:none}
+#wgAlbumPage .wg-album-photo{padding:0;border:0;display:grid;place-items:center;width:100%;aspect-ratio:1.18;overflow:hidden;background:#bfc4b5;cursor:pointer;color:#5c5947}
+#wgAlbumPage .wg-album-photo img{width:100%;height:100%;object-fit:cover;display:block}
+#wgAlbumPage .wg-album-photo-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:#77735f;font:740 8px system-ui,sans-serif;letter-spacing:.08em}
+#wgAlbumPage .wg-album-photo-empty svg{width:23px;height:23px}
+#wgAlbumPage .wg-album-photo-caption{display:block;width:100%;min-width:0;height:24px;padding:3px 2px;text-align:center;outline:0;border:0;border-bottom:1px solid transparent;background:transparent;color:#544436;font:italic 500 clamp(8px,.92vw,12px)/1.2 Georgia,serif}
+#wgAlbumPage .wg-album-photo-caption:focus{border-color:#8b694e;background:#fffcf4}
+#wgAlbumPage .wg-album-photo-caption::placeholder{color:#7b68597d}
+#wgAlbumPage .wg-album-photo-remove{position:absolute;z-index:5;top:5px;right:5px;border:0;border-radius:50%;width:24px;height:24px;display:grid;place-items:center;background:#352b27cf;color:white;cursor:pointer;opacity:0;transition:opacity .18s}
+#wgAlbumPage .wg-album-photo-remove svg{width:13px;height:13px}
+#wgAlbumPage .wg-album-polaroid:hover .wg-album-photo-remove,#wgAlbumPage .wg-album-photo-remove:focus-visible{opacity:1}
+#wgAlbumPage .wg-album-sticker-layer{position:absolute;z-index:8;inset:0;pointer-events:none}
+#wgAlbumPage .wg-album-sticker{position:absolute;pointer-events:auto;touch-action:none;cursor:grab;max-width:30%;border:1px dashed #7a513a94;border-radius:3px;padding:6px 10px;background:#f3daa2d9;color:#694334;box-shadow:1px 3px 3px #3f271e52;font:700 clamp(8px,1vw,14px)/1.2 Georgia,serif;transform:translate(-50%,-50%) rotate(-5deg);white-space:normal;text-align:center}
+#wgAlbumPage .wg-album-sticker[aria-pressed=true]{outline:2px solid #234f43;outline-offset:2px;background:#ffecbc;z-index:10}
+#wgAlbumPage .wg-album-sticker:active{cursor:grabbing}
+#wgAlbumPage .wg-album-page-controls{display:flex;justify-content:center;align-items:center;gap:16px;margin:14px auto 9px;color:#f7e8ce;font:740 13px system-ui,sans-serif}
+#wgAlbumPage .wg-album-page-arrow{width:43px;height:43px;display:grid;place-items:center;border:1px solid #ead5b38c;border-radius:50%;background:#1a3228b8;color:#fff2de;cursor:pointer;transition:transform .18s,background .18s}
+#wgAlbumPage .wg-album-page-arrow:not(:disabled):hover{background:#496950;transform:scale(1.07)}
+#wgAlbumPage .wg-album-page-arrow:disabled{opacity:.28;cursor:not-allowed}
+#wgAlbumPage .wg-album-editor-tools{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:8px auto 0}
+#wgAlbumPage .wg-album-editor-tools button{display:inline-flex;gap:7px;align-items:center;justify-content:center;min-height:42px;padding:9px 14px;border:1px solid #efd6ad77;border-radius:23px;background:#21392dcf;color:#fff2d8;cursor:pointer;font:650 12px system-ui,sans-serif;transition:transform .18s,background .18s}
+#wgAlbumPage .wg-album-editor-tools button:not(:disabled):hover{background:#52705a;transform:translateY(-1px)}
+#wgAlbumPage .wg-album-editor-tools button:disabled{opacity:.32;cursor:not-allowed}
+#wgAlbumPage .wg-album-editor-note{text-align:center;margin:15px auto 0;max-width:900px;font:460 11px/1.65 system-ui,sans-serif;color:#f3e4cab8}
+#wgAlbumPage :where(button,input):focus-visible{outline:3px solid #fff1c5!important;outline-offset:3px!important}
+/* Staged cover editor and searchable sticker picker, like the existing avatar dialog. */
+.wg-album-chooser{position:fixed;inset:50% auto auto 50%;transform:translate(-50%,-50%);width:min(740px,calc(100vw - 24px));max-width:none;max-height:min(92dvh,850px);margin:0;padding:0;border:1px solid #c3d4c7;border-radius:20px;background:#fffcf4;color:#23473b;box-shadow:0 24px 80px #0007;overflow:hidden;box-sizing:border-box}
+.wg-album-chooser[open]{display:flex;flex-direction:column}
+.wg-album-chooser::backdrop{background:#09180eb7;backdrop-filter:blur(5px)}
+.wg-album-chooser *{box-sizing:border-box}
+.wg-album-chooser .wg-album-chooser-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:25px 26px 15px;border-bottom:1px solid #d8e4d9}
+.wg-album-chooser .wg-album-chooser-head span{font:770 11px system-ui,sans-serif;letter-spacing:.16em;color:#4c8b74}
+.wg-album-chooser .wg-album-chooser-head h2{margin:9px 0 5px;font:750 clamp(23px,3vw,33px)/1.1 system-ui,sans-serif;color:#174334}
+.wg-album-chooser .wg-album-chooser-head p{margin:0;color:#6b8578;font:450 13px/1.5 system-ui,sans-serif}
+.wg-album-chooser .wg-album-chooser-x{width:42px;height:42px;border:1px solid #d5e3d8;border-radius:12px;background:#f4f8f5;color:#275241;display:grid;place-items:center;cursor:pointer;flex:none}
+.wg-album-chooser .wg-album-chooser-scroll{padding:19px 26px 25px;overflow:auto;scrollbar-width:thin}
+.wg-album-chooser .wg-album-chooser-scroll h3{font:750 15px/1.3 system-ui,sans-serif;margin:0 0 13px}
+.wg-album-chooser .wg-album-picker{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:0 0 16px}
+.wg-album-chooser .wg-album-option{min-width:0;display:grid;gap:9px;padding:8px 8px 12px;background:#f6f6ef;color:#28543f;border:1px solid #d7e3d8;border-radius:12px;cursor:pointer;font:680 11px/1.25 system-ui,sans-serif;text-align:center;transition:transform .18s,background .18s}
+.wg-album-chooser .wg-album-option:hover{background:#e8f3ea;transform:translateY(-2px)}
+.wg-album-chooser .wg-album-option[aria-pressed=true]{border:2px solid #206349;background:#dff0e6;box-shadow:0 0 0 2px #d2e6d7}
+.wg-album-chooser .wg-album-option-photo{display:block;width:100%;aspect-ratio:1.2;background-position:center;background-size:cover;border-radius:7px}
+.wg-album-chooser .wg-album-upload-cover{display:inline-flex;align-items:center;gap:7px;margin:2px 0 25px;min-height:40px;padding:9px 13px;border:1px solid #c1d7c6;border-radius:10px;background:#ebf4ed;color:#244d3b;font:700 12px system-ui,sans-serif;cursor:pointer}
+.wg-album-chooser .wg-album-chooser-scroll>p{color:#70857a;font:460 11px/1.5 system-ui,sans-serif}
+.wg-album-chooser .wg-album-chooser-actions{display:flex;justify-content:flex-end;gap:10px;padding:15px 24px;border-top:1px solid #d9e3da}
+.wg-album-chooser .wg-album-chooser-actions button{display:inline-flex;align-items:center;gap:8px;justify-content:center;min-height:43px;padding:9px 19px;border-radius:13px;cursor:pointer;font:720 13px system-ui,sans-serif}
+.wg-album-chooser .wg-album-cancel{border:1px solid #cadacb;color:#275241;background:#fff}
+.wg-album-chooser .wg-album-confirm{border:1px solid #13573c;background:#14583e;color:white}
+.wg-album-chooser :where(button,input):focus-visible{outline:3px solid #409b78!important;outline-offset:3px!important}
+.wg-album-sticker-chooser{width:min(680px,calc(100vw - 24px))}
+.wg-album-chooser .wg-album-country-search{display:grid;gap:8px;color:#365e4a;font:740 12px system-ui,sans-serif;margin:0 0 15px}
+.wg-album-chooser .wg-album-country-search input{width:100%;height:45px;border:1px solid #c6d9c9;border-radius:11px;padding:10px 13px;font:500 14px system-ui,sans-serif;background:#fff;color:#224e3e}
+.wg-album-chooser .wg-album-sticker-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;max-height:240px;overflow:auto;margin:0 0 22px;padding:2px}
+.wg-album-chooser .wg-album-sticker-option{display:flex;align-items:center;gap:9px;min-width:0;min-height:45px;padding:8px;border:1px solid #dfd4bf;border-radius:8px;background:#f8f0df;color:#664d33;font:680 12px/1.3 system-ui,sans-serif;text-align:left;cursor:pointer}
+.wg-album-chooser .wg-album-sticker-option:hover{background:#f9dfae;border-color:#b69d72}
+.wg-album-chooser .wg-album-flag{font-size:20px;line-height:1}
+.wg-album-chooser .wg-album-stamp-choices{max-height:none}
+/* Animated cover lift, leaf shuffle and arrival zoom. */
+#wgAlbumPage .wg-album-flip-theatre{position:fixed;inset:0;visibility:hidden;opacity:0;z-index:30;display:grid;place-items:center;pointer-events:none;background:radial-gradient(circle at center,#3c4d39d9,#0e1e18ed);perspective:1400px}
+#wgAlbumPage.wg-album-opening .wg-album-flip-theatre{visibility:visible;opacity:1;animation:wg-album-theatre 1.15s ease-in-out both}
+#wgAlbumPage .wg-album-anim-book{position:relative;width:clamp(165px,24vw,300px);aspect-ratio:1086/1448;transform-style:preserve-3d;transform:rotateZ(-2deg);filter:drop-shadow(18px 30px 17px #000a)}
+#wgAlbumPage .wg-album-anim-book>div{position:absolute;inset:0;border-radius:3px 11px 11px 3px;backface-visibility:hidden}
+#wgAlbumPage .wg-album-anim-back{background:linear-gradient(120deg,#ead8ac,#c09c65);border:10px solid #541e1b;box-shadow:inset 6px 0 9px #59402e66}
+#wgAlbumPage .wg-album-anim-front{background:var(--album-cover) center/cover;border:5px solid #753426;transform-origin:4% center;z-index:9;box-shadow:inset 9px 0 12px #10060a8c}
+#wgAlbumPage .wg-album-anim-leaf{background:linear-gradient(90deg,#cdb68d,#e9d7ab 18%,#d7bf92 94%);border:2px solid #ad9367;transform-origin:2% center;box-shadow:0 0 3px #20180d33}
+#wgAlbumPage .wg-album-anim-leaf.leaf-a{z-index:8}
+#wgAlbumPage .wg-album-anim-leaf.leaf-b{z-index:7}
+#wgAlbumPage .wg-album-anim-leaf.leaf-c{z-index:6}
+#wgAlbumPage .wg-album-anim-leaf.leaf-d{z-index:5}
+#wgAlbumPage.wg-album-opening .wg-album-anim-front{animation:wg-album-lift 1.02s .06s cubic-bezier(.2,.7,.25,1) forwards}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-a{animation:wg-album-flutter .59s .24s ease-in-out forwards}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-b{animation:wg-album-flutter .52s .34s ease-in-out forwards}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-c{animation:wg-album-flutter .44s .45s ease-in-out forwards}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-d{animation:wg-album-flutter .36s .55s ease-in-out forwards}
+@keyframes wg-album-lift{0%{transform:rotateY(0)}30%{transform:rotateY(-45deg)}100%{transform:rotateY(-165deg)}}
+@keyframes wg-album-flutter{0%{transform:rotateY(0)}48%{transform:rotateY(-98deg)}100%{transform:rotateY(-162deg)}}
+@keyframes wg-album-theatre{0%{opacity:0}9%{opacity:1}76%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.72)}}
+@keyframes wg-album-arrive{0%{opacity:0;transform:scale(.89) translateY(18px);filter:blur(6px)}100%{opacity:1;transform:scale(1);filter:blur(0)}}
+@keyframes wg-album-page-change{0%{opacity:.64;transform:perspective(1000px) rotateY(-4deg)}100%{opacity:1;transform:perspective(1000px) rotateY(0)}}
+@media(max-width:800px){
+ #wgAlbumPage .wg-album-paper-book{min-width:780px;min-height:488px;aspect-ratio:1.84}
+ #wgAlbumPage .wg-album-spread-frame{overflow-x:auto;scroll-snap-type:x proximity}
+ #wgAlbumPage .wg-album-paper-book>.wg-album-leaf{scroll-snap-align:start}
+ #wgAlbumPage .wg-album-editor-note::before{content:'Swipe sideways to explore both pages. ';font-weight:760;color:#fff2cf}
+ #wgAlbumPage .wg-album-spread-label span{display:none}
+ #wgAlbumPage .wg-album-toolbar{padding-bottom:10px}
+}
+@media(max-width:540px){
+ #wgAlbumPage .wg-album-header{height:64px;padding:10px 14px}
+ #wgAlbumPage .wg-album-brand>span:last-child{display:none}
+ #wgAlbumPage .wg-album-main{padding:0 11px 20px}
+ #wgAlbumPage .wg-album-book{width:min(62vw,250px)}
+ #wgAlbumPage .wg-album-stage{margin:10px auto 17px}
+ #wgAlbumPage .wg-album-front-title{font-size:27px}
+ #wgAlbumPage .wg-album-actions{gap:8px}
+ #wgAlbumPage .wg-album-open-button,#wgAlbumPage .wg-album-secondary-button{font-size:11px;padding:10px 12px;min-height:42px}
+ #wgAlbumPage .wg-album-text-button{font-size:0;padding:8px 10px;min-width:42px}
+ #wgAlbumPage .wg-album-text-button svg{width:18px;height:18px}
+ #wgAlbumPage .wg-album-paper-book{min-width:680px;min-height:440px}
+ #wgAlbumPage .wg-album-editor-tools{gap:6px}
+ #wgAlbumPage .wg-album-editor-tools button{font-size:11px;min-height:40px;padding:8px 10px}
+ #wgAlbumPage .wg-album-private{font-size:10px}
+ .wg-album-chooser .wg-album-chooser-head{padding:18px 15px 12px}
+ .wg-album-chooser .wg-album-chooser-scroll{padding:15px}
+ .wg-album-chooser .wg-album-chooser-actions{padding:12px 15px}
+ .wg-album-chooser .wg-album-picker{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .wg-album-chooser .wg-album-sticker-choices{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(hover:none){#wgAlbumPage .wg-album-photo-remove{opacity:1}}
+@media(prefers-reduced-motion:reduce){#wgAlbumPage :where(*,*::before,*::after),.wg-album-chooser :where(*,*::before,*::after){animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* V2.23.8: the whole book fits within comfortable margins, with arrows at spine-height on its outer sides. */
+#wgAlbumPage .wg-album-open-view{max-width:1240px}
+#wgAlbumPage .wg-album-spread-shell{width:min(100%,1190px);margin:0 auto;display:grid;grid-template-columns:46px minmax(0,1fr) 46px;align-items:center;gap:17px}
+#wgAlbumPage .wg-album-spread-frame{width:100%;max-width:1050px;margin-inline:auto;overflow:hidden;padding:8px}
+#wgAlbumPage .wg-album-paper-book{width:100%;aspect-ratio:1.85;overflow:hidden;perspective:1500px}
+#wgAlbumPage .wg-album-page-arrow{width:40px;height:40px;border-radius:50%;border:1px solid #e8d2ad8f;background:#20372fdc;box-shadow:0 5px 15px #07120e99}
+#wgAlbumPage .wg-album-page-arrow svg{width:21px;height:21px}
+#wgAlbumPage .wg-album-page-arrow:active:not(:disabled){transform:scale(.9)}
+#wgAlbumPage .wg-album-page-controls{margin:8px auto 0;min-height:20px;font-size:11px;color:#ffedceab}
+#wgAlbumPage .wg-album-polaroid{width:29%;max-width:none;gap:1px;padding:4px 4px 5px}
+#wgAlbumPage .wg-album-photo{aspect-ratio:1.28}
+#wgAlbumPage .wg-album-photo-caption{height:21px;padding:2px 1px;font-size:clamp(8px,.78vw,11px)}
+#wgAlbumPage .wg-album-polaroid-1{top:25%;left:11%}
+#wgAlbumPage .wg-album-polaroid-2{top:32%;right:8%}
+#wgAlbumPage .wg-album-polaroid-3{bottom:17%;left:27%}
+#wgAlbumPage .wg-album-leaf-right .wg-album-polaroid-1{top:19%;left:15%}
+#wgAlbumPage .wg-album-leaf-right .wg-album-polaroid-2{top:32%;right:7%}
+#wgAlbumPage .wg-album-leaf-right .wg-album-polaroid-3{bottom:17%;left:25%}
+/* Each Polaroid has its own outlined, tappable sticker selector. */
+#wgAlbumPage .wg-album-slot-sticker-area{display:flex;align-items:center;gap:3px;min-width:0;min-height:24px;padding:1px 1px 0}
+#wgAlbumPage .wg-album-photo-sticker{flex:1;display:flex;gap:3px;align-items:center;justify-content:center;min-width:0;min-height:22px;padding:3px 4px;border:1px dashed #987c57;border-radius:3px;background:#fffaf0;color:#73573b;font:750 clamp(7px,.63vw,10px)/1.1 system-ui,sans-serif;cursor:pointer;white-space:normal;text-align:center;transition:background .16s,border-color .16s,transform .16s}
+#wgAlbumPage .wg-album-photo-sticker svg{width:11px;height:11px;flex:none}
+#wgAlbumPage .wg-album-photo-sticker:hover{border-color:#4d8062;background:#edf7ed;transform:translateY(-1px)}
+#wgAlbumPage .wg-album-photo-sticker.has-sticker{font-weight:780;color:#594020;background:#f0d7a5;border-style:solid;line-height:1.2}
+#wgAlbumPage .wg-album-photo-sticker:active{transform:scale(.96)}
+#wgAlbumPage .wg-album-photo-sticker-remove{flex:none;display:grid;place-items:center;width:18px;height:22px;padding:2px;background:#eee3cc;border:1px solid #ccb48a;border-radius:3px;color:#73573b;cursor:pointer}
+#wgAlbumPage .wg-album-photo-sticker-remove svg{width:12px;height:12px}
+/* Add/delete controls live physically on the right-hand page, not outside the book. */
+#wgAlbumPage .wg-album-page-manage{position:absolute;right:5%;bottom:2.2%;z-index:11;display:flex;align-items:center;gap:6px}
+#wgAlbumPage .wg-album-page-manage button{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:29px;padding:5px 9px;border:1px solid #967651;border-radius:5px;background:#f8e9cbf0;color:#604a34;box-shadow:0 2px 4px #6d4c2b30;font:740 clamp(8px,.72vw,11px)/1 system-ui,sans-serif;cursor:pointer;transition:transform .18s,background .18s}
+#wgAlbumPage .wg-album-page-manage button svg{width:13px;height:13px}
+#wgAlbumPage .wg-album-page-manage button:not(:disabled):hover{background:#fff7e3;transform:translateY(-2px)}
+#wgAlbumPage .wg-album-page-manage button:disabled{opacity:.42;cursor:not-allowed}
+/* Genuine half-sheet 3D turning: the outgoing front faces the viewer, the new back settles onto the opposite side. */
+#wgAlbumPage .wg-album-paper-book.wg-album-turning{animation:none}
+#wgAlbumPage .wg-album-paper-book.wg-album-turning .wg-album-sticker-layer{opacity:0;pointer-events:none}
+#wgAlbumPage .wg-album-flip-sheet{position:absolute;top:0;width:50%;height:100%;z-index:12;transform-style:preserve-3d;pointer-events:none;will-change:transform}
+#wgAlbumPage .wg-album-flip-sheet.turn-next{left:50%;transform-origin:0% 50%;animation:wg-album-sheet-next .6s cubic-bezier(.42,0,.58,1) both}
+#wgAlbumPage .wg-album-flip-sheet.turn-prev{left:0;transform-origin:100% 50%;animation:wg-album-sheet-prev .6s cubic-bezier(.42,0,.58,1) both}
+#wgAlbumPage .wg-album-flip-face{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform-style:flat;will-change:transform}
+#wgAlbumPage .wg-album-flip-face.wg-album-flip-front{transform:rotateY(0deg) translateZ(1px)}
+#wgAlbumPage .wg-album-flip-face.wg-album-flip-back{transform:rotateY(180deg) translateZ(1px)}
+#wgAlbumPage .wg-album-flip-face.wg-album-flip-front::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#2a1b1329,transparent 22%,transparent 75%,#fff4d630)}
+#wgAlbumPage .wg-album-flip-face.wg-album-flip-back::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,#fff4d638,transparent 25%,transparent 76%,#3a27152a)}
+#wgAlbumPage .wg-album-flip-face>.wg-album-leaf,#wgAlbumPage .wg-album-flip-oldstatic>.wg-album-leaf{width:100%;height:100%;border:0}
+#wgAlbumPage .wg-album-flip-oldstatic{position:absolute;top:0;width:50%;height:100%;z-index:11;pointer-events:none;animation:wg-album-old-leaf .6s steps(1,end) both}
+#wgAlbumPage .wg-album-flip-oldstatic.on-left{left:0}
+#wgAlbumPage .wg-album-flip-oldstatic.on-right{right:0}
+#wgAlbumPage .wg-album-flip-sheet .wg-album-leaf-right .wg-album-page-manage{display:none}
+@keyframes wg-album-sheet-next{0%{transform:rotateY(0)}100%{transform:rotateY(-180deg)}}
+@keyframes wg-album-sheet-prev{0%{transform:rotateY(0)}100%{transform:rotateY(180deg)}}
+@keyframes wg-album-old-leaf{0%,49%{opacity:1}50%,100%{opacity:0}}
+/* Rapid opening keeps the existing quick tempo while bringing more paper to life. */
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-e{z-index:4;animation:wg-album-flutter .36s .59s ease-in-out forwards}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-f{z-index:3;animation:wg-album-flutter .32s .66s ease-in-out forwards}
+#wgAlbumPage.wg-album-opening .wg-album-anim-front{animation-duration:.93s}
+#wgAlbumPage.wg-album-opening .wg-album-flip-theatre{animation-duration:1.08s}
+/* Keep a useful page size for touch interaction; mobile can pan the paper inside the smaller outer frame. */
+@media(max-width:800px){
+ #wgAlbumPage .wg-album-spread-shell{grid-template-columns:36px minmax(0,1fr) 36px;gap:6px}
+ #wgAlbumPage .wg-album-spread-frame{overflow-x:auto;overflow-y:hidden}
+ #wgAlbumPage .wg-album-paper-book{min-width:700px;min-height:450px;aspect-ratio:1.85}
+ #wgAlbumPage .wg-album-page-arrow{width:35px;height:35px}
+ #wgAlbumPage .wg-album-editor-note::before{content:'Swipe within the book to see both pages. ';}
+ #wgAlbumPage .wg-album-polaroid{width:31%}
+ #wgAlbumPage .wg-album-photo-sticker{font-size:8px;min-height:23px}
+}
+@media(max-width:540px){
+ #wgAlbumPage .wg-album-spread-shell{grid-template-columns:29px minmax(0,1fr) 29px;gap:3px}
+ #wgAlbumPage .wg-album-spread-frame{padding:5px}
+ #wgAlbumPage .wg-album-paper-book{min-width:690px;min-height:443px}
+ #wgAlbumPage .wg-album-page-arrow{width:29px;height:35px;padding:5px;border-radius:9px}
+ #wgAlbumPage .wg-album-page-arrow svg{width:16px;height:16px}
+ #wgAlbumPage .wg-album-page-manage button{min-height:29px;padding:5px 6px;font-size:9px}
+}
+
+/* Worlds Gallery V2.23.9: one intentionally compact sticker picker and real flag artwork. */
+#wgAlbumPage .wg-album-editor-tools{margin:10px auto 0}
+#wgAlbumPage .wg-album-editor-tools button{min-height:43px;min-width:154px}
+#wgAlbumPage .wg-album-legacy-photo-sticker{display:inline-flex;align-items:center;justify-content:center;gap:3px;padding:2px 4px;background:#f5e3bd;color:#66523b;font:700 clamp(7px,.62vw,9px)/1.1 system-ui,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;border-radius:3px}
+#wgAlbumPage .wg-album-legacy-photo-sticker img{width:17px;height:12px;object-fit:cover;border:1px solid #e5d5b7}
+#wgAlbumPage .wg-album-placed-flag{display:block;width:clamp(24px,3vw,42px);aspect-ratio:3/2;object-fit:cover;box-shadow:0 1px 4px #39291844;border:1px solid #f5e5be;border-radius:2px;flex:none}
+#wgAlbumPage .wg-album-sticker-country{display:flex;align-items:center;justify-content:center;gap:6px;min-height:28px}
+#wgAlbumPage .wg-album-sticker-country span{max-width:160px}
+#wgAlbumPage .wg-album-sticker-animal,#wgAlbumPage .wg-album-sticker-symbol,#wgAlbumPage .wg-album-sticker-animated{border:0;background:transparent;box-shadow:none;transform:translate(-50%,-50%) rotate(-7deg);padding:2px;font-size:clamp(22px,2.6vw,35px);filter:drop-shadow(2px 2px 2px #4b372d7a)}
+#wgAlbumPage .wg-album-sticker-animated .wg-album-symbol-content{display:block;animation:wg-v2239-emoji-float 1.4s ease-in-out infinite alternate;transform-origin:center bottom}
+@keyframes wg-v2239-emoji-float{0%{transform:rotate(-11deg) scale(.95) translateY(3px)}100%{transform:rotate(11deg) scale(1.08) translateY(-5px)}}
+#wgAlbumPage .wg-album-sticker-gif{display:flex;min-width:44px;max-width:180px;min-height:40px;max-height:130px;padding:3px;border:3px solid #f4e7cb;background:#fffaf1;box-shadow:2px 3px 6px #39291f5c;transform:translate(-50%,-50%) rotate(-3deg)}
+#wgAlbumPage .wg-album-placed-gif{display:block;width:min(12vw,130px);max-height:118px;object-fit:contain;border-radius:2px}
+.wg-album-sticker-chooser{width:min(810px,calc(100vw - 22px));max-height:min(94dvh,880px)}
+.wg-album-sticker-chooser .wg-album-chooser-head{padding-bottom:12px}
+.wg-album-sticker-chooser .wg-album-chooser-scroll{padding:18px 24px 24px;min-height:145px}
+.wg-album-sticker-chooser .wg-album-sticker-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:0 24px 11px;gap:7px;border-bottom:1px solid #e4e8df}
+.wg-album-sticker-chooser .wg-album-sticker-tabs button{border:1px solid #cfddd4;background:#fffdf8;color:#3a6052;font:700 12px/1.2 system-ui,sans-serif;border-radius:9px;min-height:42px;padding:7px;cursor:pointer;transition:transform .15s,background .15s}
+.wg-album-sticker-chooser .wg-album-sticker-tabs button:hover{background:#ebf2eb;transform:translateY(-1px)}
+.wg-album-sticker-chooser .wg-album-sticker-tabs button[aria-selected=true]{background:#1d5d45;border-color:#174937;color:#fff}
+.wg-album-sticker-chooser .wg-album-sticker-pane[hidden]{display:none!important}
+.wg-album-sticker-chooser .wg-album-mode-label{font:740 12px system-ui,sans-serif;margin-bottom:8px;color:#496f5a}
+.wg-album-sticker-chooser .wg-album-country-modes{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.wg-album-sticker-chooser .wg-album-country-modes button{flex:1;min-width:95px;min-height:35px;border:1px solid #cfddd4;background:#f5f9f5;color:#3b6251;border-radius:8px;font:720 12px system-ui,sans-serif;cursor:pointer}
+.wg-album-sticker-chooser .wg-album-country-modes button[aria-pressed=true]{background:#d7eadb;color:#14553c;border-color:#2b805a;box-shadow:inset 0 0 0 1px #2b805a}
+.wg-album-sticker-chooser .wg-album-sticker-choices{max-height:38dvh;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;padding:2px}
+.wg-album-sticker-chooser .wg-album-sticker-option{min-height:54px;background:#fffaf0;transition:background .12s,transform .12s}
+.wg-album-sticker-chooser .wg-album-sticker-option:hover{background:#f9efd7;transform:translateY(-1px)}
+.wg-album-sticker-chooser .wg-album-flag-img{width:30px;height:21px;object-fit:cover;flex:none;border:1px solid #d7d1bd;box-shadow:0 1px 3px #142d2619}
+.wg-album-sticker-chooser .wg-album-emoji-grid{max-height:50dvh;grid-template-columns:repeat(4,minmax(0,1fr))}
+.wg-album-sticker-chooser .wg-album-emoji-option{justify-content:flex-start;gap:9px;min-height:65px}
+.wg-album-sticker-chooser .wg-album-emoji-preview{font-size:27px;line-height:1.25;width:36px;text-align:center;flex:none}
+.wg-album-sticker-chooser .wg-album-pane-intro{color:#667d6e;font:480 12px/1.55 system-ui,sans-serif;margin:0 0 12px}
+.wg-album-sticker-chooser .wg-album-gif-search{display:grid;gap:7px;margin:8px 0 9px;color:#325c48;font:720 12px system-ui,sans-serif}
+.wg-album-sticker-chooser .wg-album-gif-search>div{display:flex;gap:6px;align-items:center}
+.wg-album-sticker-chooser .wg-album-gif-search input{min-width:0;flex:1;height:43px;border:1px solid #b8cfbd;border-radius:10px;background:white;color:#163f2d;padding:9px 11px;font:500 13px system-ui,sans-serif}
+.wg-album-sticker-chooser .wg-album-gif-search button,.wg-album-sticker-chooser .wg-album-gif-actions button{min-height:41px;padding:9px 13px;border-radius:10px;background:#1d6145;color:white;border:1px solid #18513a;font:700 12px system-ui,sans-serif;cursor:pointer}
+.wg-album-sticker-chooser .wg-album-gif-actions button{background:#eaf3eb;color:#1d6145;border-color:#bcd9c2}
+.wg-album-sticker-chooser .wg-album-gif-status{min-height:23px;margin:9px 0 12px;font:500 12px system-ui,sans-serif;color:#567765}
+.wg-album-sticker-chooser .wg-album-gif-results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-bottom:13px}
+.wg-album-sticker-chooser .wg-album-gif-result{min-width:0;display:grid;gap:7px;padding:7px;border:1px solid #ccd7d0;border-radius:9px;background:#fcf8f1;color:#365e49;font:650 10px/1.25 system-ui,sans-serif;cursor:pointer;text-align:left}
+.wg-album-sticker-chooser .wg-album-gif-result:hover{background:#eaf2e5;border-color:#83b798}
+.wg-album-sticker-chooser .wg-album-gif-result img{display:block;width:100%;aspect-ratio:4/3;object-fit:contain;background:#eae4dc;border-radius:5px}
+.wg-album-sticker-chooser .wg-album-gif-result span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Stage choreography: cover rises first, leaves flutter for ~3 seconds, then book unfolds and zooms into the actual spread. */
+#wgAlbumPage .wg-album-flip-theatre{perspective:1800px}
+#wgAlbumPage.wg-album-opening .wg-album-flip-theatre{visibility:visible;opacity:1;animation:wg-v2239-theatre-in 3.95s ease both}
+#wgAlbumPage.wg-album-closing .wg-album-flip-theatre{visibility:visible;opacity:1;animation:wg-v2239-theatre-out 3.95s ease both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-book{animation:wg-v2239-book-unfold 3.95s cubic-bezier(.2,.8,.18,1) both}
+#wgAlbumPage.wg-album-closing .wg-album-anim-book{animation:wg-v2239-book-refold 3.95s cubic-bezier(.2,.8,.18,1) both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-front{animation:wg-v2239-front-open 3.95s ease both}
+#wgAlbumPage.wg-album-closing .wg-album-anim-front{animation:wg-v2239-front-close 3.95s ease both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-a,#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-a{animation:wg-v2239-shuffle .38s .36s 7 ease-in-out both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-b,#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-b{animation:wg-v2239-shuffle .4s .29s 7 ease-in-out both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-c,#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-c{animation:wg-v2239-shuffle .42s .21s 7 ease-in-out both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-d,#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-d{animation:wg-v2239-shuffle .35s .47s 7 ease-in-out both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-e,#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-e{animation:wg-v2239-shuffle .38s .52s 7 ease-in-out both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-f,#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-f{animation:wg-v2239-shuffle .36s .59s 7 ease-in-out both}
+#wgAlbumPage .wg-album-anim-back::after{content:'';position:absolute;top:0;bottom:0;left:98%;width:98%;background:linear-gradient(90deg,#d1b688,#f9e8c4 19%,#e4cda3 91%);box-shadow:inset -4px 0 12px #5b381d66;opacity:0}
+#wgAlbumPage.wg-album-opening .wg-album-anim-back::after{animation:wg-v2239-second-leaf 3.95s both}
+#wgAlbumPage.wg-album-closing .wg-album-anim-back::after{animation:wg-v2239-second-leaf-rev 3.95s both}
+@keyframes wg-v2239-theatre-in{0%{opacity:0;visibility:visible}4%,75%{opacity:1}83%{opacity:.97}100%{opacity:0;visibility:hidden}}
+@keyframes wg-v2239-theatre-out{0%{opacity:0;visibility:visible}9%,93%{opacity:1}100%{opacity:0;visibility:hidden}}
+@keyframes wg-v2239-book-unfold{0%,74%{transform:rotateZ(-2deg) scale(1)}82%{transform:rotateZ(0) scaleX(1.82) scaleY(1.1)}100%{transform:scale(3.4) scaleX(1.85) translateY(0)}}
+@keyframes wg-v2239-book-refold{0%{transform:scale(3.4) scaleX(1.85)}17%{transform:rotateZ(0) scaleX(1.82) scaleY(1.1)}27%,100%{transform:rotateZ(-2deg) scale(1)}}
+@keyframes wg-v2239-front-open{0%,3%{transform:rotateY(0deg)}17%,100%{transform:rotateY(-172deg)}}
+@keyframes wg-v2239-front-close{0%,82%{transform:rotateY(-172deg)}100%{transform:rotateY(0deg)}}
+@keyframes wg-v2239-shuffle{0%,3%{transform:rotateY(0deg)}45%{transform:rotateY(-106deg)}95%,100%{transform:rotateY(-178deg)}}
+@keyframes wg-v2239-second-leaf{0%,76%{opacity:0}80%,100%{opacity:1}}
+@keyframes wg-v2239-second-leaf-rev{0%,19%{opacity:1}24%,100%{opacity:0}}
+#wgAlbumPage.wg-album-reveal .wg-album-open-view{animation:wg-v2239-page-focus .72s cubic-bezier(.16,.78,.18,1) both}
+@keyframes wg-v2239-page-focus{0%{opacity:.25;transform:scale(.76);filter:blur(8px)}100%{opacity:1;transform:scale(1);filter:blur(0)}}
+@media(max-width:700px){
+ .wg-album-sticker-chooser .wg-album-sticker-tabs{padding:0 12px 11px;gap:4px}
+ .wg-album-sticker-chooser .wg-album-sticker-tabs button{font-size:10px;padding:5px;min-height:41px}
+ .wg-album-sticker-chooser .wg-album-chooser-scroll{padding:12px}
+ .wg-album-sticker-chooser .wg-album-sticker-choices{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .wg-album-sticker-chooser .wg-album-emoji-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .wg-album-sticker-chooser .wg-album-gif-results{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:370px){
+ .wg-album-sticker-chooser .wg-album-sticker-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .wg-album-sticker-chooser .wg-album-country-modes{gap:4px}
+ .wg-album-sticker-chooser .wg-album-country-modes button{min-width:76px;font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+ #wgAlbumPage .wg-album-sticker-loop .wg-album-symbol-content{animation:none!important}
+}
+
+/* Offline flag atlas: 250 local flag illustrations, no third-party flag requests needed. */
+.wg-album-real-flag{display:inline-block;vertical-align:middle;flex:none;width:30px;height:21px;background-image:url("assets/photos/wg_album_flag_sheet.webp");background-repeat:no-repeat;background-size:1600% 1600%;border:0;border-radius:2px}
+.wg-album-real-flag-fallback{font:750 12px system-ui,sans-serif;color:#7a6242}
+#wgAlbumPage .wg-album-placed-flag{width:42px;height:29.4px;aspect-ratio:10/7;object-fit:initial;box-shadow:0 1px 4px #39291844}
+.wg-album-sticker-chooser .wg-album-flag-img{width:30px;height:21px;aspect-ratio:10/7;object-fit:initial;box-shadow:0 1px 3px #142d2619}
+#wgAlbumPage .wg-album-legacy-photo-sticker .wg-album-real-flag{width:17px;height:12px;aspect-ratio:10/7}
+
+/* Animated-media credit links and textured paper leaves. */
+.wg-album-sticker-chooser .wg-album-gif-card{min-width:0;display:grid;gap:4px}
+.wg-album-sticker-chooser .wg-album-gif-card>a{color:#276e51;font:650 10px system-ui,sans-serif;text-decoration:underline;text-underline-offset:2px;padding:2px}
+#wgAlbumPage .wg-album-anim-leaf{background:linear-gradient(108deg,#bca27b29,#e4cf9c 12%,#f2e3bf 55%,#dbc59a 97%),repeating-linear-gradient(0deg,transparent 0 14px,#9869451f 15px 16px);box-shadow:inset 4px 0 9px #3b2c1c65,4px 2px 8px #2a170f3b}
+#wgAlbumPage .wg-album-anim-leaf::after{content:'THE JOURNEY';position:absolute;top:12%;left:12%;right:10%;padding-bottom:8%;border-bottom:1px solid #96775343;text-align:center;color:#8e6c4580;font:italic 600 clamp(9px,1.4vw,15px) Georgia,serif;letter-spacing:.07em}
+
+/* V2.24.0: direct-to-book entry, free-positioning stickers and real resize grips. */
+#wgAlbumPage .wg-album-actions{margin-top:2px}
+#wgAlbumPage .wg-album-sticker{--wg-sticker-scale:1;transform:translate(-50%,-50%) rotate(-5deg) scale(var(--wg-sticker-scale));transform-origin:center center;overflow:visible;user-select:none;-webkit-user-select:none;touch-action:none}
+#wgAlbumPage .wg-album-sticker:is(.wg-album-sticker-animal,.wg-album-sticker-symbol,.wg-album-sticker-animated){transform:translate(-50%,-50%) rotate(-7deg) scale(var(--wg-sticker-scale))}
+#wgAlbumPage .wg-album-sticker.wg-album-sticker-gif{transform:translate(-50%,-50%) rotate(-3deg) scale(var(--wg-sticker-scale))}
+#wgAlbumPage .wg-album-sticker[aria-pressed=true]{outline:2px solid #184f41;outline-offset:4px;z-index:18}
+#wgAlbumPage .wg-album-sticker-resize{position:absolute;right:-15px;bottom:-14px;width:27px;height:27px;display:grid;place-items:center;background:#194b3b;color:#fff7e3;border:2px solid #f1d8ac;border-radius:50%;font:800 20px/1 system-ui,sans-serif;box-shadow:0 3px 7px #271b16a1;cursor:nwse-resize;touch-action:none;opacity:0;pointer-events:none;transition:opacity .13s,background .13s;z-index:3}
+#wgAlbumPage .wg-album-sticker:is([aria-pressed=true],:focus-within)>.wg-album-sticker-resize{opacity:1;pointer-events:auto}
+#wgAlbumPage .wg-album-sticker-resize:hover{background:#267153}
+#wgAlbumPage .wg-album-sticker-resize:focus-visible{opacity:1;pointer-events:auto;outline:3px solid #fff2c1;outline-offset:2px}
+#wgAlbumPage .wg-album-sticker[role=group]:focus-visible{outline:3px solid #255d4a;outline-offset:4px}
+#wgAlbumPage .wg-album-editor-note{max-width:1000px}
+
+/* V2.24.0. One-second right-to-left leaf shuffle, then smooth book-to-spread morph.
+   On close: the spread scales down first, leaves fold left-to-right, then the cover closes. */
+#wgAlbumPage .wg-album-anim-book{--wg-morph-x:-252px;--wg-morph-sx:1.75;--wg-morph-sy:1.44}
+#wgAlbumPage.wg-album-opening .wg-album-flip-theatre{visibility:visible;opacity:1;animation:wg-v2240-theatre-in 1.9s linear both}
+#wgAlbumPage.wg-album-closing .wg-album-flip-theatre{visibility:visible;opacity:1;animation:wg-v2240-theatre-out 1.9s linear both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-book{animation:wg-v2240-unfold 1.9s cubic-bezier(.19,.71,.22,1) both}
+#wgAlbumPage.wg-album-closing .wg-album-anim-book{animation:wg-v2240-refold 1.9s cubic-bezier(.28,.73,.25,1) both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-front{animation:wg-v2240-front-open .32s .04s cubic-bezier(.23,.63,.2,1) both}
+#wgAlbumPage.wg-album-closing .wg-album-anim-front{animation:wg-v2240-front-close .36s 1.38s cubic-bezier(.4,.0,.65,1) both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf:is(.leaf-a,.leaf-b,.leaf-c,.leaf-d,.leaf-e,.leaf-f){animation:wg-v2240-leaf-open .4s cubic-bezier(.3,.14,.7,.96) 1 both}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf:is(.leaf-a,.leaf-b,.leaf-c,.leaf-d,.leaf-e,.leaf-f){animation:wg-v2240-leaf-close .4s cubic-bezier(.28,.08,.7,.9) 1 both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-a{animation-delay:.08s}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-b{animation-delay:.19s}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-c{animation-delay:.30s}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-d{animation-delay:.41s}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-e{animation-delay:.52s}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-f{animation-delay:.63s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-f{animation-delay:.55s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-e{animation-delay:.66s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-d{animation-delay:.77s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-c{animation-delay:.88s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-b{animation-delay:.99s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-a{animation-delay:1.10s}
+#wgAlbumPage.wg-album-opening .wg-album-anim-back::after{animation:wg-v2240-second-leaf-in 1.9s linear both}
+#wgAlbumPage.wg-album-closing .wg-album-anim-back::after{animation:wg-v2240-second-leaf-out 1.9s linear both}
+#wgAlbumPage.wg-album-reveal .wg-album-open-view{animation:wg-v2240-spread-arrive .78s cubic-bezier(.13,.81,.23,1) both}
+#wgAlbumPage.wg-album-closing .wg-album-open-view:not([hidden]){animation:wg-v2240-spread-leave .48s ease-in both}
+@keyframes wg-v2240-theatre-in{0%{opacity:0;visibility:visible}4%,63%{opacity:1}82%{opacity:.76}100%{opacity:0;visibility:hidden}}
+@keyframes wg-v2240-theatre-out{0%{opacity:0;visibility:visible}7%,84%{opacity:1}100%{opacity:0;visibility:hidden}}
+@keyframes wg-v2240-unfold{0%,51%{transform:rotateZ(-2deg) scale(1)}73%{transform:translateX(calc(var(--wg-morph-x)*.7)) rotateZ(0) scale(calc(var(--wg-morph-sx)*.85),calc(var(--wg-morph-sy)*.9))}100%{transform:translateX(var(--wg-morph-x)) rotateZ(0) scale(var(--wg-morph-sx),var(--wg-morph-sy))}}
+@keyframes wg-v2240-refold{0%{transform:translateX(var(--wg-morph-x)) rotateZ(0) scale(var(--wg-morph-sx),var(--wg-morph-sy))}29%{transform:translateX(calc(var(--wg-morph-x)*.45)) rotateZ(-1deg) scale(1.28,1.06)}43%,100%{transform:rotateZ(-2deg) scale(1)}}
+@keyframes wg-v2240-front-open{0%{transform:rotateY(0deg)}100%{transform:rotateY(-174deg)}}
+@keyframes wg-v2240-front-close{0%{transform:rotateY(-174deg)}100%{transform:rotateY(0deg)}}
+@keyframes wg-v2240-leaf-open{0%{transform:rotateY(0deg)}48%{transform:rotateY(-105deg)}100%{transform:rotateY(-175deg)}}
+@keyframes wg-v2240-leaf-close{0%{transform:rotateY(-175deg)}54%{transform:rotateY(-72deg)}100%{transform:rotateY(0deg)}}
+@keyframes wg-v2240-second-leaf-in{0%,48%{opacity:0}57%,100%{opacity:1}}
+@keyframes wg-v2240-second-leaf-out{0%,8%{opacity:1}32%,100%{opacity:0}}
+@keyframes wg-v2240-spread-arrive{0%{opacity:0;transform:scale(.85);filter:blur(5px)}100%{opacity:1;transform:scale(1);filter:blur(0)}}
+@keyframes wg-v2240-spread-leave{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.85)}}
+@media(max-width:1199px) and (min-width:801px){#wgAlbumPage .wg-album-anim-book{--wg-morph-x:-205px;--wg-morph-sx:1.8;--wg-morph-sy:1.65}}
+@media(max-width:800px){#wgAlbumPage .wg-album-anim-book{--wg-morph-x:-192px;--wg-morph-sx:2.36;--wg-morph-sy:2.18}}
+@media(prefers-reduced-motion:reduce){#wgAlbumPage .wg-album-sticker-resize{transition:none!important}}
+/* V2.24.0: subtle Philippine search presets, compact on narrow screens. */
+.wg-album-sticker-chooser .wg-album-ph-search{display:grid;gap:7px;margin:7px 0 13px;color:#456253;font:650 12px/1.45 system-ui,sans-serif}
+.wg-album-sticker-chooser .wg-album-ph-chips{display:flex;flex-wrap:wrap;gap:7px}
+.wg-album-sticker-chooser .wg-album-ph-chips button{font:650 11px system-ui,sans-serif;padding:9px 11px;border:1px solid #b7d0bf;color:#295944;background:#edf5ec;border-radius:18px;cursor:pointer;transition:background .16s,transform .16s}
+.wg-album-sticker-chooser .wg-album-ph-chips button:hover{background:#d7ebdc;transform:translateY(-1px)}
+.wg-album-sticker-chooser .wg-album-ph-chips button:active{transform:scale(.96)}
+@media(max-width:420px){.wg-album-sticker-chooser .wg-album-ph-chips button{padding:9px;font-size:10px}}
+@media(prefers-reduced-motion:reduce){.wg-album-sticker-chooser .wg-album-ph-chips button{transition:none}}
+
+
+/* V2.24.1: viewport-fit paper book. The whole desktop spread and its controls
+   should fit without cutting off the top or bottom on ordinary laptops. */
+#wgAlbumPage .wg-album-open-view{width:min(100%,1080px);max-width:1080px;margin-inline:auto;animation:none}
+#wgAlbumPage .wg-album-spread-shell{width:min(100%,1040px);grid-template-columns:40px minmax(0,1fr) 40px;gap:10px;margin-inline:auto}
+#wgAlbumPage .wg-album-spread-frame{
+  width:min(100%,880px,max(380px,calc((100dvh - 265px)*1.85)));
+  max-width:880px;
+  padding:7px;
+  margin-inline:auto;
+  box-shadow:0 13px 37px #0008,inset 0 0 0 2px #9c7148;
+}
+#wgAlbumPage .wg-album-paper-book{min-width:0;min-height:0;width:100%;aspect-ratio:1.85}
+#wgAlbumPage .wg-album-toolbar{padding-bottom:8px;min-height:42px}
+#wgAlbumPage .wg-album-page-controls{margin-top:6px}
+#wgAlbumPage .wg-album-editor-tools{margin-top:7px}
+#wgAlbumPage .wg-album-editor-tools button{min-height:38px}
+#wgAlbumPage .wg-album-editor-note{margin-top:7px}
+#wgAlbumPage.wg-album-opening .wg-album-open-view{animation:none}
+/* One animation path replaces conflicting legacy reveal / flutter rules.
+   Stick to compositor-friendly opacity and transforms; avoid blur filters. */
+#wgAlbumPage .wg-album-flip-theatre{will-change:opacity;background:radial-gradient(ellipse at center,#26382de0,#0c1916f5)}
+#wgAlbumPage .wg-album-anim-book{--wg-morph-y:0px;filter:none;will-change:transform}
+#wgAlbumPage.wg-album-opening .wg-album-flip-theatre{visibility:visible;animation:wg-v2241-theatre-in 1.64s linear both}
+#wgAlbumPage.wg-album-closing .wg-album-flip-theatre{visibility:visible;animation:wg-v2241-theatre-out 1.64s linear both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-book{animation:wg-v2241-unfold 1.64s cubic-bezier(.22,.7,.24,1) both}
+#wgAlbumPage.wg-album-closing .wg-album-anim-book{animation:wg-v2241-refold 1.64s cubic-bezier(.28,.64,.28,1) both}
+#wgAlbumPage.wg-album-reveal .wg-album-open-view:not([hidden]){animation:wg-v2241-spread-in .63s cubic-bezier(.17,.76,.22,1) both}
+#wgAlbumPage.wg-album-closing .wg-album-open-view:not([hidden]){animation:wg-v2241-spread-out .48s cubic-bezier(.4,0,.75,1) both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-front{animation:wg-v2240-front-open .32s .06s cubic-bezier(.23,.63,.2,1) both}
+#wgAlbumPage.wg-album-closing .wg-album-anim-front{animation:wg-v2240-front-close .32s 1.18s cubic-bezier(.4,0,.65,1) both}
+/* Maintain about a second of rapid leaves in each direction, then morph. */
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-a{animation-delay:.06s}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-b{animation-delay:.17s}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-c{animation-delay:.28s}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-d{animation-delay:.39s}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-e{animation-delay:.50s}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-f{animation-delay:.61s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-f{animation-delay:.40s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-e{animation-delay:.51s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-d{animation-delay:.62s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-c{animation-delay:.73s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-b{animation-delay:.84s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-a{animation-delay:.95s}
+@keyframes wg-v2241-theatre-in{0%{opacity:0}5%,53%{opacity:1}76%{opacity:.88}100%{opacity:0;visibility:hidden}}
+@keyframes wg-v2241-theatre-out{0%{opacity:0}8%,77%{opacity:1}100%{opacity:0;visibility:hidden}}
+@keyframes wg-v2241-unfold{
+  0%,55%{transform:rotateZ(-2deg) scale(1)}
+  78%{transform:translate(calc(var(--wg-morph-x)*.8),calc(var(--wg-morph-y)*.8)) rotateZ(0) scale(calc(var(--wg-morph-sx)*.9),calc(var(--wg-morph-sy)*.9))}
+  100%{transform:translate(var(--wg-morph-x),var(--wg-morph-y)) rotateZ(0) scale(var(--wg-morph-sx),var(--wg-morph-sy))}
+}
+@keyframes wg-v2241-refold{
+  0%{transform:translate(var(--wg-morph-x),var(--wg-morph-y)) rotateZ(0) scale(var(--wg-morph-sx),var(--wg-morph-sy))}
+  34%{transform:translate(calc(var(--wg-morph-x)*.45),calc(var(--wg-morph-y)*.45)) rotateZ(-1deg) scale(var(--wg-morph-sx),var(--wg-morph-sy))}
+  46%,100%{transform:rotateZ(-2deg) scale(1)}
+}
+@keyframes wg-v2241-spread-in{0%{opacity:0;transform:translateY(8px) scale(.945)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes wg-v2241-spread-out{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(6px) scale(.945)}}
+/* Allow side-to-side page viewing on small screens, never shrink photo targets
+   to illegible thumbnails; the whole spread fits vertically when possible. */
+@media(max-width:800px){
+ #wgAlbumPage .wg-album-spread-shell{grid-template-columns:34px minmax(0,1fr) 34px;gap:5px}
+ #wgAlbumPage .wg-album-spread-frame{width:100%;max-width:none;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+ #wgAlbumPage .wg-album-paper-book{min-width:680px;min-height:0;aspect-ratio:1.85}
+}
+@media(max-width:540px){
+ #wgAlbumPage .wg-album-spread-shell{grid-template-columns:28px minmax(0,1fr) 28px;gap:3px}
+ #wgAlbumPage .wg-album-paper-book{min-width:650px;min-height:0}
+ #wgAlbumPage .wg-album-header{height:58px}
+ #wgAlbumPage .wg-album-editor-note{margin-top:6px}
+}
+@media(prefers-reduced-motion:reduce){
+ #wgAlbumPage .wg-album-anim-book,#wgAlbumPage .wg-album-flip-theatre{animation:none!important}
+}
+
+/* V2.24.2: FINAL choreography overrides. Single centered coordinate system.
+   No left-/right-spine translation: both cover and spread morph around center. */
+#wgAlbumPage .wg-album-anim-book{
+  width:var(--wg-closed-w,260px);height:var(--wg-closed-h,345px);aspect-ratio:auto;
+  transform-origin:center center;filter:none;will-change:transform;
+}
+#wgAlbumPage .wg-album-anim-back{
+  background:linear-gradient(90deg,#ebd4a9 0%,#f4e1bc 47%,#9b7648 49.5%,#b99866 50.5%,#f1d8ac 53%,#dbc092 100%);
+  border:5px solid #6c3c24;box-shadow:inset 0 0 18px #6b492a75;
+}
+#wgAlbumPage .wg-album-anim-back::after{animation:none!important;opacity:0!important}
+#wgAlbumPage .wg-album-flip-theatre{perspective:1800px;transform:none!important;place-items:center;pointer-events:none}
+#wgAlbumPage.wg-album-opening .wg-album-flip-theatre{visibility:visible;animation:wg-v2242-stage-in 1.65s linear both}
+#wgAlbumPage.wg-album-closing .wg-album-flip-theatre{visibility:visible;animation:wg-v2242-stage-out 1.65s linear both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-book{animation:wg-v2242-center-open 1.65s cubic-bezier(.22,.75,.24,1) both}
+#wgAlbumPage.wg-album-closing .wg-album-anim-book{animation:wg-v2242-center-close 1.65s cubic-bezier(.28,.62,.25,1) both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-front{animation:wg-v2242-front-open .32s .07s ease-out both}
+#wgAlbumPage.wg-album-closing .wg-album-anim-front{animation:wg-v2242-front-close .36s 1.26s ease-in both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf{animation:wg-v2242-leaf-open .23s ease-in-out both}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf{animation:wg-v2242-leaf-close .23s ease-in-out both}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-a{animation-delay:.08s}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-b{animation-delay:.21s}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-c{animation-delay:.34s}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-d{animation-delay:.47s}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-e{animation-delay:.60s}
+#wgAlbumPage.wg-album-opening .wg-album-anim-leaf.leaf-f{animation-delay:.73s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-f{animation-delay:.61s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-e{animation-delay:.74s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-d{animation-delay:.87s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-c{animation-delay:1.00s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-b{animation-delay:1.13s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-a{animation-delay:1.26s}
+@keyframes wg-v2242-leaf-open{0%{transform:rotateY(0)}100%{transform:rotateY(-176deg)}}
+@keyframes wg-v2242-leaf-close{0%{transform:rotateY(-176deg)}100%{transform:rotateY(0deg)}}
+@keyframes wg-v2242-front-open{0%{transform:rotateY(0)}100%{transform:rotateY(-177deg)}}
+@keyframes wg-v2242-front-close{0%{transform:rotateY(-177deg)}100%{transform:rotateY(0deg)}}
+@keyframes wg-v2242-center-open{
+  0%,60%{transform:translate(var(--wg-center-cover-x,0px),var(--wg-center-cover-y,0px)) scale(1)}
+  75%{transform:translate(var(--wg-center-spread-x,0px),var(--wg-center-spread-y,0px)) scale(calc(var(--wg-center-expand-x,3)*.9),calc(var(--wg-center-expand-y,1.5)*.9))}
+  100%{transform:translate(var(--wg-center-spread-x,0px),var(--wg-center-spread-y,0px)) scale(var(--wg-center-expand-x,3),var(--wg-center-expand-y,1.5))}
+}
+@keyframes wg-v2242-center-close{
+  0%{transform:translate(var(--wg-center-spread-x,0px),var(--wg-center-spread-y,0px)) scale(var(--wg-center-expand-x,3),var(--wg-center-expand-y,1.5))}
+  34%{transform:translate(var(--wg-center-cover-x,0px),var(--wg-center-cover-y,0px)) scale(1)}
+  100%{transform:translate(var(--wg-center-cover-x,0px),var(--wg-center-cover-y,0px)) scale(1)}
+}
+@keyframes wg-v2242-stage-in{0%{opacity:0}5%,76%{opacity:1}100%{opacity:0;visibility:hidden}}
+@keyframes wg-v2242-stage-out{0%{opacity:0}7%,92%{opacity:1}100%{opacity:0;visibility:hidden}}
+#wgAlbumPage.wg-album-reveal .wg-album-open-view:not([hidden]){animation:wg-v2242-spread-appear .43s cubic-bezier(.15,.8,.22,1) both}
+#wgAlbumPage.wg-album-closing .wg-album-open-view:not([hidden]){animation:wg-v2242-spread-disappear .32s ease-in both}
+@keyframes wg-v2242-spread-appear{0%{opacity:0;transform:scale(.985)}100%{opacity:1;transform:scale(1)}}
+@keyframes wg-v2242-spread-disappear{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.985)}}
+/* Stable page turns: sheet is blank parchment, typography and stickers are NOT
+   nested in a rotating plane. They remain at their native computed font size. */
+#wgAlbumPage .wg-album-paper-book.wg-album-turning{animation:none!important;transform:none!important}
+#wgAlbumPage .wg-album-paper-book.wg-album-turning .wg-album-sticker-layer{opacity:1!important}
+#wgAlbumPage .wg-album-flip-sheet{
+  box-shadow:0 0 12px #51382157;backface-visibility:visible;
+}
+#wgAlbumPage .wg-album-flip-face{
+  background:repeating-linear-gradient(0deg,transparent 0 14px,#a47d5033 15px 16px),linear-gradient(115deg,#f2dfb7,#d1ac7a);
+  border:1px solid #a88a62;box-shadow:inset 7px 0 15px #65492c45;
+}
+#wgAlbumPage .wg-album-flip-back{background:linear-gradient(104deg,#cfaa7e,#f5dfba 18%,#e2c496 100%)}
+/* Static by default; only actual GIF <img> elements are animated. */
+#wgAlbumPage .wg-album-sticker,
+#wgAlbumPage .wg-album-sticker:is(.wg-album-sticker-animal,.wg-album-sticker-symbol,.wg-album-sticker-animated,.wg-album-sticker-gif){
+  transform:translate(-50%,-50%) rotate(var(--wg-sticker-rotation,0deg)) scale(var(--wg-sticker-scale,1));
+  transform-origin:center center;transition:none;
+}
+#wgAlbumPage .wg-album-sticker-animated .wg-album-symbol-content{animation:none!important;transform:none!important}
+#wgAlbumPage .wg-album-sticker[aria-pressed=false]{outline:0;}
+#wgAlbumPage .wg-album-sticker[aria-pressed=true]{outline:2px solid #184f41;outline-offset:3px;z-index:18}
+#wgAlbumPage .wg-album-sticker-resize,#wgAlbumPage .wg-album-sticker-rotate{
+  position:absolute;width:28px;height:28px;display:grid;place-items:center;
+  background:#194b3b;color:#fff7e3;border:2px solid #f1d8ac;border-radius:50%;
+  font:800 19px/1 system-ui,sans-serif;box-shadow:0 3px 7px #271b16a1;
+  cursor:grab;touch-action:none;opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .12s;z-index:3;
+}
+#wgAlbumPage .wg-album-sticker-resize{right:-16px;bottom:-16px;cursor:nwse-resize}
+#wgAlbumPage .wg-album-sticker-rotate{left:-16px;bottom:-16px;cursor:crosshair}
+#wgAlbumPage .wg-album-sticker[aria-pressed=true]>.wg-album-sticker-resize,
+#wgAlbumPage .wg-album-sticker[aria-pressed=true]>.wg-album-sticker-rotate{
+  opacity:1;visibility:visible;pointer-events:auto;
+}
+#wgAlbumPage .wg-album-sticker[aria-pressed=false]>.wg-album-sticker-resize,
+#wgAlbumPage .wg-album-sticker[aria-pressed=false]>.wg-album-sticker-rotate{
+  opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+}
+/* Explicit design preview: the selected layout actually changes the search
+   result appearance, not only the sticker that will be added. */
+.wg-album-sticker-chooser .wg-album-country-option[data-design=flag]{justify-content:center;min-height:56px}
+.wg-album-sticker-chooser .wg-album-country-option[data-design=flag] .wg-album-real-flag{width:38px;height:27px}
+.wg-album-sticker-chooser .wg-album-country-option[data-design=name]{justify-content:center;text-align:center}
+@media(prefers-reduced-motion:reduce){
+ #wgAlbumPage.wg-album-opening .wg-album-anim-book,#wgAlbumPage.wg-album-closing .wg-album-anim-book,
+ #wgAlbumPage.wg-album-opening .wg-album-flip-theatre,#wgAlbumPage.wg-album-closing .wg-album-flip-theatre{animation:none!important}
+}
+/* Keep the two end states in the same visual centre as the theatre.
+   Header remains accessible; overflowing content may still scroll vertically. */
+#wgAlbumPage .wg-album-scroll{display:flex;flex-direction:column}
+#wgAlbumPage .wg-album-header{flex:0 0 auto;width:100%}
+#wgAlbumPage .wg-album-main{flex:1 0 auto;min-height:0;display:flex;align-items:center;justify-content:center;padding-bottom:20px}
+#wgAlbumPage .wg-album-closed-view,#wgAlbumPage .wg-album-open-view{margin:auto}
+@media(max-width:540px){
+ #wgAlbumPage .wg-album-main{padding:0 9px 18px}
+}
+#wgAlbumPage .wg-album-open-view,#wgAlbumPage .wg-album-closed-view{margin-inline:0;margin-block:auto}
+/* The status message is a separate flex child, so keep main in a column to
+   prevent it from shifting the album to the left. */
+#wgAlbumPage .wg-album-main{flex-direction:column}
+
+
+/* V2.24.3: Fold the open cover FIRST while it is still full size; only then
+   reduce the closed book to its original dimensions in the same centre. */
+#wgAlbumPage.wg-album-closing .wg-album-anim-book{
+  animation:wg-v2243-close-flip-then-shrink 1.65s cubic-bezier(.25,.7,.25,1) both;
+}
+@keyframes wg-v2243-close-flip-then-shrink{
+  0%,49%{transform:translate(var(--wg-center-spread-x,0px),var(--wg-center-spread-y,0px)) scale(var(--wg-center-expand-x,3),var(--wg-center-expand-y,1.5))}
+  100%{transform:translate(var(--wg-center-cover-x,0px),var(--wg-center-cover-y,0px)) scale(1)}
+}
+#wgAlbumPage.wg-album-closing .wg-album-anim-front{
+  animation:wg-v2242-front-close .47s .24s cubic-bezier(.18,.55,.27,1) both;
+}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-f{animation-delay:.02s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-e{animation-delay:.13s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-d{animation-delay:.24s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-c{animation-delay:.35s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-b{animation-delay:.46s}
+#wgAlbumPage.wg-album-closing .wg-album-anim-leaf.leaf-a{animation-delay:.57s}
+#wgAlbumPage.wg-album-closing .wg-album-flip-theatre{
+  animation:wg-v2243-stage-close 1.65s linear both;
+}
+@keyframes wg-v2243-stage-close{
+  0%,86%{opacity:1;visibility:visible}
+  100%{opacity:0;visibility:hidden}
+}
+/* Only actual alpha-channel GIFs/WebP show through. Never force an opaque
+   "Polaroid card" behind any decorative sticker or remote animated media. */
+#wgAlbumPage .wg-album-sticker,
+#wgAlbumPage .wg-album-sticker-country,
+#wgAlbumPage .wg-album-sticker-gif,
+#wgAlbumPage .wg-album-sticker-symbol,
+#wgAlbumPage .wg-album-sticker-animal,
+#wgAlbumPage .wg-album-sticker-animated{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  padding:0!important;
+  filter:none;
+}
+#wgAlbumPage .wg-album-placed-gif{background:transparent;border:0;box-shadow:none;border-radius:0}
+#wgAlbumPage .wg-album-placed-flag{border:0;box-shadow:none;background-color:transparent}
+#wgAlbumPage .wg-album-legacy-photo-sticker{background:transparent;border:0;box-shadow:none}
+/* Preview cards may remain clickable, but the media itself has no opaque matte. */
+.wg-album-sticker-chooser .wg-album-gif-result img{background:transparent!important;border:0;box-shadow:none}
+/* A selected sticker reveals three compact editing controls: rotate, resize, X. */
+#wgAlbumPage .wg-album-sticker-remove{
+  position:absolute;right:-16px;top:-18px;width:28px;height:28px;
+  display:grid;place-items:center;z-index:5;
+  border:2px solid #fff1d7;border-radius:50%;
+  color:#fff8ec;background:#7b3530;box-shadow:0 2px 7px #26171077;
+  cursor:pointer;opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .12s,background .12s;
+}
+#wgAlbumPage .wg-album-sticker-remove svg{width:15px;height:15px}
+#wgAlbumPage .wg-album-sticker[aria-pressed=true]>.wg-album-sticker-remove{
+  opacity:1;visibility:visible;pointer-events:auto;
+}
+#wgAlbumPage .wg-album-sticker[aria-pressed=false]>.wg-album-sticker-remove{
+  opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+}
+#wgAlbumPage .wg-album-sticker-remove:hover{background:#a9443a}
+#wgAlbumPage .wg-album-sticker-remove:focus-visible{outline:3px solid #265943;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){
+  #wgAlbumPage.wg-album-closing .wg-album-anim-book,
+  #wgAlbumPage.wg-album-closing .wg-album-anim-front,
+  #wgAlbumPage.wg-album-closing .wg-album-flip-theatre{animation:none!important}
+}
+
+/* V2.24.4: editable country labels, white readable lettering, selected-only edit. */
+#wgAlbumPage .wg-album-sticker-country .wg-album-country-caption{
+  color:#fff!important;font-weight:800;text-shadow:0 1px 3px #111,0 0 4px #111,1px 1px 0 #333;
+  max-width:145px;overflow-wrap:anywhere;line-height:1.12;
+}
+#wgAlbumPage .wg-album-sticker-edit{
+  position:absolute;left:-15px;top:-18px;width:27px;height:27px;
+  display:grid;place-items:center;border-radius:50%;border:2px solid #fff1d7;
+  background:#285946;color:#fff8ec;box-shadow:0 2px 6px #251b1670;
+  cursor:pointer;opacity:0;visibility:hidden;pointer-events:none;
+}
+#wgAlbumPage .wg-album-sticker-edit svg{width:15px;height:15px}
+#wgAlbumPage .wg-album-sticker[aria-pressed=true]>.wg-album-sticker-edit{
+  opacity:1;visibility:visible;pointer-events:auto;
+}
+#wgAlbumPage .wg-album-sticker[aria-pressed=false]>.wg-album-sticker-edit{
+  opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+}
+#wgAlbumPage .wg-album-sticker-edit:focus-visible{outline:3px solid #255f47;outline-offset:2px}
+.wg-album-name-chooser{max-width:min(430px,calc(100vw - 24px));width:100%}
+.wg-album-name-form{padding-bottom:18px}
+.wg-album-name-form>label{display:block;padding:4px 24px 8px;color:#234e3c;font-weight:720}
+.wg-album-name-form>input{display:block;margin:0 24px 18px;width:calc(100% - 48px);height:44px;
+  border:1px solid #a9bba8;border-radius:9px;padding:8px 11px;font-size:16px;color:#153e2b;background:white}
+.wg-album-name-form>input:focus-visible{outline:3px solid #78aa85;outline-offset:2px}
+.wg-album-name-form .wg-album-chooser-actions{padding:8px 24px 0}
