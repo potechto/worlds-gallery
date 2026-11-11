@@ -47,3 +47,6 @@ tools/WG_V221_*
 tools/WG_V222_*
 tools/WG_V223_*
 tools/wg_v220_moderation_preview.sql
+
+# Geography refresh helper - developer-only, not needed by public site
+tools/fetch_ph_boundaries.py
