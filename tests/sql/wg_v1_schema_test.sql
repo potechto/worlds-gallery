@@ -76,9 +76,12 @@ BEGIN
  IF has_table_privilege(current_user,'wg_ci.media','SELECT') THEN
    RAISE EXCEPTION 'member can read private media mapping';
  END IF;
- UPDATE wg_ci.posts SET visibility='published' WHERE id='00000000-0000-4000-8000-000000000002';
- GET DIAGNOSTICS result_count=ROW_COUNT;
- IF result_count <> 0 THEN RAISE EXCEPTION 'owner bypassed publication review'; END IF;
+ BEGIN
+  UPDATE wg_ci.posts SET visibility='published' WHERE id='00000000-0000-4000-8000-000000000002';
+  RAISE EXCEPTION 'owner bypassed publication review';
+ EXCEPTION
+  WHEN insufficient_privilege OR check_violation OR with_check_option_violation THEN NULL;
+ END;
  UPDATE wg_ci.posts SET title='Malicious edit' WHERE id='00000000-0000-4000-8000-000000000001';
  GET DIAGNOSTICS result_count=ROW_COUNT;
  IF result_count <> 0 THEN RAISE EXCEPTION 'owner B changed owner A public post'; END IF;
