@@ -182,11 +182,13 @@ BEGIN
  IF public.wg_v1_can_serve_media('44444444-4444-4444-8444-444444444444') THEN
    RAISE EXCEPTION 'Hidden post media not revoked';
  END IF;
- IF public.wg_v1_admin_post_action('00000000-0000-4000-8000-000000000004',
-   'cccccccc-cccc-4ccc-8ccc-cccccccccccc','delete',
-   'Moderator attempted admin delete') THEN
+ BEGIN
+   PERFORM public.wg_v1_admin_post_action('00000000-0000-4000-8000-000000000004',
+     'cccccccc-cccc-4ccc-8ccc-cccccccccccc','delete',
+     'Moderator attempted admin delete');
    RAISE EXCEPTION 'Moderator inherited admin role';
- END IF;
+ EXCEPTION WHEN insufficient_privilege THEN NULL;
+ END;
 END $verify$;
 ROLLBACK;
 \echo 'PASS: staging-only V1 SQL schema; reviewer, owner, admin, privacy and media revocation checks rolled back.'
