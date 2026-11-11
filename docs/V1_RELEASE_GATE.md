@@ -28,10 +28,10 @@ Development branch: \`develop/worlds-gallery-v1-community\`. No production user 
 |---|---|---|
 | Public response contract | Sanitized, published-only, 1–4 opaque media tokens; no private fields | Added on development branch, CI required |
 | Database/RLS isolation | PostgreSQL guest/owner B/A denied cases + photo vault denied | CI fixture added; production is untouched |
-| Community schema & migrations | Reconciled working SQL on separate isolated Supabase database, reviewed permissions | Blocked: approved staging not yet available |
+| Community schema & migrations | Staging-only relational model, server-only RPCs and verified roles | Draft schema + real PostgreSQL 17 CI passing; Supabase staging deployment blocked |
 | Authentication | Username claim protected against concurrent signup; verified-session role | Pending |
 | Upload pipeline | Private upload, server-side image sanitization, EXIF removal, human photo review | Pending real integration |
-| Publication | Owner consent, review seal, snapshot release and revocation | Pending real integration |
+| Publication | Owner consent, review seal, snapshot release and revocation | PostgreSQL release + media-revocation checks pass; gateway/image sealing not integrated |
 | Member controls | Vertical 3-dot own Edit / Private / Hide / Delete with server permission | Preview only |
 | Admin \`@worldsgallery\` | Verified server-side UID; Edit/Hide/Delete with audit | Preview only |
 | Moderator/report queue | Independent reviews, report handling, image re-check | Preview only |
@@ -52,3 +52,7 @@ GitHub Actions workflow \`.github/workflows/worlds-gallery-v1.yml\` runs the Nod
 ## Operator boundaries
 
 Use the connected GitHub and Supabase tools to inspect and implement. VS Code is optional. Do not require Docker or third-party services on the user's PC. Do not write into \`main\`, migrate production schemas, turn on public posting or charge for hosted staging without fresh explicit authorization.
+
+## V1 backend milestone 2026-11-11
+
+GitHub CI run #13 passed both Node and actual PostgreSQL jobs. The review-only schema at `supabase/review-only/WG_V1_CommunityDB.sql` models staff roles, publication states, sanitized media vault, and post audit. Its server-only RPCs were exercised against disposable PostgreSQL. The first CI attempt exposed an expected-denial test bug; after handling that assertion correctly, run #13 passed. This is not a production Supabase rollout: approved staging, authenticated Edge gateway, real source-photo fingerprinting, independently reviewed media sealing, revision/edit queue, reports, and multi-account browser QA remain outstanding.
