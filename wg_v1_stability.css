@@ -1,0 +1,158 @@
+/* Worlds Gallery V1 stabilization - scoped, reversible UI polish.
+ * Local only until separate production approval. Keep text accessible and form inputs >= 36px.
+ */
+@media (min-width:781px){
+  #wgAuthGate .wg-auth-frame{
+    max-width:1780px;gap:clamp(20px,3vw,52px);
+    padding:clamp(15px,2vh,27px) clamp(22px,3.3vw,62px);
+  }
+  #wgAuthGate .wg-auth-editorial{
+    height:calc(100dvh - clamp(30px,4vh,54px));min-height:0;
+    align-items:stretch;justify-content:space-between;
+  }
+  #wgAuthGate .wg-auth-brand{align-self:flex-start}
+  #wgAuthGate .wg-auth-intro{
+    width:100%;max-width:740px;align-self:center;text-align:center;
+    margin:auto 0;position:relative;z-index:2;
+  }
+  #wgAuthGate .wg-auth-kicker{justify-content:center}
+  #wgAuthGate .wg-auth-intro h1{
+    font-size:clamp(41px,4.5vw,74px);line-height:1.07;
+    margin:15px -2vw 17px;overflow-wrap:normal;
+  }
+  #wgAuthGate .wg-auth-intro p{margin-inline:auto;max-width:570px;line-height:1.55}
+  #wgAuthGate .wg-auth-flightline{align-self:flex-start}
+  #wgAuthGate .wg-auth-panel{
+    max-height:none;overflow:visible;
+    padding:clamp(16px,2.2vh,26px) clamp(18px,2.3vw,28px);
+    border-radius:20px;
+  }
+  #wgAuthGate .wg-auth-panel-copy{margin:10px 0 11px}
+  #wgAuthGate .wg-auth-panel-copy h2{font-size:clamp(26px,2.05vw,32px);margin-bottom:4px}
+  #wgAuthGate .wg-auth-panel-copy p{font-size:11px;line-height:1.45}
+  #wgAuthGate .wg-auth-tabs{margin:0 0 11px;padding:3px;gap:3px}
+  #wgAuthGate .wg-auth-tabs button{padding:9px 8px;font-size:12px;min-height:35px}
+  #wgAuthGate .wg-auth-form{gap:8px}
+  #wgAuthGate .wg-auth-form-row{gap:9px}
+  #wgAuthGate .wg-auth-form label{gap:4px;font-size:10.5px}
+  #wgAuthGate .wg-auth-form input:not([type=checkbox]),
+  #wgAuthGate .wg-auth-form select,
+  #wgAuthGate .wg-country-trigger{height:37px;min-height:37px;padding:7px 10px;font-size:12px}
+  #wgAuthGate .wg-password-toggle{width:32px;height:31px}
+  #wgAuthGate .wg-auth-primary{min-height:39px;padding:9px 13px;margin-top:2px}
+  #wgAuthGate .wg-auth-location-more summary{padding:7px 10px}
+  #wgAuthGate .wg-auth-location-fields{gap:7px;padding:4px 9px 10px}
+  #wgAuthGate .wg-guest-explore-actions{margin-top:10px;padding:9px 0 2px}
+  #wgAuthGate .wg-guest-explore-actions button{min-height:38px;padding:8px 10px}
+  #wgAuthGate .wg-guest-explore-actions p{line-height:1.35;margin-top:5px;font-size:10px}
+  #wgAuthGate .wg-auth-panel-footer{margin-top:10px;padding-top:9px;font-size:8px}
+  #wgAuthGate .wg-auth-status{margin:5px 0 0;min-height:0;line-height:1.35}
+  #wgAuthGate .wg-auth-status:empty{display:none}
+}
+@media (min-width:781px) and (max-height:680px){
+  /* Very short windows need a safe fallback; never clip required form fields. */
+  #wgAuthGate .wg-auth-panel{max-height:calc(100dvh - 18px);overflow-y:auto}
+  #wgAuthGate .wg-auth-editorial{height:calc(100dvh - 18px)}
+}
+@media (max-width:780px){
+  #wgAuthGate .wg-auth-intro{text-align:center;width:100%;max-width:100%}
+  #wgAuthGate .wg-auth-kicker{justify-content:center}
+  #wgAuthGate .wg-auth-intro p{margin-inline:auto}
+  #wgAuthGate .wg-auth-panel{padding:clamp(15px,3.5vw,24px)}
+  #wgAuthGate .wg-auth-panel-copy{margin:12px 0}
+  #wgAuthGate .wg-auth-tabs{margin-bottom:12px}
+  #wgAuthGate .wg-auth-form{gap:10px}
+  #wgAuthGate .wg-guest-explore-actions{margin-top:12px}
+}
+/* Smaller, calmer Mood Compass controls without losing comfortable tap size. */
+#wg-discovery .wg-dsc-heading{margin-bottom:15px}
+#wg-discovery .wg-dsc-heading h2{font-size:clamp(24px,2.65vw,34px)}
+#wg-discovery .wg-dsc-heading p{font-size:12.5px;line-height:1.55}
+#wg-discovery .wg-dsc-tab{padding:11px 15px}
+#wg-discovery .wg-dsc-tab strong{font-size:13px}
+#wg-discovery .wg-dsc-tab span{font-size:11px}
+#wg-discovery .wg-dsc-place-visual .wg-dsc-picture{aspect-ratio:auto;height:clamp(220px,24vw,355px);min-height:0}
+@media(max-width:780px){#wg-discovery .wg-dsc-place-visual .wg-dsc-picture{height:clamp(205px,54vw,310px)}}
+#wg-discovery{padding-block:clamp(35px,4.5vw,54px)}
+#wg-discovery .wg-dsc-panel{padding:clamp(15px,1.8vw,25px)}
+#wg-discovery .wg-dsc-panel-intro h3{font-size:clamp(20px,2vw,26px)}
+#wg-discovery .wg-dsc-panel-intro p{margin-bottom:13px;font-size:12.5px}
+#wg-discovery .wg-dsc-moods{gap:8px;margin:6px 0 18px}
+#wg-discovery .wg-dsc-mood{min-height:62px;gap:4px;padding:7px 6px;font-size:11.5px;border-radius:11px}
+#wg-discovery .wg-dsc-mood-icon svg{width:21px;height:21px}
+#wg-discovery .wg-dsc-place-copy h4{font-size:clamp(23px,2.5vw,33px)}
+#wg-discovery .wg-dsc-place-desc{font-size:14px;line-height:1.55}
+#wg-discovery .wg-dsc-fact{font-size:12px;padding:10px 12px}
+#wg-discovery .wg-dsc-picture:has(img:not([hidden])){cursor:zoom-in}
+#wg-discovery .wg-dsc-picture:focus-visible{outline:3px solid #308566;outline-offset:3px}
+@media(max-width:660px){
+  #wg-discovery .wg-dsc-mood{min-height:60px}
+  #wg-discovery .wg-dsc-moods{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:370px){#wg-discovery .wg-dsc-moods{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Compact account, settings, privacy and profile pages. Readable, not oversized. */
+#wgAccountDrawer{padding:14px clamp(12px,3vw,36px) 28px!important}
+#wgAccountDrawer .wg-ac-header{max-width:940px;min-height:42px!important;margin-bottom:10px!important;padding-bottom:8px!important}
+#wgAccountDrawer .wg-ac-content{
+  width:min(100%,790px);padding:clamp(16px,2.1vw,27px);
+  margin:9px auto 0;border-radius:17px;
+}
+#wgAccountDrawer .wg-ac-page-head{gap:10px;margin-bottom:7px}
+#wgAccountDrawer .wg-ac-page-head h2{font-size:clamp(23px,2.5vw,31px);letter-spacing:-.028em}
+#wgAccountDrawer .wg-ac-page-head p{font-size:11.5px;line-height:1.5}
+#wgAccountDrawer .wg-ac-form{max-width:720px;padding:9px 0 0;gap:11px}
+#wgAccountDrawer .wg-ac-form label{font-size:11.5px;gap:4px}
+#wgAccountDrawer .wg-ac-form input:not([type=checkbox]),
+#wgAccountDrawer .wg-ac-form textarea,
+#wgAccountDrawer .wg-ac-form select,
+#wgAccountDrawer .wg-ac-country-picker,
+#wgAccountDrawer .wg-ac-select-trigger{font-size:12px!important;min-height:39px!important;padding:7px 10px!important}
+#wgAccountDrawer .wg-ac-form textarea{min-height:110px!important}
+#wgAccountDrawer .wg-ac-form small{font-size:10px;line-height:1.4}
+#wgAccountDrawer .wg-ac-form .wg-ac-switch{gap:9px!important;line-height:1.35!important}
+#wgAccountDrawer .wg-ac-form .wg-ac-switch input[type=checkbox]{width:16px;height:16px;margin-top:1px;flex:0 0 16px}
+#wgAccountDrawer .wg-ac-section-label{font-size:10px;margin-top:5px;padding-top:9px}
+#wgAccountDrawer .wg-ac-muted{font-size:10.5px;line-height:1.45}
+#wgAccountDrawer .wg-ac-save{min-height:40px;margin-top:2px}
+#wgAccountDrawer .wg-v2232-settings-section{padding-block:8px!important}
+#wgAccountDrawer .wg-v2232-settings-section .wg-ac-section-label{margin-bottom:8px!important}
+#wgAccountDrawer .wg-v2232-settings-switches{gap:8px!important}
+#wgAccountDrawer .wg-v2232-settings-grid{gap:10px!important}
+#wgAccountDrawer .wg-v2232-privacy-note{padding:9px 11px;font-size:10.5px;line-height:1.4}
+@media(max-width:680px){#wgAccountDrawer .wg-ac-content{padding:16px 13px;margin-top:6px}#wgAccountDrawer .wg-ac-two{gap:10px}}
+/* Album book: cover cannot appear over the reversing page shuffle. */
+#wgAlbumPage.wg-album-closing .wg-album-anim-front{
+  animation:wg-v2249-cover-last .14s 1.50s cubic-bezier(.25,.6,.4,1) both!important;
+}
+@keyframes wg-v2249-cover-last{
+  0%{transform:rotateY(-177deg);opacity:0;visibility:hidden}
+  42%{transform:rotateY(-148deg);opacity:0;visibility:hidden}
+  42.01%{visibility:visible}
+  100%{transform:rotateY(0);opacity:1;visibility:visible}
+}
+/* Make the additional SVG covers genuinely minimalist. Keep original art unchanged. */
+#wgAlbumPage .wg-v1-minimal-cover .wg-album-strap,
+#wgAlbumPage .wg-v1-minimal-cover .wg-album-corner-top,
+#wgAlbumPage .wg-v1-minimal-cover .wg-album-corner-bottom,
+#wgAlbumPage .wg-v1-minimal-cover .wg-album-compass{display:none}
+#wgAlbumPage .wg-v1-minimal-cover.wg-album-book{border:3px solid #697b73;background:#d8ded6}
+#wgAlbumPage .wg-v1-minimal-cover .wg-album-spine{background:linear-gradient(90deg,#1e312b91,#829c916b 57%,transparent)}
+#wgAlbumPage .wg-v1-minimal-cover .wg-album-front-frame{
+  inset:4% 5% 5% 14%;border:1px solid #ffffff8a;outline:none;
+  background:linear-gradient(180deg,#101e2938,#152b3425 42%,#141e2626);
+}
+#wgAlbumPage .wg-v1-minimal-cover .wg-album-front-title{font:500 clamp(23px,2.5vw,33px)/1.2 system-ui,sans-serif;color:#fff;letter-spacing:.02em;padding-top:65%;text-shadow:0 2px 9px #18272588}
+#wgAlbumPage .wg-v1-minimal-cover .wg-album-front-subtitle{color:#fff;font-size:8px;text-shadow:0 1px 6px #18272590}
+/* Large photo preview for licensed Mood Compass pictures. */
+#wgV1MoodLightbox{
+  width:min(1020px,calc(100vw - 28px));max-width:none;max-height:calc(100dvh - 24px);
+  padding:15px;border:1px solid #d3e1d6;border-radius:17px;background:#f8fbf7;
+  color:#1e4236;box-shadow:0 22px 70px #06150fa6;
+}
+#wgV1MoodLightbox::backdrop{background:#03120dcc;backdrop-filter:blur(6px)}
+#wgV1MoodLightbox .wg-v1-zoom-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:9px}
+#wgV1MoodLightbox .wg-v1-zoom-head strong{font:700 13px/1.4 system-ui,sans-serif}
+#wgV1MoodLightbox .wg-v1-zoom-close{border:1px solid #c7dbcf;background:#fff;border-radius:8px;min-height:36px;padding:7px 14px;color:#204f3a;cursor:pointer}
+#wgV1MoodLightbox img{display:block;margin:auto;max-width:100%;max-height:calc(100dvh - 134px);height:auto;width:auto;object-fit:contain;border-radius:9px}
+#wgV1MoodLightbox .wg-v1-zoom-caption{margin:10px 3px 0;font:400 11px/1.4 system-ui,sans-serif;color:#5c7768}
+@media(prefers-reduced-motion:reduce){#wgAlbumPage.wg-album-closing .wg-album-anim-front{animation:none!important}}

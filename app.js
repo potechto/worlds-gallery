@@ -37,13 +37,12 @@ function cloudError(error){return error?.message || 'Cloud request failed';}
 function ownerPostMenu(story){
  if(!story?.cloud || story.status!=='draft' || !currentOwner() || story.owner_id!==currentOwner())return '';
  const id=html(story.id);
- return `<details class="wg-post-menu"><summary aria-label="Manage your post" title="Manage post">⋮</summary><div class="wg-post-menu-options" role="group" aria-label="Owner post actions"><button type="button" data-post-visibility="${id}" title="This post is already private">Hide / Unhide</button><button type="button" data-post-edit="${id}">Edit</button><button type="button" data-post-delete="${id}">Delete</button></div></details>`;
+ return `<details class="wg-post-menu"><summary aria-label="Manage your post" title="Manage post">⋮</summary><div class="wg-post-menu-options" role="group" aria-label="Owner post actions"><span class="wg-post-menu-status" role="status">Only me · Private draft</span><button type="button" data-post-prepare="${id}">Prepare for public review</button><button type="button" data-post-edit="${id}">Edit post</button><button type="button" data-post-delete="${id}">Delete post</button></div></details>`;
 }
 function ownedPostById(id){return cloudStories.find(s=>s.id===id && s.cloud && s.status==='draft' && s.owner_id===currentOwner())||null;}
-function postVisibilityNotice(story){if(!ownedPostById(story?.id))return;notify('This post is already Only me. Public Hide / Unhide will activate after moderated posting launches.');}
 function runOwnerPostAction(e){
- const visibility=e.target.closest('[data-post-visibility]');
- if(visibility){const story=ownedPostById(visibility.dataset.postVisibility);if(story)postVisibilityNotice(story);return true;}
+ const prepare=e.target.closest('[data-post-prepare]');
+ if(prepare){const story=ownedPostById(prepare.dataset.postPrepare);if(story)openPublicationChecklist(story);return true;}
  const edit=e.target.closest('[data-post-edit]');
  if(edit){const story=ownedPostById(edit.dataset.postEdit);if(story)openCloudEditor(story);return true;}
  const deletion=e.target.closest('[data-post-delete]');
@@ -266,7 +265,7 @@ function storyOwnerAvatar(s){
  const first=String(s.author||'?').slice(0,1).toUpperCase();
  return `<span class="avatar wg-v2232-story-avatar" data-wg-avatar-owner="${html(s.owner_id||'none')}" data-wg-avatar-fallback="${html(first)}">${html(first)}</span>`;
 }
-function renderStats(){const all=stories();$('statStories').textContent=all.length.toLocaleString();$('statCountries').textContent=new Set(all.map(s=>s.country)).size}
+function renderStats(){ /* V1: number counters removed from UI; no DOM lookup. */ }
 function renderGallery(){const items=getFiltered();$('resultsCount').textContent=`Showing ${items.length} of ${stories().length} stories`;
  $('gallery').innerHTML=items.length?items.map(s=>{
   const t=themeFor(s.theme),liked=hearts.includes(s.id);
@@ -363,7 +362,7 @@ function validateUpload(){const author=$('author').value.trim(),country=$('uploa
 async function submitUpload(e){e.preventDefault();const invalid=validateUpload();const msg=$('formMessage');if(invalid){msg.classList.remove('ok');msg.textContent=invalid;return}
  const submit=$('submitStory');submit.disabled=true;submit.textContent='Posting privately…';msg.classList.remove('ok');msg.textContent='';
  const ownerId=currentOwner();if(!ownerId){msg.textContent='Please sign in again before posting.';submit.disabled=false;submit.textContent='Post';return;}
- try{await saveCloudDraft();$('uploadDialog').close();resetFilters();await fetchCloudStories();state.mineOnly=true;$('mineOnly').checked=true;renderGallery();notify('Posted privately under My Posts. Only you can see it.');$('stories').scrollIntoView({behavior:'smooth',block:'start'})}
+ try{await saveCloudDraft();$('uploadDialog').close();resetFilters();await fetchCloudStories();state.mineOnly=true;$('mineOnly').checked=true;$('sortFilter').value='mine';renderGallery();notify('Posted privately under My Posts. Only you can see it.');$('stories').scrollIntoView({behavior:'smooth',block:'start'})}
  catch(err){msg.classList.remove('ok');msg.textContent='Could not post privately: '+cloudError(err)}
  finally{submit.disabled=false;submit.textContent='Post'}
 }
@@ -407,7 +406,7 @@ function lightboxMove(d){if(lightboxImages.length){lightboxIndex=(lightboxIndex+
 $('search').addEventListener('input',e=>{state.search=e.target.value;renderGallery()});
 $('continentFilter').addEventListener('change',e=>{state.selectedContinent=e.target.value;state.selectedCountry='';state.selectedRegion=null;renderCountryOptions(false);renderGallery();globe.reset();renderGlobeLabel()});
 $('countryFilter').addEventListener('change',e=>setCountry(e.target.value,'filter'));
-$('sortFilter').addEventListener('change',e=>{state.sort=e.target.value;renderGallery()});
+$('sortFilter').addEventListener('change',e=>{const mine=e.target.value==='mine';if(mine&&!currentOwner()){notify('Sign in to view My Posts.');e.target.value='new';state.mineOnly=false;state.sort='new';}else{state.mineOnly=mine;state.sort=mine?'new':e.target.value;}$('mineOnly').checked=state.mineOnly;renderGallery()});
 $('mineOnly').addEventListener('change',e=>{state.mineOnly=e.target.checked;renderGallery()});
 document.addEventListener('wg:authenticated',()=>{
  if(cloudUser&&cloudUser!==currentOwner()){
@@ -440,7 +439,26 @@ $('regionAny').addEventListener('click',()=>{state.selectedRegion=null;$('region
 $('themeChips').addEventListener('click',e=>{const t=e.target.closest('[data-remove-theme]');if(t){state.themes.delete(t.dataset.removeTheme);renderGallery()}if(e.target.closest('[data-remove-region]')){state.selectedRegion=null;renderGallery()}if(e.target.closest('[data-remove-country]'))setCountry('','filter');if(e.target.closest('[data-remove-continent]')){state.selectedContinent='';$('continentFilter').value='';renderCountryOptions();renderGallery()}});
 $('clearFilters').addEventListener('click',resetFilters);
 $('gallery').addEventListener('click',e=>{if(runOwnerPostAction(e))return;const h=e.target.closest('[data-heart]');if(h){toggleHeart(h.dataset.heart);return}const open=e.target.closest('[data-open-story]');if(open){openReader(open.dataset.openStory);return}if(e.target.closest('[data-reset]'))resetFilters()});
-document.addEventListener('click',e=>{document.querySelectorAll('details.wg-post-menu[open]').forEach(menu=>{if(!menu.contains(e.target))menu.open=false;});});
+document.addEventListener('click',e=>{
+ const selected=e.target.closest('details.wg-post-menu');
+ document.querySelectorAll('details.wg-post-menu[open]').forEach(menu=>{
+  if(menu!==selected || (selected && !selected.contains(e.target)))menu.open=false;
+ });
+});
+// One owner menu at a time; Escape is keyboard-accessible on desktop/mobile keyboards.
+document.addEventListener('click',e=>{
+ const summary=e.target.closest('details.wg-post-menu > summary');
+ if(!summary)return;
+ document.querySelectorAll('details.wg-post-menu[open]').forEach(menu=>{
+  if(menu!==summary.parentElement)menu.open=false;
+ });
+});
+document.addEventListener('keydown',e=>{
+ if(e.key!=='Escape')return;
+ const openMenus=document.querySelectorAll('details.wg-post-menu[open]');
+ if(!openMenus.length)return;
+ openMenus.forEach(menu=>{menu.open=false;});
+});
 $('gallery').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('.card-excerpt')){e.preventDefault();openReader(e.target.dataset.openStory)}});
 $('globeSelection').addEventListener('click',e=>{if(e.target.id==='scrollGallery')$('stories').scrollIntoView({behavior:'smooth'});if(e.target.id==='globeRegionChoose')openRegionModal()});
 $('globeReset').addEventListener('click',()=>{globe.reset();setCountry('','globe')});$('globeZoomIn').addEventListener('click',()=>globe.zoomBy(.16));$('globeZoomOut').addEventListener('click',()=>globe.zoomBy(-.16));

@@ -8,11 +8,31 @@
   const OLD_KEY = account => `wg_my_album_intro_v1:${account}`;
   const MAX_SPREADS = 12;
   const MAX_STICKERS = 16;
+  // WG V1: original, offline SVG covers; no third-party image licensing or network calls.
+  const minimalCover=(bg,accent,detail,variant)=>{
+    const motifs={
+      horizon:`<path d="M0 490 H560" stroke="${accent}" stroke-width="3" opacity=".4"/><circle cx="385" cy="346" r="67" fill="${detail}" opacity=".55"/>`,
+      arc:`<path d="M140 690V335a140 140 0 0 1 280 0v355" fill="none" stroke="${accent}" stroke-width="28" opacity=".3"/>`,
+      waves:`<path d="M0 490 Q145 410 280 490 T560 490 M0 525 Q145 445 280 525 T560 525" fill="none" stroke="${accent}" stroke-width="8" opacity=".25"/>`,
+      dot:`<circle cx="280" cy="434" r="112" fill="${detail}" opacity=".25"/><circle cx="280" cy="434" r="28" fill="${accent}" opacity=".55"/>`,
+      line:`<path d="M145 360H416 M145 378H365 M145 395H394" stroke="${accent}" stroke-width="4" opacity=".5"/>`
+    };
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 750"><rect width="560" height="750" fill="${bg}"/><rect x="28" y="28" width="504" height="694" fill="none" stroke="${accent}" stroke-opacity=".28" stroke-width="2"/>${motifs[variant]||motifs.line}</svg>`;
+    return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  };
   const COVER_CHOICES = [
     {id:'signature',name:'Travel journal',image:'assets/photos/wg_album_reference.webp'},
     {id:'sky',name:'Sky & dreams',image:'assets/photos/wg_album_scene_sky.webp'},
     {id:'city',name:'City at sunset',image:'assets/photos/wg_album_scene_city.webp'},
-    {id:'garden',name:'Blooming streets',image:'assets/photos/wg_album_scene_garden.webp'}
+    {id:'garden',name:'Blooming streets',image:'assets/photos/wg_album_scene_garden.webp'},
+    {id:'linen',name:'Minimal linen',image:minimalCover('#e7e0cf','#8f866d','#c5ad8a','line')},
+    {id:'sage',name:'Soft sage',image:minimalCover('#d8e3d8','#547763','#8cad99','horizon')},
+    {id:'sand',name:'Warm sand',image:minimalCover('#eddcc8','#b7875e','#d8aa75','arc')},
+    {id:'mist',name:'Morning mist',image:minimalCover('#e2eaf0','#7294ac','#9cbfd2','waves')},
+    {id:'stone',name:'Cool stone',image:minimalCover('#dde0dd','#697875','#a2b1ae','dot')},
+    {id:'sea-glass',name:'Sea glass',image:minimalCover('#d0e6e0','#317b80','#72bdb4','waves')},
+    {id:'blush',name:'Soft blush',image:minimalCover('#f2dfd9','#a98388','#d7a7a0','horizon')},
+    {id:'midnight',name:'Midnight blue',image:minimalCover('#263d50','#b6cad9','#50738f','arc')}
   ];
   const SCENES = [
     {id:'sky',name:'Dreamy skies',image:'assets/photos/wg_album_scene_sky.webp'},
@@ -256,13 +276,14 @@
     const signature=state.cover==='signature';
     book.classList.toggle('wg-album-signature',signature);
     book.classList.toggle('wg-album-other-cover',!signature);
+    book.classList.toggle('wg-v1-minimal-cover',COVER_CHOICES.some(choice=>choice.id===state.cover&&choice.image.startsWith('data:image/svg+xml')));
     const face=dialog.querySelector('.wg-album-front-image');
     face.style.backgroundImage=signature?'':`linear-gradient(180deg,rgba(13,18,29,.05),rgba(14,19,26,.4)),url("${coverURL(state)}")`;
     $('wgAlbumFlipTheatre').style.setProperty('--album-cover',`url("${coverURL(state)}")`);
   }
   const THEATRE_MS=1650; // one-second shuffle + ~650ms centered morph
   const OPEN_SPREAD_AT_MS=1170;
-  const CLOSE_COVER_AT_MS=1520;
+  const CLOSE_COVER_AT_MS=1590; // after all reversing leaves have finished
   function syncTheatreGeometry(){
     // Both the original cover and final spread are measured in viewport space.
     // The animation uses their *centres*, never a spine-based x-offset.

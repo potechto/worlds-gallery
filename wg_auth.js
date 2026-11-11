@@ -39,8 +39,8 @@
         </nav>
         <form id="wgSignUpForm" class="wg-auth-form" autocomplete="on">
           <div class="wg-auth-form-row">
-            <label>Username <input name="username" autocomplete="username" minlength="3" maxlength="10" pattern="[A-Za-z0-9_]{3,10}" required placeholder="yourusername"></label>
-            <label>Display name <input name="display_name" maxlength="10" required autocomplete="nickname" placeholder="Your display name"></label>
+            <label>Username <input name="username" autocomplete="username" minlength="3" maxlength="24" pattern="[A-Za-z0-9_]{3,24}" required placeholder="yourusername"></label>
+            <label>Display name <input name="display_name" maxlength="70" required autocomplete="nickname" placeholder="Your display name"></label>
           </div>
           <label>Email address <input name="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
           <div class="wg-auth-form-row">
@@ -66,8 +66,8 @@
         </form>
         <form id="wgSetupForm" class="wg-auth-form" hidden>
           <p class="wg-auth-note">Complete your private profile before entering the globe.</p>
-          <label>Username <input name="username" minlength="3" maxlength="10" pattern="[A-Za-z0-9_]{3,10}" required></label>
-          <label>Display name <input name="display_name" maxlength="10" required></label>
+          <label>Username <input name="username" minlength="3" maxlength="24" pattern="[A-Za-z0-9_]{3,24}" required></label>
+          <label>Display name <input name="display_name" maxlength="70" required></label>
           <label>Home country <select name="country_code" required>${countryOptions}</select></label>
           <button class="wg-auth-primary" type="submit">Continue to my country <span aria-hidden="true">↗</span></button>
         </form>
@@ -417,7 +417,7 @@
     if (!match) throw new Error('Please select a valid country.');
     const username = String(data.get('username') || '').trim();
     const display_name = String(data.get('display_name') || '').trim();
-    if (!/^[A-Za-z0-9_]{3,10}$/.test(username) || !display_name || display_name.length > 10) throw new Error('Please check your username and display name.');
+    if (!/^[A-Za-z0-9_]{3,24}$/.test(username) || !display_name || display_name.length > 70) throw new Error('Username must be 3-24 letters, numbers or underscores; display name up to 70 characters.');
     return {
       username, display_name,
       home_country_code: code, home_country_name: match[1],
@@ -432,7 +432,7 @@
     if (result.data) return result.data;
     const metadata = user.user_metadata || {};
     const match = countries.find(([code]) => code === metadata.home_country_code);
-    if (!match || !/^[A-Za-z0-9_]{3,10}$/.test(metadata.username || '') || !metadata.display_name) {
+    if (!match || !/^[A-Za-z0-9_]{3,24}$/.test(metadata.username || '') || !metadata.display_name) {
       setMode('setup');
       return null;
     }
@@ -446,7 +446,7 @@
       home_city: metadata.home_city || null
     };
     const inserted = await db.from('wg_profiles').insert(newProfile).select('*').single();
-    if (inserted.error) {setMode('setup'); status('Choose a different username if yours is already used. ' + inserted.error.message); return null;}
+    if (inserted.error) {setMode('setup'); status(inserted.error.code === '23505' ? 'Username is already taken. Please choose a different one.' : 'Could not complete the profile. Please retry or contact support.','error'); return null;}
     return inserted.data;
   }
   async function ensurePrivateDefaults(user) {
@@ -526,7 +526,7 @@
       if (password !== confirmPassword) throw new Error('Passwords do not match. Please try again.');
       if (password.length < 8 || password.length > 128) throw new Error('Choose a password between 8 and 128 characters. Longer passphrases are safer.');
       const result = await db.auth.signUp({
-        email:String(data.get('email') || '').trim(), password,
+        email:String(data.get('email') || '').trim().toLowerCase(), password,
         options:{emailRedirectTo:location.origin + location.pathname, data:values}
       });
       if (result.error) throw result.error;
@@ -540,9 +540,9 @@
         await db.auth.signOut();
         status('Account created. Email confirmation appears disabled in Supabase settings. Enable it before launch. Sign in only after confirming your address.','notice');
       } else {
-        status('Account created. Please confirm the email sent to your inbox (check Spam too) before signing in.','success');
+        status('If this email is eligible for a new account, a confirmation email will arrive. Check Inbox and Spam. If you already registered, use Sign In or password recovery.','success');
       }
-    } catch (err) {status(err.message || 'Could not create account.');}
+    } catch (err) {status(err?.code === '23505' ? 'Username is already taken. Choose another username.' : 'Could not complete registration. Check your details, try a different username, or sign in if the email is already registered.','error');}
     finally {lockBusy(false);}
   });
   byId('wgSetupForm').addEventListener('submit', async event => {
@@ -553,7 +553,7 @@
       const result = await db.from('wg_profiles').insert({...values,user_id:currentUser.id}).select('*').single();
       if (result.error) throw result.error;
       await enter(currentUser);
-    } catch (err) {status(err.message || 'Could not save your profile.');}
+    } catch (err) {status(err?.code === '23505' ? 'Username is already in use. Choose another username.' : 'Could not save your profile. Please retry.','error');}
     finally {lockBusy(false);}
   });
   logout.addEventListener('click', async () => {
