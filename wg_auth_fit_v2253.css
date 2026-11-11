@@ -1,0 +1,138 @@
+/* Worlds Gallery V2.25.3: auth layout correction.
+   Left-aligned story copy shares the brand's starting edge; the story block
+   stays vertically centered. Create Account fits ordinary desktop heights.
+   The form and optional fields remain accessible; short windows may scroll.
+*/
+@media (min-width: 781px) {
+  #wgAuthGate .wg-auth-frame {
+    min-height: 100dvh;
+    height: 100dvh;
+    padding-block: clamp(10px, 1.6dvh, 20px);
+    align-items: center;
+  }
+  #wgAuthGate .wg-auth-editorial {
+    height: 100%;
+    min-height: 0;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  #wgAuthGate .wg-auth-brand,
+  #wgAuthGate .wg-auth-intro,
+  #wgAuthGate .wg-auth-flightline {
+    align-self: flex-start;
+  }
+  #wgAuthGate .wg-auth-intro {
+    width: 100%;
+    max-width: 760px;
+    margin: auto 0;
+    padding: 0;
+    text-align: left;
+    transform: none;
+  }
+  #wgAuthGate .wg-auth-kicker { justify-content: flex-start; }
+  #wgAuthGate .wg-auth-intro h1 {
+    margin: clamp(12px, 2.4dvh, 22px) 0 clamp(12px, 2.3dvh, 20px);
+    font-size: clamp(36px, 4.1vw, 72px);
+    line-height: 1.07;
+    overflow-wrap: normal;
+  }
+  #wgAuthGate .wg-auth-intro p {
+    margin: 0;
+    max-width: 590px;
+    text-align: left;
+    line-height: 1.53;
+  }
+  /* A signup panel is content-sized, never a separate scroll-box on normal desktops. */
+  #wgAuthGate .wg-auth-panel {
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+    padding: clamp(13px, 2dvh, 20px) clamp(17px, 2.25vw, 28px);
+  }
+  #wgAuthGate .wg-auth-panel-copy { margin: 8px 0 9px; }
+  #wgAuthGate .wg-auth-panel-copy h2 {
+    font-size: clamp(25px, 1.9vw, 31px);
+    line-height: 1.09;
+    margin-bottom: 4px;
+  }
+  #wgAuthGate .wg-auth-panel-copy p { font-size: 10.5px; line-height: 1.38; }
+  #wgAuthGate .wg-auth-tabs { margin-bottom: 9px; padding: 3px; gap: 3px; }
+  #wgAuthGate .wg-auth-tabs button {
+    min-height: 34px;
+    padding: 8px;
+    font-size: 11.5px;
+  }
+  #wgAuthGate .wg-auth-form { gap: 7px; }
+  #wgAuthGate .wg-auth-form-row { gap: 8px; }
+  #wgAuthGate .wg-auth-form label { gap: 3px; font-size: 10.5px; }
+  #wgAuthGate .wg-auth-form input:not([type=checkbox]),
+  #wgAuthGate .wg-auth-form select,
+  #wgAuthGate .wg-country-trigger {
+    height: 36px;
+    min-height: 36px;
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+  #wgAuthGate .wg-password-toggle { width: 32px; height: 30px; }
+  #wgAuthGate .wg-auth-location-more summary { min-height: 29px; padding: 6px 9px; }
+  #wgAuthGate .wg-auth-location-fields {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+    padding: 6px 9px 9px;
+  }
+  #wgAuthGate .wg-auth-location-fields label { min-width: 0; }
+  #wgAuthGate .wg-auth-primary {
+    min-height: 37px;
+    margin-top: 1px;
+    padding: 8px 12px;
+  }
+  #wgAuthGate .wg-auth-note { font-size: 10px; line-height: 1.36; }
+  #wgAuthGate .wg-guest-explore-actions {
+    margin-top: 7px;
+    padding: 7px 0 0;
+  }
+  #wgAuthGate .wg-guest-explore-actions button { min-height: 35px; padding: 7px 10px; }
+  #wgAuthGate .wg-guest-explore-actions p {
+    margin: 3px 0 0;
+    font-size: 9.75px;
+    line-height: 1.32;
+  }
+  #wgAuthGate .wg-auth-status { margin: 4px 0 0; min-height: 0; line-height: 1.36; }
+  #wgAuthGate .wg-auth-status:empty { display: none; }
+  #wgAuthGate .wg-auth-panel-footer { margin-top: 7px; padding-top: 7px; font-size: 8px; }
+}
+/* Use smaller but legible typography when OS scaling makes the effective
+   viewport short. Never cut off mandatory fields on very short screens. */
+@media (min-width: 781px) and (max-height: 710px) {
+  #wgAuthGate .wg-auth-frame { padding-block: 9px; }
+  #wgAuthGate .wg-auth-panel { padding-block: 11px; }
+  #wgAuthGate .wg-auth-panel-copy { margin: 5px 0 6px; }
+  #wgAuthGate .wg-auth-panel-copy h2 { font-size: 25px; }
+  #wgAuthGate .wg-auth-tabs { margin-bottom: 6px; }
+  #wgAuthGate .wg-auth-tabs button { min-height: 32px; padding: 7px; }
+  #wgAuthGate .wg-auth-form { gap: 5px; }
+  #wgAuthGate .wg-auth-form input:not([type=checkbox]),
+  #wgAuthGate .wg-auth-form select,
+  #wgAuthGate .wg-country-trigger { height: 35px; min-height: 35px; }
+  #wgAuthGate .wg-auth-location-more summary { padding-block: 5px; }
+  #wgAuthGate .wg-auth-intro h1 { font-size: clamp(34px, 3.75vw, 63px); }
+  #wgAuthGate .wg-auth-panel-footer { margin-top: 5px; padding-top: 5px; }
+}
+/* Explicit fallback: never clip expanded optional fields, validation messages,
+   zoomed text or short/landscape windows. Scroll the whole auth page, not a
+   nested panel; ordinary desktop viewports above fit without this fallback. */
+@media (min-width: 781px) and (max-height: 590px) {
+  #wgAuthGate { overflow-y: auto; }
+  #wgAuthGate .wg-auth-frame { height: auto; min-height: 100dvh; }
+  #wgAuthGate .wg-auth-editorial { min-height: 400px; }
+  #wgAuthGate .wg-auth-panel { max-height: none; overflow: visible; }
+}
+/* On phones the two-column design stacks. Keep content left-aligned like the
+   logo; allow the page to scroll rather than hide fields or shrink tap targets. */
+@media (max-width: 780px) {
+  #wgAuthGate .wg-auth-intro { width: 100%; text-align: left; margin: 14px 0 0; }
+  #wgAuthGate .wg-auth-kicker { justify-content: flex-start; }
+  #wgAuthGate .wg-auth-intro p { margin: 0; text-align: left; }
+  #wgAuthGate .wg-auth-panel { max-height: none; overflow: visible; }
+}

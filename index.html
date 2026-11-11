@@ -25,6 +25,8 @@
 <link rel="stylesheet" href="wg_discovery.css?v=20261110-beta1">
 <link rel="stylesheet" href="wg_interaction_polish.css?v=20261110-v2235">
 <link rel="stylesheet" href="wg_album.css?v=20261110-v2244">
+<link rel="stylesheet" href="wg_v1_stability.css?v=20261111-v2249">
+<link rel="stylesheet" href="wg_auth_fit_v2253.css?v=20261111-v2253">
 </head>
 <body class="portal-locked">
 <!-- Worlds Gallery V5: immersive country entry. Globe is the ONLY initial screen. -->
@@ -80,7 +82,6 @@
       <p class="hero-subtitle">A thoughtful gallery for ordinary moments and extraordinary feelings. Explore memories, journeys, and dreams through the people who lived them.</p>
       <div class="hero-actions"><button type="button" class="button button-primary" data-open-upload>Tell your story <span>↗</span></button></div>
       <div class="hero-trust"><span class="hero-spark">✧</span> From anywhere in the world. Always free to explore.</div>
-      <div class="mini-stats"><div><b id="statStories">0</b><span>Your private posts</span></div><div><b id="statCountries">0</b><span>Places in your posts</span></div><div><b>249</b><span>Country directory</span></div></div>
     </div>
     <div class="globe-pane">
       <div class="globe-top"><div><span class="eyebrow small">YOUR WINDOW TO THE WORLD</span><div class="globe-title">Where would you like to go?</div></div><span class="live-pill"><i></i> Interactive globe</span></div>
@@ -112,7 +113,7 @@
         <label class="filter-field"><span>World region</span><select id="continentFilter" aria-label="Filter by world region"><option value="">All world regions</option><option>Africa</option><option>Americas</option><option>Asia</option><option>Europe</option><option>Oceania</option><option>Antarctic</option></select></label>
         <label class="filter-field"><span>Country or territory</span><select id="countryFilter" aria-label="Filter by country"><option value="">All countries</option></select></label>
         <div class="filter-field"><span>State / province / region</span><button id="openRegion" type="button" class="filter-select-btn"><span id="regionLabel">All regions</span><span aria-hidden="true">▾</span></button></div>
-        <label class="filter-field sort"><span>Sort stories</span><select id="sortFilter" aria-label="Sort stories"><option value="new">Newest first</option><option value="hearts">Most loved</option><option value="title">Title A–Z</option></select></label>
+        <label class="filter-field sort"><span>Sort stories</span><select id="sortFilter" aria-label="Sort stories"><option value="new">Newest first</option><option value="hearts">Most loved</option><option value="title">Title A–Z</option><option value="mine">View mine only</option></select></label>
       </div>
       <div class="active-filters" id="activeFilters" hidden><div class="active-chips" id="themeChips"></div><button id="clearFilters" type="button" class="link-button">Clear all filters</button></div>
     </div>
@@ -207,7 +208,7 @@
 </dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="wg_post_policy.js?v=v2233-link-privacy-20261109"></script>
-<script src="data.js?v=v2234-original-only-20261109"></script><script src="world_geometry.js?v=b65c5365c640"></script><script src="ph_coastline.js?v=fe3b853d6dcc"></script><script src="ph_admin_geo.js?v=56699b9621e3"></script><script src="place_highlights.js?v=092981cd69b4"></script><script src="globe.js?v=0ea3b51f80da"></script><script src="app.js?v=v2234-original-only-20261109"></script><script src="timezones.js?v=1633b3a9ceba"></script><script src="portal.js?v=v2234-original-only-20261109"></script>
+<script src="data.js?v=v2234-original-only-20261109"></script><script src="world_geometry.js?v=b65c5365c640"></script><script src="ph_coastline.js?v=fe3b853d6dcc"></script><script src="ph_admin_geo.js?v=56699b9621e3"></script><script src="place_highlights.js?v=092981cd69b4"></script><script src="globe.js?v=0ea3b51f80da"></script><script src="app.js?v=20261111-v2249-stats-removed"></script><script src="timezones.js?v=1633b3a9ceba"></script><script src="portal.js?v=v2234-original-only-20261109"></script>
 <script src="assets/vendor/maplibre/maplibre-gl.js?v=45a9b07a9189"></script>
 <script src="wg_global_map.js?v=c46231b55e3a"></script>
 <script src="wg_world_knowledge.js?v=3ac5824820fe"></script>
@@ -220,9 +221,9 @@ if (!window.supabase || typeof window.supabase.createClient !== 'function') {
 }
 </script>
 <script src="wg_locale.js?v=v2231-post-20261109"></script>
-<script src="wg_auth.js?v=20261111-logo-hotfix"></script>
+<script src="wg_auth.js?v=20261111-v2249-signup"></script>
 <script type="module" src="wg_cinematic.js?v=99a7ef27dd41"></script>
-<script src="wg_account.js?v=20261110-v2245-account-album"></script>
+<script src="wg_account.js?v=20261111-v2249-profile"></script>
 <script src="wg_view_state.js?v=v26"></script>
 <script src="wg_locale_country.js?v=v26"></script>
 <script src="wg_ui_icons.js?v=v26"></script>
@@ -232,6 +233,7 @@ if (!window.supabase || typeof window.supabase.createClient !== 'function') {
 <script src="wg_discovery_data.js?v=20261110-v2236"></script>
 <script src="wg_discovery.js?v=20261110-v2240"></script>
 <script src="wg_interaction_polish.js?v=20261110-v2245-account-album"></script>
-<script src="wg_album.js?v=20261110-v2245-account-album"></script>
+<script src="wg_album.js?v=20261111-v2249-cover-options"></script>
+<script src="wg_v1_stability.js?v=20261111-v2249"></script>
 </body>
 </html>

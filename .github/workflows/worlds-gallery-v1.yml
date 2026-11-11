@@ -1,0 +1,51 @@
+name: Worlds Gallery V1 security checks
+on:
+  push:
+    branches:
+      - develop/worlds-gallery-v1-community
+  pull_request:
+    paths:
+      - 'wg_v1_*'
+      - 'tests/**'
+      - 'supabase/review-only/**'
+      - '.github/workflows/worlds-gallery-v1.yml'
+permissions:
+  contents: read
+jobs:
+  client-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check wg_v1_public_contract.mjs
+      - run: node --test tests/wg_v1_public_contract.test.mjs
+  postgres-security:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: testonly
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGDATABASE: postgres
+      PGUSER: postgres
+      PGPASSWORD: testonly
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure PostgreSQL client on GitHub runner
+        run: command -v psql >/dev/null || (sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client)
+      - name: Exercise actual PostgreSQL RLS and privileges
+        run: |
+          psql -X -v ON_ERROR_STOP=1 -f tests/sql/wg_v1_schema_test.sql
+          psql -X -v ON_ERROR_STOP=1 -f tests/sql/wg_v1_community_integrity.sql

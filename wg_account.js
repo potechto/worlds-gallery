@@ -262,7 +262,7 @@
       loading=true;form.querySelector('[type=submit]').disabled=true;
       const result=await api().from('wg_profiles').update(data).eq('user_id',user.id).select('*').single();
       loading=false;form.querySelector('[type=submit]').disabled=false;
-      if(result.error){flash(result.error.message||'Could not save profile.',false);return;}
+      if(result.error){flash(result.error.code==='23505'?'Username is already in use. Choose a different one.':'Could not save profile. Try again.',false);return;}
       profile=result.data;
       const email=String(values.get('account_email')||'').trim().toLowerCase();
       if(email && email!==String(user.email||'').toLowerCase()){
