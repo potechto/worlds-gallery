@@ -22,7 +22,7 @@
     </div>
     <div class="wg-auth-frame">
       <section class="wg-auth-editorial" aria-label="Worlds Gallery introduction">
-        <div class="wg-auth-brand"><span class="wg-auth-brand-symbol" aria-hidden="true"><i></i></span><span>WORLDS<span class="wg-auth-brand-dot">.</span>GALLERY</span></div>
+        <div class="wg-auth-brand" aria-label="Worlds Gallery"><img class="wg-auth-brand-image" src="assets/photos/worldsgallerylogo.png?v=20261111-auth-brand" alt="" aria-hidden="true" width="56" height="56" decoding="async"><span class="wg-auth-brand-name">Worlds <strong>Gallery</strong></span></div>
         <div class="wg-auth-intro">
           <span class="wg-auth-kicker"><span class="wg-auth-dot"></span> FROM ONE PLACE TO EVERY PLACE</span>
           <h1>The world is<br><em>worth remembering.</em></h1>
