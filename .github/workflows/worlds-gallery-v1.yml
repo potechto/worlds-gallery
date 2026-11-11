@@ -46,4 +46,6 @@ jobs:
       - name: Ensure PostgreSQL client on GitHub runner
         run: command -v psql >/dev/null || (sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client)
       - name: Exercise actual PostgreSQL RLS and privileges
-        run: psql -X -v ON_ERROR_STOP=1 -f tests/sql/wg_v1_schema_test.sql
+        run: |
+          psql -X -v ON_ERROR_STOP=1 -f tests/sql/wg_v1_schema_test.sql
+          psql -X -v ON_ERROR_STOP=1 -f tests/sql/wg_v1_community_integrity.sql
