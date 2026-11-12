@@ -190,3 +190,63 @@
 #wgAccountDrawer .wg-ac-country-popup{position:absolute!important;top:calc(100% + 5px)!important;bottom:auto!important;left:0!important;right:0!important;width:100%!important;margin:0!important;z-index:85!important;overscroll-behavior:contain}
 #wgAccountDrawer .wg-ac-country-popup.wg-ac-drop-up{top:auto!important;bottom:calc(100% + 5px)!important}
 @media(max-width:620px){#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper{padding:18px 15px!important}#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-two{grid-template-columns:minmax(0,1fr)!important}}
+
+/* WG_V1_GUEST_SUPPORT_PAPER_TRANSPARENT_20261112
+   The guest's writing surface should feel like real lined paper, not nested white cards.
+   Scope: guest letter only. Existing post, profile, and signed-in styles are untouched. */
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper {
+  --wg-paper-ink:#294958;
+  --wg-paper-outline:#91a6aa;
+  --wg-paper-hover:rgba(255,253,245,.26);
+}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper label,
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-muted,
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper small {
+  color:var(--wg-paper-ink)!important;
+  opacity:1!important;
+}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper input:not([type=checkbox]),
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper textarea,
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-select-trigger {
+  background:transparent!important;
+  background-image:none!important;
+  color:#193d4a!important;
+  border:1.5px solid var(--wg-paper-outline)!important;
+  border-radius:12px!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper textarea {
+  min-height:200px!important;
+  line-height:1.58!important;
+  resize:vertical;
+}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper input::placeholder,
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper textarea::placeholder {
+  color:#647b82!important;
+  opacity:1!important;
+}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper input:focus-visible,
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper textarea:focus-visible,
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-select-trigger:focus-visible {
+  background:var(--wg-paper-hover)!important;
+  outline:2px solid #34778b!important;
+  outline-offset:2px;
+}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-select-popup {
+  background:#fcf9f0!important;
+  border:1px solid var(--wg-paper-outline)!important;
+  box-shadow:0 12px 25px rgba(11,41,49,.17)!important;
+}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-select-popup button {
+  background:transparent!important;
+  color:#214855!important;
+}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-select-popup button:hover,
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-select-popup button:focus-visible,
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-select-popup button[aria-selected=true] {
+  background:#d8e9e7!important;
+  color:#143a47!important;
+}
+/* Preserve visible high-contrast Send letter button and anchored dropdowns. */
