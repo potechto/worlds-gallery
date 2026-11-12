@@ -462,3 +462,24 @@
   min-height:33px!important;
   line-height:33px!important;
 }
+
+/* WG_V1_GUEST_SUPPORT_COOLDOWN_CONTRAST_V8_20261112
+   Guest support success timer sits on a pale card. Override the old
+   white-on-navy fallback without affecting member support or timer logic. */
+#wgAccountDrawer.wg-ac-outside .wg-v214-timer-block {
+  color: #173b48 !important;
+}
+#wgAccountDrawer.wg-ac-outside .wg-v214-timer-block .wg-v214-timer-label {
+  color: #2b5260 !important;
+  opacity: 1 !important;
+}
+#wgAccountDrawer.wg-ac-outside .wg-v214-timer-block .wg-mail-clock.wg-v214-timer {
+  color: #143f4f !important;
+  -webkit-text-fill-color: #143f4f !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+#wgAccountDrawer.wg-ac-outside .wg-v214-timer-block .wg-v214-timer-caption {
+  color: #3c626c !important;
+  opacity: 1 !important;
+}
