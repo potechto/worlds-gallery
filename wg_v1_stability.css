@@ -430,3 +430,35 @@
     min-height:132px!important;
   }
 }
+/* WG_V1_GUEST_SUPPORT_GRID_ALIGNMENT_V7_20261112 */
+/* One label occupies one 33px rule; its field occupies the next rule. */
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper {
+  padding-top:33px!important;
+  padding-bottom:33px!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper label:not(.wg-ac-trap) {
+  line-height:33px!important;
+  letter-spacing:0!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper input:not([type=checkbox]),
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-select-trigger {
+  height:33px!important;
+  min-height:33px!important;
+  max-height:33px!important;
+  line-height:33px!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-two,
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-two > label,
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper > label:not(.wg-ac-trap) {
+  min-height:66px!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper label > small {
+  min-height:33px!important;
+  height:33px!important;
+  line-height:33px!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-muted {
+  height:auto!important;
+  min-height:33px!important;
+  line-height:33px!important;
+}
