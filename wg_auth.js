@@ -210,12 +210,16 @@
     function positionMenu() {
       if (!current || current.menu.hidden) return;
       const r = current.trigger.getBoundingClientRect();
-      const free = window.innerHeight - r.bottom - 12;
+      const below = window.innerHeight - r.bottom - 12;
+      const above = r.top - 12;
+      const openAbove = below < 150 && above > below;
+      const room = openAbove ? above : below;
       const left = Math.max(8, Math.min(r.left, window.innerWidth - r.width - 8));
-      current.menu.style.left = left + 'px';
-      current.menu.style.top = (r.bottom + 5) + 'px';
       current.menu.style.width = Math.min(r.width, window.innerWidth - 16) + 'px';
-      current.menu.style.maxHeight = Math.min(290, Math.max(80, free)) + 'px';
+      current.menu.style.maxHeight = Math.max(85, Math.min(290, room - 8)) + 'px';
+      current.menu.style.left = left + 'px';
+      const menuHeight = current.menu.getBoundingClientRect().height;
+      current.menu.style.top = (openAbove ? Math.max(8, r.top - menuHeight - 5) : r.bottom + 5) + 'px';
     }
     function items() {
       return current ? [...current.list.querySelectorAll('[role="option"]')] : [];
@@ -228,7 +232,10 @@
         option.dataset.active = String(i === activeIndex);
         if (i === activeIndex) {
           current.search.setAttribute('aria-activedescendant', option.id);
-          option.scrollIntoView({block:'nearest'});
+          // Scroll only the country list, never the surrounding page.
+          const list=current.list, listRect=list.getBoundingClientRect(), itemRect=option.getBoundingClientRect();
+          if(itemRect.top<listRect.top)list.scrollTop-=listRect.top-itemRect.top;
+          else if(itemRect.bottom>listRect.bottom)list.scrollTop+=itemRect.bottom-listRect.bottom;
         }
       });
     }
@@ -275,10 +282,7 @@
       record.menu.hidden = false;
       record.trigger.setAttribute('aria-expanded', 'true');
       record.search.value = '';
-      // Give the popover enough vertical room *below* the control. Never flip it above.
-      if (window.innerHeight - record.trigger.getBoundingClientRect().bottom < 180) {
-        record.trigger.scrollIntoView({block:'start', behavior:'instant'});
-      }
+      // Floating popover: never scroll the page; anchor above only when necessary.
       render();
       requestAnimationFrame(() => {
         if (current !== record) return;

@@ -156,3 +156,37 @@
 #wgV1MoodLightbox img{display:block;margin:auto;max-width:100%;max-height:calc(100dvh - 134px);height:auto;width:auto;object-fit:contain;border-radius:9px}
 #wgV1MoodLightbox .wg-v1-zoom-caption{margin:10px 3px 0;font:400 11px/1.4 system-ui,sans-serif;color:#5c7768}
 @media(prefers-reduced-motion:reduce){#wgAlbumPage.wg-album-closing .wg-album-anim-front{animation:none!important}}
+
+/* WG_V1_GUEST_SUPPORT_DROPDOWN_ANCHOR_20261112 */
+/* Guest letter is cream: always render labels and help text in readable ink. */
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper{transform:none!important;color:#163a46!important}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper label,
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-muted,
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper small{color:#284753!important;opacity:1!important}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper input:not([type=checkbox]),
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper textarea,
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper select:not(.wg-ac-native-select),
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-select-trigger{background:#fffefa!important;color:#173646!important;border:1.5px solid #8299a4!important;box-shadow:0 1px 3px rgba(8,37,48,.07)!important}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper input::placeholder,
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper textarea::placeholder{color:#59727b!important;opacity:1!important}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper input:focus-visible,
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper textarea:focus-visible,
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-select-trigger:focus-visible{outline:3px solid #216f80!important;outline-offset:2px!important}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-select-popup{background:#fffef7!important;border:1px solid #8ca6ad!important;box-shadow:0 12px 30px rgba(6,32,45,.19)!important}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-select-popup button{color:#173a47!important}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-select-popup button:hover,
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-select-popup button:focus-visible,
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-select-popup button[aria-selected=true]{background:#dceff0!important;color:#103b48!important}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-save{background:#15485a!important;color:#fff!important;font-size:14px!important;box-shadow:none!important}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-save:hover:not(:disabled){background:#1f6073!important}
+#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-save:disabled{color:#294654!important;background:#bad2d9!important}
+/* Overlay the menu; no form reflow or forced scrolling. */
+#wgAccountDrawer .wg-ac-select-wrap{position:relative!important}
+#wgAccountDrawer .wg-ac-select-wrap.wg-ac-select-open{z-index:80!important}
+#wgAccountDrawer .wg-ac-form label.wg-ac-picker-active{z-index:130!important}
+#wgAccountDrawer .wg-ac-select-popup{position:absolute!important;top:calc(100% + 5px)!important;bottom:auto!important;left:0!important;right:0!important;width:100%!important;margin:0!important;z-index:85!important;max-height:220px;overscroll-behavior:contain}
+#wgAccountDrawer .wg-ac-select-wrap.wg-ac-drop-up .wg-ac-select-popup{top:auto!important;bottom:calc(100% + 5px)!important}
+#wgAccountDrawer .wg-ac-form label:has(> .wg-ac-country-popup){z-index:65}
+#wgAccountDrawer .wg-ac-country-popup{position:absolute!important;top:calc(100% + 5px)!important;bottom:auto!important;left:0!important;right:0!important;width:100%!important;margin:0!important;z-index:85!important;overscroll-behavior:contain}
+#wgAccountDrawer .wg-ac-country-popup.wg-ac-drop-up{top:auto!important;bottom:calc(100% + 5px)!important}
+@media(max-width:620px){#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper{padding:18px 15px!important}#wgAccountDrawer.wg-ac-outside .wg-v28-letter-paper .wg-ac-two{grid-template-columns:minmax(0,1fr)!important}}

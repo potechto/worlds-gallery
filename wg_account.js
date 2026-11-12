@@ -202,18 +202,18 @@
       for(const [code,name] of options){
         const opt=document.createElement('button');opt.type='button';opt.setAttribute('role','option');opt.textContent=name;opt.dataset.code=code;
         opt.setAttribute('aria-selected',String(code===input.value));
-        opt.addEventListener('click',()=>{input.value=code;button.querySelector('span').textContent=name;document.dispatchEvent(new CustomEvent('wg:country-selected',{detail:{code,source:'profile'}}));close();button.focus();});
+        opt.addEventListener('click',()=>{input.value=code;button.querySelector('span').textContent=name;document.dispatchEvent(new CustomEvent('wg:country-selected',{detail:{code,source:'profile'}}));close();button.focus({preventScroll:true});});
         list.appendChild(opt);
       }
       if(!options.length)list.textContent='No matches';
       search.addEventListener('input',()=>{filter=search.value;paint();});
       search.addEventListener('keydown',e=>{
-        if(e.key==='Escape'){e.preventDefault();close();button.focus();}
+        if(e.key==='Escape'){e.preventDefault();close();button.focus({preventScroll:true});}
         if(e.key==='Enter'){e.preventDefault();list.querySelector('button')?.click();}
         if(e.key==='ArrowDown'){e.preventDefault();list.querySelector('button')?.focus();}
       });
       list.addEventListener('keydown',e=>{
-        if(e.key==='Escape'){e.preventDefault();close();button.focus();}
+        if(e.key==='Escape'){e.preventDefault();close();button.focus({preventScroll:true});}
         if(e.key==='ArrowDown'||e.key==='ArrowUp'){
           e.preventDefault();
           const opts=[...list.querySelectorAll('button')],i=opts.indexOf(document.activeElement);
@@ -223,10 +223,12 @@
     }
     button.addEventListener('click',()=>{
       if(!popup.hidden){close();return;}
+      const r=button.getBoundingClientRect(),below=window.innerHeight-r.bottom-10,above=r.top-10;
+      const up=below<170&&above>below;
+      popup.classList.toggle('wg-ac-drop-up',up);
+      popup.style.maxHeight=Math.max(85,Math.min(240,(up?above:below)-12))+'px';
       popup.hidden=false;button.setAttribute('aria-expanded','true');
-      // If near the bottom of the drawer, scroll the control upward first.
-      button.scrollIntoView({block:'center',behavior:'instant'});
-      filter='';paint();popup.querySelector('input')?.focus();
+      filter='';paint();popup.querySelector('input')?.focus({preventScroll:true});
     });
     drawer.addEventListener('click',e=>{if(!popup.hidden && !popup.contains(e.target) && !button.contains(e.target))close();});
   }
@@ -288,31 +290,36 @@
       outer.appendChild(button);
       const popup=document.createElement('div');popup.className='wg-ac-select-popup';popup.hidden=true;outer.appendChild(popup);
       function sync(){button.querySelector('span').textContent=select.selectedOptions[0]?.textContent||'Choose one';}
-      function close(){popup.hidden=true;button.setAttribute('aria-expanded','false');}
+      function close(){popup.hidden=true;button.setAttribute('aria-expanded','false');outer.classList.remove('wg-ac-select-open','wg-ac-drop-up');outer.closest('label')?.classList.remove('wg-ac-picker-active');}
       function open(){
         popup.replaceChildren();
         for(const option of select.options){
           if(!option.value)continue;
           const item=document.createElement('button');item.type='button';item.textContent=option.textContent;
           item.setAttribute('role','option');item.setAttribute('aria-selected',String(option.value===select.value));
-          item.addEventListener('click',()=>{select.value=option.value;select.dispatchEvent(new Event('change',{bubbles:true}));sync();close();button.focus();});
+          item.addEventListener('click',()=>{select.value=option.value;select.dispatchEvent(new Event('change',{bubbles:true}));sync();close();button.focus({preventScroll:true});});
           popup.appendChild(item);
         }
+        const r=button.getBoundingClientRect(),below=window.innerHeight-r.bottom-10,above=r.top-10;
+        const up=below<170&&above>below;
+        outer.classList.toggle('wg-ac-drop-up',up);
+        outer.classList.add('wg-ac-select-open');
+        outer.closest('label')?.classList.add('wg-ac-picker-active');
+        popup.style.maxHeight=Math.max(80,Math.min(220,(up?above:below)-12))+'px';
         popup.hidden=false;button.setAttribute('aria-expanded','true');
-        button.scrollIntoView({block:'center',behavior:'instant'});
       }
       button.addEventListener('click',()=>popup.hidden?open():close());
       select.addEventListener('change',sync);
       popup.addEventListener('keydown',e=>{
         const list=[...popup.querySelectorAll('button')],i=list.indexOf(document.activeElement);
-        if(e.key==='Escape'){e.preventDefault();close();button.focus();}
+        if(e.key==='Escape'){e.preventDefault();close();button.focus({preventScroll:true});}
         else if(e.key==='ArrowDown'||e.key==='ArrowUp'){
-          e.preventDefault();list[Math.max(0,Math.min(list.length-1,i+(e.key==='ArrowDown'?1:-1)))]?.focus();
+          e.preventDefault();list[Math.max(0,Math.min(list.length-1,i+(e.key==='ArrowDown'?1:-1)))]?.focus({preventScroll:true});
         }
       });
       button.addEventListener('keydown',e=>{
         if(['Enter',' ','ArrowDown'].includes(e.key)){
-          e.preventDefault();if(popup.hidden)open();popup.querySelector('button')?.focus();
+          e.preventDefault();if(popup.hidden)open();popup.querySelector('button')?.focus({preventScroll:true});
         }
       });
       outer.addEventListener('focusout',e=>{if(!outer.contains(e.relatedTarget))close();});
