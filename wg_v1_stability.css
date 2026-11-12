@@ -300,3 +300,133 @@
   border:1px solid rgba(83,121,129,.58)!important;
   border-radius:10px!important;
 }
+/* WG_V1_GUEST_SUPPORT_RULED_PAPER_V6_20261112
+   Guest-only outside Sign In / Create Account. Align entries to the
+   existing stationery rulings; no bordered cards and no scroll jumps. */
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper {
+  --wg-letter-rule:33px;
+  display:grid!important;
+  gap:0!important;
+  padding:32px 26px 28px 48px!important;
+  color:#203e49!important;
+  background:repeating-linear-gradient(to bottom,#fffdf5 0px,#fffdf5 31px,#e3e9e1 32px,#fffdf5 33px)!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper::before {
+  left:22px!important;
+  border-color:#dfb6af!important;
+  opacity:.58!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-two {
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  column-gap:18px!important;
+  row-gap:0!important;
+  min-height:66px!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper label:not(.wg-ac-trap) {
+  display:flex!important;
+  flex-direction:column!important;
+  gap:0!important;
+  color:#254956!important;
+  font-size:12px!important;
+  font-weight:650!important;
+  line-height:24px!important;
+  margin:0!important;
+  padding:0!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper > label:not(.wg-ac-trap),
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-two > label {
+  min-height:66px!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper input:not([type=checkbox]),
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-select-trigger {
+  height:36px!important;
+  min-height:36px!important;
+  max-height:36px!important;
+  width:100%!important;
+  padding:0 5px!important;
+  line-height:36px!important;
+  font-size:13px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  color:#193d4b!important;
+  box-shadow:none!important;
+  text-align:left!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-select-trigger {
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  margin:0!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper textarea {
+  width:100%!important;
+  height:231px!important;
+  min-height:231px!important;
+  max-height:400px!important;
+  padding:0 5px!important;
+  line-height:33px!important;
+  font-size:13px!important;
+  color:#193d4b!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  resize:vertical;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper label > small {
+  min-height:30px!important;
+  line-height:30px!important;
+  color:#3a5c67!important;
+  opacity:1!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-muted {
+  font-size:11px!important;
+  color:#3a5c67!important;
+  min-height:33px!important;
+  line-height:33px!important;
+  margin:0!important;
+  padding:0!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-save {
+  margin:5px 0 0!important;
+  min-height:46px!important;
+  background:#164c60!important;
+  color:#fff!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper input::placeholder,
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper textarea::placeholder {
+  color:#667f84!important;
+  opacity:1!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper input:not([type=checkbox]):focus-visible,
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper textarea:focus-visible,
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-select-trigger:focus-visible {
+  outline:2px solid #31738a!important;
+  outline-offset:1px!important;
+  background:rgba(218,234,234,.2)!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-select-popup {
+  background:#fffdf5!important;
+  border:1px solid #799aa1!important;
+  box-shadow:0 12px 22px rgba(11,40,50,.20)!important;
+  border-radius:8px!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-select-popup button {
+  color:#21424e!important;
+}
+@media(max-width:620px) {
+  #wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper {
+    padding:27px 18px 25px 36px!important;
+  }
+  #wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper::before {
+    left:17px!important;
+  }
+  #wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-two {
+    grid-template-columns:1fr!important;
+    min-height:132px!important;
+  }
+}
