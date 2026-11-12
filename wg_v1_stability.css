@@ -250,3 +250,53 @@
   color:#143a47!important;
 }
 /* Preserve visible high-contrast Send letter button and anchored dropdowns. */
+
+/* WG_V1_GUEST_SUPPORT_SEAMLESS_LETTER_20261112 */
+/* Guest support form is one sheet of paper, not a stack of cards. */
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper input:not([type=checkbox]),
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper textarea,
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-select-trigger {
+  background:transparent!important;
+  background-image:none!important;
+  color:#1c4350!important;
+  border:0!important;
+  border-bottom:1px solid rgba(55,95,107,.40)!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  outline:0;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper input:not([type=checkbox]) {
+  padding-inline:6px!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-select-trigger {
+  padding-inline:6px!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper textarea {
+  border-bottom:0!important;
+  min-height:210px!important;
+  padding:10px 8px!important;
+  line-height:1.65!important;
+  resize:vertical;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper input:not([type=checkbox]):focus-visible,
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-select-trigger:focus-visible {
+  background:rgba(219,239,239,.18)!important;
+  border-bottom:2px solid #236f82!important;
+  box-shadow:none!important;
+  outline:2px solid rgba(33,108,126,.55)!important;
+  outline-offset:2px!important;
+}
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper textarea:focus-visible {
+  background:rgba(222,238,237,.13)!important;
+  outline:2px solid rgba(33,108,126,.60)!important;
+  outline-offset:2px!important;
+  border-radius:4px!important;
+}
+/* The expanded dropdown remains a separate light-paper list to keep choices readable. */
+#wgAccountDrawer.wg-ac-outside #wgAcSupportForm.wg-v28-letter-paper .wg-ac-select-popup {
+  background:#fffdf5!important;
+  border:1px solid rgba(83,121,129,.58)!important;
+  border-radius:10px!important;
+}
